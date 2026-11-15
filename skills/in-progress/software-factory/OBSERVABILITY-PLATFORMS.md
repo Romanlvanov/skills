@@ -1,75 +1,75 @@
-# Observability platforms
+# Платформы наблюдаемости
 
-> Surveyed 2026-10, and not guaranteed to be up to date. Use it to get oriented, then research the current options yourself: products, prices, limits and betas change fast.
+> Обзор сделан в 2026-10, актуальность не гарантируется. Используй его, чтобы сориентироваться, затем сам исследуй актуальные варианты: продукты, цены, лимиты и беты меняются быстро.
 
-Orientation for filling the observability platform slot, or deciding on a deliberate none. The types split by **what the human needs to see inside a run**: its log, its agent trace (each model call and tool call as a span), or that trace joined to the rest of the user's system. Self-hosted vs SaaS cuts across the last three types. When a run should act on what the platform sees, make the platform a ticket source: a monitor files the ticket, and a run reads it.
+Ориентир для заполнения слота платформы наблюдаемости или для осознанного решения обойтись без неё. Типы делятся по тому, **что человеку нужно видеть внутри прогона**: его лог, его трейс агента (каждый вызов модели и вызов инструмента как span) или этот трейс, связанный с остальной системой пользователя. Деление на self-hosted и SaaS проходит поперёк трёх последних типов. Когда прогон должен действовать по тому, что видит платформа, сделай платформу источником тикетов: монитор заводит тикет, а прогон его читает.
 
-## How runners hook in
+## Как подключаются раннеры
 
-Every type receives data through one of five hooks. Name the hook alongside the product when filling the slot.
+Каждый тип получает данные через один из пяти хуков. Заполняя слот, называй хук вместе с продуктом.
 
-- **Harness OTel**: the agent harness exports OpenTelemetry itself. Claude Code and the Claude Agent SDK take `CLAUDE_CODE_ENABLE_TELEMETRY=1` plus `OTEL_*` variables, with prompts and tool output opt-in; Codex CLI takes an `[otel]` block in `config.toml`. ([Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk/observability), [Claude Code](https://code.claude.com/docs/en/monitoring-usage), [Codex config](https://developers.openai.com/codex/config-advanced))
-- **Platform push**: the model platform sends traces for you, as Claude Managed Agents do to an OTLP destination set in the Claude Console. ([Claude docs](https://platform.claude.com/docs/en/manage-claude/opentelemetry/api))
-- **SDK wrapper**: one call in the runner's code, such as LangSmith's `configure_claude_agent_sdk()`.
-- **Hook plugin**: a Claude Code hook reads the session transcript at each Stop and ships it, as in Langfuse's Claude Code plugin.
-- **Gateway**: the runner's model base URL points at a logging proxy. Zero runner code, and it sees model calls only: tool calls inside the harness stay invisible.
+- **OTel из харнесса** (harness OTel): харнесс агента сам экспортирует OpenTelemetry. Claude Code и Claude Agent SDK принимают `CLAUDE_CODE_ENABLE_TELEMETRY=1` плюс переменные `OTEL_*`, причём промпты и вывод инструментов включаются отдельно; Codex CLI принимает блок `[otel]` в `config.toml`. ([Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk/observability), [Claude Code](https://code.claude.com/docs/en/monitoring-usage), [Codex config](https://developers.openai.com/codex/config-advanced))
+- **Отправка платформой** (platform push): платформа модели сама отправляет трейсы, как Claude Managed Agents отправляют их в OTLP-назначение, заданное в Claude Console. ([Claude docs](https://platform.claude.com/docs/en/manage-claude/opentelemetry/api))
+- **Обёртка SDK** (SDK wrapper): один вызов в коде раннера, например `configure_claude_agent_sdk()` в LangSmith.
+- **Плагин-хук** (hook plugin): хук Claude Code читает транскрипт сессии на каждом Stop и отправляет его, как в плагине Langfuse для Claude Code.
+- **Шлюз** (gateway): базовый URL модели у раннера указывает на логирующий прокси. Ноль кода в раннере, и видит он только вызовы модели: вызовы инструментов внутри харнесса остаются невидимыми.
 
-OpenTelemetry is the common wire: harness OTel and platform push land in any OTLP backend. The GenAI semantic conventions (`invoke_agent`, `chat`, `execute_tool` spans) are still settling, so expect span names to drift. ([OTel GenAI agent spans](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans))
+OpenTelemetry является общим проводом: OTel из харнесса и отправка платформой попадают в любой OTLP-бэкенд. Семантические конвенции GenAI (spans `invoke_agent`, `chat`, `execute_tool`) ещё не устоялись, так что жди, что имена spans будут дрейфовать. ([OTel GenAI agent spans](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans))
 
-## Type 1: None (the runner or orchestrator product shows enough)
+## Тип 1: Нет (продукт раннера или оркестратора показывает достаточно)
 
-**What it is**: the human reads each run where the runner or orchestrator already shows it: the CI run page, the sandbox dashboard, the agent's transcript saved as a run artifact. No hook to build, as self-hosted as the runner, and bundled with its cost.
+**Что это**: человек читает каждый прогон там, где его уже показывает раннер или оркестратор: страница CI-прогона, дашборд песочницы, транскрипт агента, сохранённый как артефакт прогона. Хук строить не нужно, размещение такое же, как у раннера, стоимость входит в его стоимость.
 
-**When a factory picks it**: few runs a day, one human watching, and the question is "did it fail, and what did it print?" Most factories start here, and grow out of it when they need search across runs, a token or cost rollup per run, or retention longer than the runner keeps.
+**Когда фабрика его выбирает**: немного прогонов в день, следит один человек, а вопрос звучит как «упало ли, и что оно напечатало?». Большинство фабрик начинают здесь и вырастают из этого, когда им нужен поиск по прогонам, сводка токенов или стоимости на прогон или хранение дольше, чем держит раннер.
 
-**Starting points**: [GitHub Actions run logs](https://docs.github.com/en/organizations/managing-organization-settings/configuring-the-retention-period-for-github-actions-artifacts-and-logs-in-your-organization), [E2B sandbox logs and metrics](https://e2b.dev/docs), [Daytona sandbox telemetry](https://www.daytona.io/docs/en/observability/otel-collection/), [OpenAI Agents SDK traces](https://openai.github.io/openai-agents-python/tracing/). Sandbox products often forward the same data over OTLP, which is the path out to Type 2.
+**Отправные точки**: [GitHub Actions run logs](https://docs.github.com/en/organizations/managing-organization-settings/configuring-the-retention-period-for-github-actions-artifacts-and-logs-in-your-organization), [E2B sandbox logs and metrics](https://e2b.dev/docs), [Daytona sandbox telemetry](https://www.daytona.io/docs/en/observability/otel-collection/), [OpenAI Agents SDK traces](https://openai.github.io/openai-agents-python/tracing/). Продукты-песочницы часто пересылают те же данные по OTLP, и это путь наружу к типу 2.
 
-**Verify**: retention days per runner product; some sandboxes keep very little (Daytona: 3 days, as of 2026-10).
+**Проверить**: срок хранения в днях у каждого продукта-раннера; некоторые песочницы хранят очень мало (Daytona: 3 дня, на 2026-10).
 
-## Type 2: LLM and agent tracing platform
+## Тип 2: Платформа трейсинга LLM и агентов
 
-**What it is**: a backend built around the agent trace: each run as a tree of model calls and tool calls, with token cost, prompts and sessions, usually with evals and datasets on top.
+**Что это**: бэкенд, построенный вокруг трейса агента: каждый прогон как дерево вызовов модели и вызовов инструментов, со стоимостью токенов, промптами и сессиями, обычно с evals и датасетами сверху.
 
-**When a factory picks it**: the human asks "why did the agent do that?" across many runs; a retro run or a human compares runs; token spend needs a per-run rollup. Self-hosting an open-source one keeps transcripts in-house.
+**Когда фабрика его выбирает**: человек спрашивает «почему агент так сделал?» на множестве прогонов; ретро-прогон или человек сравнивает прогоны; расходу токенов нужна сводка на прогон. Self-hosted open-source вариант держит транскрипты внутри.
 
-**Traits of the type**: takes harness OTel, an SDK wrapper or a hook plugin, often the platform push too. Billed by volume, and agent runs are span-heavy (one span per tool call), so budget per run rather than per request.
+**Свойства типа**: принимает OTel из харнесса, обёртку SDK или плагин-хук, часто и отправку платформой. Оплата по объёму, а прогоны агентов тяжёлые по spans (один span на вызов инструмента), поэтому закладывай бюджет на прогон, а не на запрос.
 
-**Starting points**: [Langfuse](https://langfuse.com/pricing) and [Arize Phoenix](https://phoenix.arize.com) (open source, self-hostable), [LangSmith](https://www.langchain.com/pricing-langsmith), [Braintrust](https://www.braintrust.dev/pricing).
+**Отправные точки**: [Langfuse](https://langfuse.com/pricing) и [Arize Phoenix](https://phoenix.arize.com) (open source, можно развернуть у себя), [LangSmith](https://www.langchain.com/pricing-langsmith), [Braintrust](https://www.braintrust.dev/pricing).
 
-**Verify**: free-tier limits, the billing unit (trace, span, unit or GB; Braintrust moved to GB in 2026-03), which tier unlocks self-hosting, and current ownership.
+**Проверить**: лимиты бесплатного уровня, единицу оплаты (трейс, span, единица или ГБ; Braintrust перешёл на ГБ в 2026-03), какой уровень открывает self-hosting и текущего владельца.
 
-## Type 3: General APM and logging backend
+## Тип 3: Универсальный APM- и лог-бэкенд
 
-**What it is**: the user's existing observability stack (logs, metrics, distributed traces for every service), with an agent or LLM view added.
+**Что это**: существующий стек наблюдаемости пользователя (логи, метрики, распределённые трейсы для каждого сервиса), с добавленным представлением для агентов или LLM.
 
-**When a factory picks it**: the team already pays for one; runs need joining to the app's own traces (the Agent SDK propagates `TRACEPARENT`, so a run nests inside its caller's trace); or a monitor ticket source already reads from it.
+**Когда фабрика его выбирает**: команда уже за него платит; прогоны нужно связать с собственными трейсами приложения (Agent SDK пробрасывает `TRACEPARENT`, так что прогон вкладывается в трейс вызывающего); или источник тикетов-монитор уже читает из него.
 
-**Traits of the type**: harness OTel goes straight to the vendor's OTLP endpoint. Priced per GB, event or host, so a factory's volume is a rounding error on an existing bill and a surprise on a new one.
+**Свойства типа**: OTel из харнесса идёт прямо в OTLP-эндпоинт вендора. Цена за ГБ, событие или хост, поэтому объём фабрики будет погрешностью округления в существующем счёте и сюрпризом в новом.
 
-**Starting points**: [Datadog Agent Observability](https://www.datadoghq.com/product/llm-observability/), [Grafana Cloud](https://grafana.com/pricing/), [Honeycomb](https://www.honeycomb.io/pricing), [SigNoz](https://signoz.io/pricing/) (open source).
+**Отправные точки**: [Datadog Agent Observability](https://www.datadoghq.com/product/llm-observability/), [Grafana Cloud](https://grafana.com/pricing/), [Honeycomb](https://www.honeycomb.io/pricing), [SigNoz](https://signoz.io/pricing/) (open source).
 
-**Verify**: whether the agent view is GA or preview, which harnesses have a setup guide, and free-tier volumes.
+**Проверить**: представление для агентов в GA или в превью, для каких харнессов есть руководство по настройке, объёмы бесплатного уровня.
 
-## Type 4: LLM gateway with request logging
+## Тип 4: LLM-шлюз с логированием запросов
 
-**What it is**: a proxy between the runner and the model provider that logs every request and response, with routing, keys, budgets and caching alongside.
+**Что это**: прокси между раннером и провайдером модели, который логирует каждый запрос и ответ, а рядом даёт маршрутизацию, ключи, бюджеты и кэширование.
 
-**When a factory picks it**: the user wants per-run spend caps or one key vault for many runners, and logging comes with it; or the harness has no export of its own. It sees model calls only, so pair it with Type 2 or 3 for tool calls.
+**Когда фабрика его выбирает**: пользователю нужны лимиты расходов на прогон или одно хранилище ключей для многих раннеров, а логирование идёт в нагрузку; или у харнесса нет собственного экспорта. Он видит только вызовы модели, так что для вызовов инструментов используй его в паре с типом 2 или 3.
 
-**Starting points**: [LiteLLM Proxy](https://docs.litellm.ai/docs/proxy/logging) (open source, forwards logs to Langfuse or OTel), [Portkey](https://portkey.ai/pricing).
+**Отправные точки**: [LiteLLM Proxy](https://docs.litellm.ai/docs/proxy/logging) (open source, пересылает логи в Langfuse или OTel), [Portkey](https://portkey.ai/pricing).
 
-**Verify**: per-request pricing on SaaS, and whether the product is still actively developed (Helicone went into maintenance mode after an acquisition, as of 2026-10).
+**Проверить**: цену за запрос в SaaS и развивается ли продукт активно (Helicone перешёл в режим поддержки после поглощения, на 2026-10).
 
-## Researching further
+## Что исследовать дальше
 
-Check each candidate against the questions that decide this slot:
+Проверь каждого кандидата по вопросам, которые решают выбор для этого слота:
 
-1. **Does the runner or orchestrator already show enough?** Compare what the human needs (cross-run search, per-run cost, retention) with what the run page or sandbox dashboard gives. A yes here means a deliberate none.
-2. **How does the agent harness export traces?** Find which of the five hooks the harness supports, then which the product accepts. Confirm tool calls arrive as spans, and whether prompts and tool output need an opt-in.
-3. **Is it self-hostable?** Licence, which tier allows it, and what it runs on. Decisive when transcripts must stay in-house.
-4. **What is the cost shape?** The billing unit, the free tier, and an estimate per run given one span per tool call, multiplied by runs per day.
-5. **How long is retention?** Days kept on each tier, against how far back the human looks when a run goes wrong.
+1. **Показывает ли раннер или оркестратор уже достаточно?** Сравни, что нужно человеку (поиск по прогонам, стоимость на прогон, срок хранения), с тем, что даёт страница прогона или дашборд песочницы. «Да» здесь означает осознанное «нет».
+2. **Как харнесс агента экспортирует трейсы?** Найди, какие из пяти хуков поддерживает харнесс, затем какие принимает продукт. Убедись, что вызовы инструментов приходят как spans, и нужно ли отдельно включать промпты и вывод инструментов.
+3. **Можно ли развернуть у себя?** Лицензия, какой уровень это разрешает и на чём оно работает. Решающий вопрос, когда транскрипты должны оставаться внутри.
+4. **Какова модель стоимости?** Единица оплаты, бесплатный уровень и оценка на прогон при одном span на вызов инструмента, умноженная на число прогонов в день.
+5. **Каков срок хранения?** Сколько дней хранится на каждом уровне, по сравнению с тем, как далеко назад смотрит человек, когда прогон идёт не так.
 
-**Where the answers live**: the vendor's pricing page (units, tiers, retention); the vendor's integration doc for the specific harness; the harness's own monitoring docs (what it exports, which flags are beta); the OpenTelemetry GenAI semantic conventions; the product's repo for licence and release activity; the vendor's changelog or blog for ownership changes.
+**Где лежат ответы**: страница цен вендора (единицы, уровни, срок хранения); документация вендора по интеграции с конкретным харнессом; собственная документация харнесса по мониторингу (что он экспортирует, какие флаги в бете); семантические конвенции OpenTelemetry GenAI; репозиторий продукта для лицензии и активности релизов; changelog или блог вендора про смену владельца.
 
-**What goes stale fastest**: free-tier limits and prices; beta and preview flags (Claude Code trace export, Console platform push, vendor agent views); ownership and maintenance status; billing units; retention days; GenAI span names.
+**Что устаревает быстрее всего**: лимиты бесплатного уровня и цены; флаги беты и превью (экспорт трейсов Claude Code, отправка платформой из Console, представления для агентов у вендоров); статус владельца и поддержки; единицы оплаты; срок хранения в днях; имена GenAI spans.
