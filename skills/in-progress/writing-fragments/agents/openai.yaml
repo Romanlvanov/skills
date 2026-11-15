@@ -1,5 +1,5 @@
 interface:
   display_name: "Writing Fragments"
-  short_description: "Mine raw writing fragments"
+  short_description: "Добыча сырых фрагментов текста"
 policy:
   allow_implicit_invocation: false
