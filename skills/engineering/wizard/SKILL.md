@@ -1,44 +1,44 @@
 ---
 name: wizard
-description: Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure, setting up credentials or CI secrets, walking an unfamiliar third-party dashboard, or running a one-off migration or cutover. Don't invoke this for steps the agent can perform itself.
+description: Сгенерируй интерактивный bash-мастер (wizard), который проводит человека через шаги, выполнить которые может только он. Используй при развёртывании инфраструктуры, настройке учётных данных или секретов CI, прохождении незнакомой панели стороннего сервиса или проведении разовой миграции или переключения (cutover). Не вызывай этот скилл для шагов, которые агент может выполнить сам.
 ---
 
-# Wizard
+# Мастер
 
-A **wizard** is a bash script that walks a human, step by step, through a manual procedure that's tedious to do by hand and tedious to re-explain to an AI every time. It opens each URL, says exactly what to click and copy, captures the values, writes them where they belong (`.env`, GitHub secrets), confirms at every stage, and shows how many stages are left. It might configure third-party services, run a one-off migration, or move the project from one state to another.
+**Мастер** (wizard) это bash-скрипт, который шаг за шагом проводит человека через ручную процедуру: делать её руками утомительно, и так же утомительно каждый раз заново объяснять её AI. Он открывает каждый URL, говорит, что именно нажать и скопировать, принимает значения, записывает их куда нужно (`.env`, секреты GitHub), просит подтверждение на каждом этапе и показывает, сколько этапов осталось. Мастер может настраивать сторонние сервисы, проводить разовую миграцию или переводить проект из одного состояния в другое.
 
-The delightful UX is already solved by [template.sh](template.sh): stage-by-stage progress, confirmation gates, cross-platform URL opening (including WSL), hidden secret entry, idempotent `.env` upserts, `gh secret`/`gh variable` writes, and a closing summary. **Your job is only to scope the procedure and author its stages.** The library above the `STAGES` marker is identical in every wizard; that consistency is the point: never hand-edit it.
+Приятный UX уже решён в [template.sh](template.sh): прогресс по этапам, точки подтверждения, кроссплатформенное открытие URL (включая WSL), скрытый ввод секретов, идемпотентная запись в `.env` (upsert), запись через `gh secret`/`gh variable` и итоговая сводка. **Твоя задача только определить границы процедуры и написать её этапы.** Библиотека над маркером `STAGES` одинакова во всех мастерах, и в этом единообразии весь смысл: никогда не правь её вручную.
 
-A wizard is ephemeral by default: built for one run, saved to a scratch or `scripts/` path, deleted when the job's done. Commit it only when the user wants a repeatable setup path that should live in the repo.
+По умолчанию мастер одноразовый: создаётся для одного запуска, сохраняется во временный путь или в `scripts/` и удаляется, когда работа сделана. Коммить его только тогда, когда пользователь хочет повторяемый путь настройки, который должен жить в репозитории.
 
-## Process
+## Процесс
 
-### 1. Scope the procedure
+### 1. Определи границы процедуры
 
-Work out every manual step the human must take and every value that gets captured along the way. Read the repo first, don't ask cold:
+Выясни каждый ручной шаг, который должен сделать человек, и каждое значение, которое по пути принимается. Сначала прочитай репозиторий, не задавай вопросы вслепую:
 
-- For setup: `.env`, `.env.example`, `.env.*`, `README`, `docker-compose*`, framework config, and `.github/workflows/*` (every `secrets.*` / `vars.*` reference is a value the wizard must produce).
-- For a migration or transition: the current state, the target state, and the irreversible actions between them.
+- Для настройки: `.env`, `.env.example`, `.env.*`, `README`, `docker-compose*`, конфигурацию фреймворка и `.github/workflows/*` (каждая ссылка `secrets.*` / `vars.*` это значение, которое мастер должен получить).
+- Для миграции или перехода: текущее состояние, целевое состояние и необратимые действия между ними.
 
-Then show the user the ordered list of stages and the values each produces, and confirm: they may add, drop, or reorder.
+Затем покажи пользователю упорядоченный список этапов и значения, которые даёт каждый этап, и получи подтверждение: пользователь может добавить, убрать или переставить этапы.
 
-**Done when:** every stage is named in order, and for each captured value you know (a) where the human gets it, (b) where it's written (`.env`, a GitHub secret, both, or nowhere; some stages are pure actions), and (c) whether it's secret (hidden entry) or public.
+**Готово, когда:** каждый этап назван по порядку, и для каждого принимаемого значения ты знаешь (a) где человек его берёт, (b) куда оно записывается (`.env`, секрет GitHub, оба места или никуда; некоторые этапы являются чистыми действиями) и (c) секретное оно (скрытый ввод) или публичное.
 
-### 2. Map each stage's journey
+### 2. Опиши путь каждого этапа
 
-For each stage, write the precise path a human follows: which URL to open, what to do there, where a value is shown, which variable it fills: e.g. "Dashboard → Developers → API keys → Reveal test key → copy". Where you don't actually know the current UI or the exact command, say so and ask the user or check the docs: never invent steps that may not exist.
+Для каждого этапа запиши точный путь, по которому идёт человек: какой URL открыть, что там сделать, где показано значение, какую переменную оно заполняет. Например: «Dashboard → Developers → API keys → Reveal test key → скопировать». Если ты на самом деле не знаешь текущий интерфейс или точную команду, так и скажи и спроси пользователя или проверь документацию: никогда не выдумывай шаги, которых может не существовать.
 
-**Done when:** every stage traces to concrete instructions a stranger could follow.
+**Готово, когда:** каждый этап сводится к конкретным инструкциям, по которым сможет пройти посторонний человек.
 
-### 3. Author the wizard
+### 3. Напиши мастер
 
-Copy `template.sh` to the target path. Replace the example stage with one `stage` per step, in dependency order. Use the library helpers: `stage`, `say`/`step`, `open_url`, `ask`/`ask_secret`, `write_env`, `set_secret`/`set_var`, `pause`/`confirm`. Set `TOTAL_STAGES` to the number of stages you wrote.
+Скопируй `template.sh` в целевой путь. Замени этап-пример на отдельный `stage` для каждого шага в порядке зависимостей. Используй хелперы библиотеки: `stage`, `say`/`step`, `open_url`, `ask`/`ask_secret`, `write_env`, `set_secret`/`set_var`, `pause`/`confirm`. Установи `TOTAL_STAGES` равным числу написанных этапов.
 
-Hold the bar the template sets: open the URL before asking for its value, use `ask_secret` for anything secret, `write_env` every persisted value, `set_secret` only the values CI actually needs, and `confirm` before any irreversible action. Each `stage` clears the screen so only the current step is visible: keep a stage to one focused task so nothing the human needs scrolls away. Don't touch the library above the marker.
+Держи планку, которую задаёт шаблон: открывай URL до того, как спрашиваешь его значение, используй `ask_secret` для всего секретного, `write_env` для каждого сохраняемого значения, `set_secret` только для значений, которые действительно нужны CI, и `confirm` перед любым необратимым действием. Каждый `stage` очищает экран, чтобы был виден только текущий шаг: ограничивай этап одной сфокусированной задачей, чтобы ничего нужного человеку не уехало вверх. Не трогай библиотеку над маркером.
 
-### 4. Verify and hand off
+### 4. Проверь и передай
 
-- `bash -n <script>`; run `shellcheck` if available.
+- `bash -n <script>`; запусти `shellcheck`, если он доступен.
 - `chmod +x <script>`.
-- Don't run it end-to-end yourself: it opens browsers and blocks on human input. Trace it statically instead: every value from step 1 is captured and lands where step 1 said, and every `set_secret` name exactly matches a `secrets.*` reference in CI.
-- Tell the user how to run it. If it's a repeatable setup path, commit it and link it from the README so the next person runs the script instead of asking an AI.
+- Не запускай мастер целиком сам: он открывает браузеры и ждёт ввода человека. Вместо этого проследи его статически: каждое значение из шага 1 принимается и попадает туда, куда сказано в шаге 1, а каждое имя в `set_secret` точно совпадает со ссылкой `secrets.*` в CI.
+- Скажи пользователю, как его запустить. Если это повторяемый путь настройки, закоммить его и дай ссылку из README, чтобы следующий человек запускал скрипт, а не спрашивал AI.
