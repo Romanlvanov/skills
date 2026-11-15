@@ -1,8 +1,8 @@
-# GLOSSARY.md Format
+# Формат GLOSSARY.md
 
-`GLOSSARY.md` is the canonical language for this teaching workspace. All explainers, exercises, and learning records should adhere to its terminology. Building it is itself part of learning: compressing a concept into a tight definition is evidence the user understands it.
+`GLOSSARY.md` задаёт канонический язык этого учебного рабочего пространства. Все объяснения, упражнения и учебные записи должны придерживаться его терминологии. Построение глоссария само по себе входит в обучение: сжать понятие в чёткое определение значит доказать, что пользователь его понимает.
 
-## Structure
+## Структура
 
 ```md
 # {Topic} Glossary
@@ -24,12 +24,12 @@ A 1–10 self-rating of how hard a set felt, where 10 is failure and 8 means two
 _Avoid_: Effort score, intensity rating
 ```
 
-## Rules
+## Правила
 
-- **Add a term only when the user understands it.** The glossary is a record of compressed knowledge, not a dictionary the user reads to learn. If the user has just been introduced to a concept, wait until they can use it correctly before promoting it here.
-- **Be opinionated.** When several words exist for the same concept, pick the best one and list the rest as aliases to avoid. This is how language compresses.
-- **Keep definitions tight.** One or two sentences. Define what the term IS, not what it does or how to do it.
-- **Use the glossary's own terms inside definitions.** Once a term is in the glossary, prefer it everywhere, including inside other definitions. This is what makes complex terms easier to grasp later.
-- **Group under subheadings** when natural clusters emerge (e.g. `## Anatomy`, `## Programming`). A flat list is fine when terms cohere.
-- **Flag ambiguities explicitly.** If a term is used loosely in the wider field, note the resolution: "In this workspace, 'set' always means a working set; warm-ups are tracked separately."
-- **Revise as understanding deepens.** A definition the user wrote in week one may be wrong by week six. Update in place; do not leave stale entries.
+- **Добавляй термин, только когда пользователь его понимает.** Глоссарий служит записью сжатого знания, а не словарь, по которому пользователь учится. Если пользователь только что познакомился с понятием, подожди, пока он не сможет правильно его использовать, прежде чем переносить сюда.
+- **Будь категоричен.** Когда для одного понятия есть несколько слов, выбери лучшее, а остальные перечисли как синонимы, которых следует избегать. Так язык сжимается.
+- **Держи определения чёткими.** Одно-два предложения. Определяй, ЧЕМ термин является, а не что он делает или как это делать.
+- **Используй термины глоссария внутри определений.** Как только термин попал в глоссарий, предпочитай его везде, в том числе внутри других определений. Именно это потом облегчает понимание сложных терминов.
+- **Группируй под подзаголовками**, когда возникают естественные кластеры (например, `## Anatomy`, `## Programming`). Плоский список подходит, когда термины связаны между собой.
+- **Явно отмечай неоднозначности.** Если в более широкой области термин используют вольно, запиши, как он разрешён: «В этом рабочем пространстве „подход“ всегда означает рабочий подход; разминочные учитываются отдельно».
+- **Пересматривай по мере углубления понимания.** Определение, которое пользователь написал на первой неделе, к шестой может оказаться неверным. Обновляй на месте; не оставляй устаревших записей.

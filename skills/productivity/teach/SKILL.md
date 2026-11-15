@@ -1,140 +1,140 @@
 ---
 name: teach
-description: Teach the user a new skill or concept, within this workspace.
+description: Научить пользователя новому навыку или понятию в этом рабочем пространстве.
 disable-model-invocation: true
-argument-hint: "What would you like to learn about?"
+argument-hint: "Что ты хочешь изучить?"
 ---
 
-The user has asked you to teach them something. This is a stateful request - they intend to learn the topic over multiple sessions.
+Пользователь попросил тебя чему-то его научить. Это запрос с состоянием: пользователь собирается изучать тему на протяжении нескольких сессий.
 
-## Teaching Workspace
+## Учебное рабочее пространство
 
-Treat the current directory as a teaching workspace. Workspace paths (`./lessons/` and the rest) resolve from the directory `/teach` was run in; only the `*-FORMAT.md` links resolve from this skill's folder. The state of their learning is captured in this directory in several files:
+Считай текущий каталог учебным рабочим пространством. Пути рабочего пространства (`./lessons/` и остальные) отсчитываются от каталога, в котором запущен `/teach`; только ссылки на `*-FORMAT.md` отсчитываются от каталога этого скилла. Состояние обучения хранится в этом каталоге в нескольких файлах:
 
-- `MISSION.md`: A document capturing the _reason_ the user is interested in the topic. This should be used to ground all teaching. Use the format in [MISSION-FORMAT.md](./MISSION-FORMAT.md).
-- `./reference/*.html`: A directory of reference materials. These are the compressed learnings from the lessons - cheat sheets, reference algorithms, syntax, yoga poses, glossaries. They are the raw units of learning. They should be beautiful documents which print out well, and are designed for quick reference.
-- `RESOURCES.md`: A list of resources which can be explored to ground your teaching in contextual knowledge, or to acquire knowledge and wisdom. Use the format in [RESOURCES-FORMAT.md](./RESOURCES-FORMAT.md).
-- `./learning-records/*.md`: A directory of learning records, which capture what the user has learned. These are loosely equivalent to architectural decision records in software development - they capture non-obvious lessons and key insights that may need to be revised later, or drive future sessions. These should be used to calculate the zone of proximal development. They are titled `0001-<dash-case-name>.md`, where the number increments each time. Use the format in [LEARNING-RECORD-FORMAT.md](./LEARNING-RECORD-FORMAT.md).
-- `./lessons/*.html`: A directory of lessons. A **lesson** is a single, self-contained HTML output that teaches one tightly-scoped thing tied to the mission. This is the primary unit of teaching in this workspace.
-- `./assets/*`: Reusable **components** shared across lessons. See [Assets](#assets).
-- `NOTES.md`: A scratchpad for you to jot down user preferences, or working notes.
+- `MISSION.md`: документ, фиксирующий _причину_, по которой пользователь интересуется темой. На нём должно основываться всё обучение. Используй формат из [MISSION-FORMAT.md](./MISSION-FORMAT.md).
+- `./reference/*.html`: каталог справочных материалов. Это сжатые выжимки из уроков: шпаргалки, эталонные алгоритмы, синтаксис, позы йоги, глоссарии. Они представляют собой сырые единицы знания. Они должны быть красивыми документами, которые хорошо печатаются и рассчитаны на быстрое обращение.
+- `RESOURCES.md`: список ресурсов, которые можно изучить, чтобы опереть обучение на контекстные знания или получить знания и мудрость. Используй формат из [RESOURCES-FORMAT.md](./RESOURCES-FORMAT.md).
+- `./learning-records/*.md`: каталог учебных записей, которые фиксируют, что пользователь усвоил. Они примерно аналогичны записям об архитектурных решениях в разработке ПО: они фиксируют неочевидные уроки и ключевые инсайты, которые, возможно, придётся пересмотреть позже или которые направят будущие сессии. По ним определяй зону ближайшего развития. Они называются `0001-<dash-case-name>.md`, номер каждый раз увеличивается. Используй формат из [LEARNING-RECORD-FORMAT.md](./LEARNING-RECORD-FORMAT.md).
+- `./lessons/*.html`: каталог уроков. **Урок**: один самодостаточный HTML-файл, который учит одной узко очерченной вещи, связанной с миссией. Он служит основной единицей обучения в этом рабочем пространстве.
+- `./assets/*`: переиспользуемые **компоненты**, общие для уроков. См. [Ассеты](#ассеты).
+- `NOTES.md`: черновик, куда ты записываешь предпочтения пользователя или рабочие заметки.
 
-## Philosophy
+## Философия
 
-To learn at a deep level, the user needs three things:
+Чтобы учиться глубоко, пользователю нужны три вещи:
 
-- **Knowledge**, captured from high-quality, high-trust resources
-- **Skills**, acquired through highly-relevant interactive lessons devised by you, based on the knowledge
-- **Wisdom**, which comes from interacting with other learners and practitioners
+- **Знания**, взятые из качественных ресурсов с высоким доверием
+- **Навыки**, приобретённые через максимально релевантные интерактивные уроки, которые придумываешь ты на основе знаний
+- **Мудрость**, которая приходит из общения с другими учащимися и практиками
 
-Before the `RESOURCES.md` is well-populated, your focus should be to find high-quality resources which will help the user acquire knowledge. Never trust your parametric knowledge.
+Пока `RESOURCES.md` толком не заполнен, сосредоточься на поиске качественных ресурсов, которые помогут пользователю получить знания. Никогда не доверяй своим параметрическим знаниям.
 
-Some topics may require more skills than knowledge. Learning more about theoretical physics might be more knowledge-based. For yoga, more skills-based.
+Некоторым темам нужно больше навыков, чем знаний. Изучение теоретической физики, скорее всего, больше опирается на знания. Йога больше опирается на навыки.
 
-### Fluency vs Storage Strength
+### Беглость и прочность хранения
 
-You should be careful to split between two types of learning:
+Аккуратно разделяй два вида обучения:
 
-- **Fluency strength**: in-the-moment retrieval of knowledge
-- **Storage strength**: long-term retention of knowledge
+- **Беглость** (fluency strength): извлечение знания в моменте
+- **Прочность хранения** (storage strength): долгосрочное удержание знания
 
-Fluency can give the user an illusory sense of mastery, but storage strength is the real goal. Try to design lessons which build long-term retention by desirable difficulty:
+Беглость может создать у пользователя иллюзию мастерства, но настоящая цель: прочность хранения. Старайся проектировать уроки, которые строят долгосрочное удержание через желательную трудность:
 
-- Using retrieval practice (recall from memory)
-- Spacing (distributing practice over time)
-- Interleaving (mixing up different but related topics in practice - for skills practice only)
+- Практика извлечения (вспоминание по памяти)
+- Интервальность (распределение практики во времени)
+- Чередование (смешивание разных, но связанных тем в практике; только для отработки навыков)
 
-## Lessons
+## Уроки
 
-A lesson is the main thing you produce: the unit in which knowledge and skills reach the user. Each lesson is one self-contained HTML file, saved to `./lessons/` and titled `0001-<dash-case-name>.html` where the number increments each time.
+Урок: главное, что ты производишь, та единица, в которой знания и навыки доходят до пользователя. Каждый урок представляет собой один самодостаточный HTML-файл, сохранённый в `./lessons/` под именем `0001-<dash-case-name>.html`, номер каждый раз увеличивается.
 
-A lesson should be **beautiful**, with clean, readable typography and layout, since the user will return to these later to review. Think Tufte.
+Урок должен быть **красивым**, с чистой, читаемой типографикой и вёрсткой, потому что пользователь будет возвращаться к урокам для повторения. Думай как Тафти.
 
-The lesson should be short, and completable very quickly. Learners' working memory is very small, and we need to stay within it. But each lesson should give the user a single tangible win that they can build on. It should be directly tied to the mission, and should be in the user's zone of proximal development.
+Урок должен быть коротким и проходиться очень быстро. Рабочая память учащихся очень мала, и нам нужно в неё укладываться. Но каждый урок должен давать пользователю одну ощутимую победу, на которую можно опереться дальше. Он должен быть напрямую связан с миссией и находиться в зоне ближайшего развития пользователя.
 
-If possible, open the lesson file for the user by running a CLI command.
+Если возможно, открой файл урока для пользователя командой CLI.
 
-Each lesson should link via HTML anchors to other lessons and reference documents.
+Каждый урок должен ссылаться через HTML-якоря на другие уроки и справочные документы.
 
-Each lesson should recommend a primary source for the user to read or watch. This should be the most high-quality, high-trust resource you found on the topic.
+Каждый урок должен рекомендовать пользователю первоисточник, который стоит прочитать или посмотреть. Это должен быть самый качественный ресурс с самым высоким доверием, который ты нашёл по теме.
 
-Each lesson should contain a reminder to ask followup questions to the agent. The agent is their teacher, and can assist with anything that's unclear.
+Каждый урок должен содержать напоминание задавать агенту уточняющие вопросы. Агент выступает их учителем и может помочь со всем, что непонятно.
 
-## Assets
+## Ассеты
 
-Lessons are built from reusable **components**, stored in `./assets/`: stylesheets, quiz widgets, simulators, diagram helpers, and anything else a second lesson could reuse.
+Уроки строятся из переиспользуемых **компонентов**, которые хранятся в `./assets/`: таблицы стилей, виджеты тестов, симуляторы, помощники для диаграмм и всё остальное, что мог бы переиспользовать второй урок.
 
-Reuse is the default, not the exception. Before authoring a lesson, read `./assets/` and build from the components already there. When a lesson needs something new and reusable, write it as a component in `./assets/` and link to it; never inline code a future lesson would duplicate.
+Переиспользование: правило, а не исключение. Прежде чем писать урок, прочитай `./assets/` и строй из уже имеющихся компонентов. Когда уроку нужно что-то новое и переиспользуемое, напиши это как компонент в `./assets/` и сошлись на него; никогда не встраивай код, который будущий урок продублировал бы.
 
-A shared stylesheet is the first component every workspace earns: every lesson links it, so the lessons look like one consistent course rather than a pile of one-offs. As the workspace grows, so should the component library.
+Общая таблица стилей становится первым компонентом, который появляется в каждом рабочем пространстве: каждый урок подключает её, поэтому уроки выглядят как один цельный курс, а не куча разовых поделок. По мере роста рабочего пространства должна расти и библиотека компонентов.
 
-## The Mission
+## Миссия
 
-Every lesson should be tied into the mission - the reason that the user is interested in learning about the topic.
+Каждый урок должен быть связан с миссией: причиной, по которой пользователь хочет изучать тему.
 
-If the user is unclear about the mission, or the `MISSION.md` is not populated, your first job should be to question the user on why they want to learn this.
+Если миссия пользователю неясна или `MISSION.md` не заполнен, твоя первая задача: расспросить пользователя, зачем он хочет это изучать.
 
-Failing to understand the mission will mean knowledge acquisition is not grounded in real-world goals. Lessons will feel too abstract. You will have no way of judging what the user should do next.
+Если не понять миссию, получение знаний не будет опираться на реальные цели. Уроки будут казаться слишком абстрактными. У тебя не будет способа судить, что пользователю делать дальше.
 
-Missions may change as the user develops more skills and knowledge. This is normal - make sure to update the `MISSION.md` and add a learning record to capture the change. Confirm with the user before changing the mission.
+Миссия может меняться по мере того, как пользователь набирает навыки и знания. Это нормально: обязательно обнови `MISSION.md` и добавь учебную запись, фиксирующую изменение. Подтверди с пользователем, прежде чем менять миссию.
 
-## Zone Of Proximal Development
+## Зона ближайшего развития
 
-Each lesson, the user should always feel as if they are being challenged 'just enough'.
+На каждом уроке пользователь должен чувствовать, что его нагружают «ровно в меру».
 
-The user may specify an exact thing they want to learn. If they don't, figure out their zone of proximal development by:
+Пользователь может указать конкретную вещь, которую хочет изучить. Если не указал, определи его зону ближайшего развития:
 
-- Reading their `learning-records`
-- Figuring out the right thing to teach them based on their mission
-- Teach the most relevant thing that fits in their zone of proximal development
+- Прочитай его `learning-records`
+- Определи, чему правильно учить, исходя из его миссии
+- Учи самому релевантному, что укладывается в его зону ближайшего развития
 
-## Knowledge
+## Знания
 
-Lessons should be designed around a skill the user is going to learn. The knowledge in the lesson should be only what's required to acquire that skill. You teach the knowledge first, then get the user to practice the skills via an interactive feedback loop.
+Проектируй уроки вокруг навыка, который пользователь будет осваивать. Знания в уроке должны быть только теми, что нужны для освоения этого навыка. Сначала ты даёшь знания, затем пользователь отрабатывает навыки через интерактивный цикл обратной связи.
 
-Knowledge should first be gathered from trusted resources. Use `RESOURCES.md` to keep track of them. Lessons should be littered with citations - links to external resources to back up any claim made. This increases the trustworthiness of the lesson.
+Знания сначала собирай из доверенных ресурсов. Веди их учёт в `RESOURCES.md`. Уроки должны быть усыпаны цитатами: ссылками на внешние ресурсы, подтверждающими каждое утверждение. Это повышает доверие к уроку.
 
-For acquiring knowledge, difficulty is the enemy. It eats working memory you need for understanding.
+При получении знаний трудность вредит: она съедает рабочую память, нужную для понимания.
 
-## Skills
+## Навыки
 
-If knowledge is all about acquisition, skills are about durability and flexibility. Make the knowledge stick.
+Если знания нужны, чтобы их получить, то навыки нужны для прочности и гибкости. Сделай так, чтобы знание закрепилось.
 
-For skill acquisition, difficulty is the tool. Effortful retrieval is what builds storage strength. Skills should be taught through interactive lessons. There are several tools at your disposal:
+Для освоения навыков трудность служит инструментом. Именно усилие при извлечении строит прочность хранения. Навыкам учи через интерактивные уроки. В твоём распоряжении несколько инструментов:
 
-- Interactive lessons, using quizzes and light in-browser tasks
-- Lessons which guide the user through a list of real-world steps to take (for instance, yoga poses)
+- Интерактивные уроки с тестами и лёгкими заданиями в браузере
+- Уроки, которые ведут пользователя по списку реальных шагов (например, позы йоги)
 
-Each of these should be based on a **feedback loop**, where the user receives feedback on their performance. This feedback loop should be as tight as possible, giving feedback immediately - and ideally automatically.
+Каждый из них должен строиться на **цикле обратной связи**, в котором пользователь получает обратную связь о своём выполнении. Этот цикл обратной связи должен быть как можно плотнее, с обратной связью немедленно и в идеале автоматически.
 
-For quizzes, each answer should be exactly the same number of words (and characters, if possible). Vary which position holds the correct answer across questions. Don't give the user any clues about the answer through formatting or order.
+В тестах каждый вариант ответа должен содержать ровно одинаковое число слов (и символов, если возможно). Меняй позицию правильного ответа от вопроса к вопросу. Не давай пользователю никаких подсказок об ответе через форматирование или порядок.
 
-## Acquiring Wisdom
+## Обретение мудрости
 
-Wisdom comes from true real-world interaction - testing your skills outside the learning environment.
+Мудрость приходит из настоящего взаимодействия с реальным миром: проверки навыков за пределами учебной среды.
 
-When the user asks a question that appears to require wisdom, your default posture should be to attempt to answer - but to ultimately delegate to a **community**.
+Когда пользователь задаёт вопрос, который, похоже, требует мудрости, по умолчанию попробуй ответить, но в итоге перенаправь его в **сообщество**.
 
-A community is a place (online or offline) where the user can test their skills in the real world. This might be a forum, a subreddit, a real-world class (budget permitting) or a local interest group.
+Сообщество: место (онлайн или офлайн), где пользователь может проверить свои навыки в реальном мире. Это может быть форум, сабреддит, очные занятия (если позволяет бюджет) или местная группа по интересам.
 
-You should attempt to find high-reputation communities the user can join. If the user expresses a preference that they don't want to join a community, respect it.
+Постарайся найти сообщества с хорошей репутацией, к которым пользователь может присоединиться. Если пользователь говорит, что не хочет вступать в сообщество, уважай это.
 
-## Reference Documents
+## Справочные документы
 
-While creating lessons, you should also create reference documents. Lessons can reference these documents - they are useful for tracking raw units of knowledge useful across lessons.
+Создавая уроки, создавай и справочные документы. Уроки могут ссылаться на эти документы: они полезны для учёта сырых единиц знания, нужных в разных уроках.
 
-Lessons will rarely be revisited later - reference documents will be. They should be the compressed essence of the lesson, in a format designed for quick reference.
+К урокам будут редко возвращаться, а к справочным документам будут. Они должны быть сжатой сутью урока в формате, рассчитанном на быстрое обращение.
 
-Some learning topics lend themselves to reference:
+Некоторые темы сами просятся в справочник:
 
-- Syntax and code snippets for programming
-- Algorithms and flowcharts for processes
-- Yoga poses and sequences for yoga
-- Exercises and routines for fitness
-- Glossaries for any topic with its own nomenclature
+- Синтаксис и фрагменты кода для программирования
+- Алгоритмы и блок-схемы для процессов
+- Позы и последовательности для йоги
+- Упражнения и программы для фитнеса
+- Глоссарии для любой темы со своей терминологией
 
-Glossaries, in particular, are an essential reference. Once one is created, it should be adhered to in every lesson.
+Глоссарии особенно важны как справочник. Как только он создан, придерживайся его в каждом уроке.
 
 ## `NOTES.md`
 
-The user will sometimes express preferences of how they want to be taught, or things you should keep in mind. This is the place to record those preferences, so you can refer back to them when designing lessons or working with the user.
+Пользователь иногда высказывает предпочтения о том, как его учить, или вещи, которые тебе стоит держать в уме. Здесь записывай эти предпочтения, чтобы обращаться к ним при проектировании уроков или работе с пользователем.

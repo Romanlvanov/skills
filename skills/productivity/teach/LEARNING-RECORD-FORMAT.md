@@ -1,10 +1,10 @@
-# Learning Record Format
+# Формат учебной записи
 
-Learning records live in `./learning-records/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc. Create the directory lazily: only when the first record is written.
+Учебные записи лежат в `./learning-records/` и нумеруются последовательно: `0001-slug.md`, `0002-slug.md` и т.д. Создавай каталог лениво: только когда пишется первая запись.
 
-They are the teaching equivalent of ADRs: they capture non-obvious lessons, key insights, and stated prior knowledge that will steer future sessions. They are used to calculate the zone of proximal development.
+Это учебный аналог ADR: такие записи фиксируют неочевидные уроки, ключевые инсайты и заявленные предварительные знания, которые будут направлять будущие сессии. По ним определяется зона ближайшего развития.
 
-## Template
+## Шаблон
 
 ```md
 # {Short title of what was learned or established}
@@ -12,35 +12,35 @@ They are the teaching equivalent of ADRs: they capture non-obvious lessons, key 
 {1-3 sentences: what was learned (or what prior knowledge was established), and why it matters for future sessions.}
 ```
 
-That is the whole format. A learning record can be a single paragraph. The value is recording _that_ this is now known and _why_ it changes what to teach next, not in filling out sections.
+Больше в формате ничего нет. Учебная запись может быть одним абзацем. Ценность в том, чтобы зафиксировать, _что_ это теперь известно и _почему_ это меняет, чему учить дальше, а не в заполнении разделов.
 
-## Optional sections
+## Необязательные разделы
 
-Only include these when they add genuine value. Most records won't need them.
+Включай их, только когда они дают настоящую пользу. Большинству записей они не нужны.
 
-- **Status** frontmatter (`active | superseded by LR-NNNN`): useful when an earlier understanding turns out to be wrong and is replaced.
-- **Evidence**: how the user demonstrated the understanding (a question answered, an exercise completed, prior experience cited). Useful when the claim might be revisited.
-- **Implications**: what this unlocks or rules out for future sessions. Worth recording when non-obvious.
+- **Status** во frontmatter (`active | superseded by LR-NNNN`): полезно, когда более раннее понимание оказалось неверным и заменено.
+- **Evidence**: как пользователь продемонстрировал понимание (ответил на вопрос, выполнил упражнение, сослался на прошлый опыт). Полезно, когда утверждение может быть пересмотрено.
+- **Implications**: что это открывает или исключает для будущих сессий. Стоит записывать, когда это неочевидно.
 
-## Numbering
+## Нумерация
 
-Scan `./learning-records/` for the highest existing number and increment by one.
+Найди в `./learning-records/` наибольший существующий номер и увеличь его на единицу.
 
-## When to write a learning record
+## Когда писать учебную запись
 
-Write one when any of these is true:
+Пиши запись, когда верно любое из этого:
 
-1. **The user demonstrated genuine understanding of something non-trivial**: not just exposure, but evidence they can use the concept correctly. This sets a new floor for what to teach next.
-2. **The user disclosed prior knowledge**: "I already know X." Record it so future sessions don't re-teach it. Also record the _depth_ claimed.
-3. **A misconception was corrected**: the user previously believed something wrong and now sees why. These are high-value: they predict future stumbling blocks for related topics.
-4. **The mission shifted in response to learning**: the user discovered they cared about something different than they thought. Cross-link to [[MISSION.md]] and update it.
+1. **Пользователь продемонстрировал настоящее понимание чего-то нетривиального**: не просто знакомство, а доказательство, что он может правильно применять понятие. Это задаёт новый нижний уровень для того, чему учить дальше.
+2. **Пользователь сообщил о предварительных знаниях**: «Я уже знаю X». Запиши это, чтобы будущие сессии не учили этому заново. Также запиши заявленную _глубину_.
+3. **Было исправлено заблуждение**: пользователь раньше верил в неверное и теперь видит почему. Такие записи очень ценны: они предсказывают будущие камни преткновения в связанных темах.
+4. **Миссия сместилась в ответ на обучение**: пользователь обнаружил, что ему важно не то, что он думал. Поставь перекрёстную ссылку на [[MISSION.md]] и обнови его.
 
-### What does _not_ qualify
+### Что _не_ подходит
 
-- Material that was merely covered. Coverage is not learning. Wait for evidence.
-- Anything already captured tersely in [[GLOSSARY.md]] as a term definition. Don't duplicate.
-- Session-by-session activity logs. Learning records are not a journal: they are decision-grade insights.
+- Материал, который просто был пройден. Пройти не значит усвоить. Жди доказательств.
+- Всё, что уже кратко зафиксировано в [[GLOSSARY.md]] как определение термина. Не дублируй.
+- Журналы активности по сессиям. Учебные записи: не дневник, а инсайты уровня решений.
 
-## Supersession
+## Замещение
 
-When a later record contradicts an earlier one (the user's understanding deepened or corrected), mark the old record `Status: superseded by LR-NNNN` rather than deleting it. The history of how understanding evolved is itself useful signal.
+Когда более поздняя запись противоречит более ранней (понимание пользователя углубилось или исправилось), пометь старую запись `Status: superseded by LR-NNNN`, а не удаляй её. История того, как развивалось понимание, сама по себе служит полезным сигналом.

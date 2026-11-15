@@ -1,8 +1,8 @@
-# MISSION.md Format
+# Формат MISSION.md
 
-`MISSION.md` lives at the workspace root. It captures the _reason_ the user is learning this topic. Every teaching decision (what to teach next, which resources to surface, which exercises to design) should trace back to this document.
+`MISSION.md` лежит в корне рабочего пространства. Он фиксирует _причину_, по которой пользователь изучает тему. Каждое учебное решение (чему учить дальше, какие ресурсы показать, какие упражнения придумать) должно прослеживаться до этого документа.
 
-## Template
+## Шаблон
 
 ```md
 # Mission: {Topic}
@@ -22,10 +22,10 @@
 - {Adjacent topics the user explicitly does not want to chase right now, protecting the zone of proximal development}
 ```
 
-## Rules
+## Правила
 
-- **One mission per workspace.** If the user wants to learn two unrelated things, that is two workspaces.
-- **Concrete over abstract.** "Run a half marathon by October" beats "get fitter." "Ship a Rust CLI to my team" beats "learn Rust."
-- **Push back on vagueness.** If the user cannot articulate why, interview them before writing anything. A bad mission is worse than no mission.
-- **Revise when reality shifts.** Missions change. When the user's goal moves, update this file: don't leave a stale mission steering future sessions.
-- **Keep it short.** If `MISSION.md` runs past a screen, it has stopped being a compass and started being a plan.
+- **Одна миссия на рабочее пространство.** Если пользователь хочет изучить две несвязанные вещи, заведи два рабочих пространства.
+- **Конкретное важнее абстрактного.** «Пробежать полумарафон к октябрю» лучше, чем «прийти в форму». «Выпустить CLI на Rust для моей команды» лучше, чем «выучить Rust».
+- **Не принимай расплывчатость.** Если пользователь не может сформулировать зачем, опроси его, прежде чем что-то писать. Плохая миссия хуже, чем никакой.
+- **Пересматривай, когда меняется реальность.** Миссии меняются. Когда цель пользователя сдвигается, обнови этот файл: не оставляй устаревшую миссию направлять будущие сессии.
+- **Держи коротким.** Если `MISSION.md` вылезает за экран, он перестал быть компасом и стал планом.
