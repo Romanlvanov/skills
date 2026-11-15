@@ -1,16 +1,16 @@
 ---
 name: setup-ts-deep-modules
-description: Wire dependency-cruiser into a TypeScript repo so each package is a deep module, with implementation hidden in subfolders and reachable only through its entry-point files. User-invoked.
+description: "Подключи dependency-cruiser к TypeScript-репозиторию, чтобы каждый пакет был глубоким модулем: реализация спрятана в подпапках и доступна только через файлы точек входа. Вызывается пользователем."
 disable-model-invocation: true
 ---
 
-# Setup TS Deep Modules
+# Настройка глубоких модулей TS
 
-Make every package in this repo a **deep module**: a lot of behaviour behind a small interface. A package's public surface is its **entry points** (the files at the package root), and everything in its subfolders is hidden. This skill installs [dependency-cruiser](https://github.com/sverweij/dependency-cruiser) and the rules that make the entry points the only way in, then proves the rules bite.
+Сделай каждый пакет в этом репозитории **глубоким модулем**: много поведения за маленьким интерфейсом. Публичная поверхность пакета состоит из его **точек входа** (файлы в корне пакета), а всё, что лежит в его подпапках, скрыто. Этот скилл устанавливает [dependency-cruiser](https://github.com/sverweij/dependency-cruiser) и правила, которые делают точки входа единственным способом попасть внутрь, а затем доказывает, что правила действительно срабатывают.
 
-For the vocabulary (deep module, interface, seam, depth), call the Skill tool with "codebase-design" and use its language throughout.
+Для словаря (глубокий модуль, интерфейс, шов, глубина) вызови инструмент Skill с "codebase-design" и используй его язык во всём тексте.
 
-## The shape this enforces
+## Какую форму это навязывает
 
 ```
 src/packages/
@@ -21,82 +21,82 @@ src/packages/
     tests/          ← co-located tests + fixtures (a subfolder, so private).
 ```
 
-The public surface is the package's **root files**, not one designated `index.ts`. By convention implementation lives in `lib/` and tests in `tests/`, giving every package the same two-folder shape. The rule itself is general, though: *anything* in *any* subfolder is private, so you never extend the config to add a folder.
+Публичную поверхность пакета составляют его **корневые файлы**, а не один назначенный `index.ts`. По соглашению реализация живёт в `lib/`, а тесты в `tests/`, так что у каждого пакета одинаковая форма из двух папок. Но само правило общее: *всё* в *любой* подпапке приватно, поэтому тебе никогда не придётся расширять конфиг ради новой папки.
 
-Four rules, all `error`:
+Четыре правила, все с уровнем `error`:
 
-1. **Entry-point boundary**: code outside a package (app code or another package) may import only that package's entry points (its root files), never anything in its subfolders.
-2. **Intra-package freedom**: a package's own files import each other freely.
-3. **Tests through the entry points**: files under `<pkg>/tests/` may import any package's entry points and their own `tests/` fixtures, but never any package's subfolder internals (not even their own). Integration tests across packages are fine; deep imports are not.
-4. **No cycles**: no dependency cycles.
+1. **Граница точек входа**: код вне пакета (код приложения или другой пакет) может импортировать только точки входа этого пакета (его корневые файлы) и никогда ничего из его подпапок.
+2. **Свобода внутри пакета**: собственные файлы пакета свободно импортируют друг друга.
+3. **Тесты через точки входа**: файлы в `<pkg>/tests/` могут импортировать точки входа любого пакета и собственные фикстуры из `tests/`, но никогда внутренности подпапок какого-либо пакета (даже своего). Интеграционные тесты между пакетами допустимы, глубокие импорты нет.
+4. **Без циклов**: никаких циклов зависимостей.
 
-**Entry points, not a barrel.** Because the public surface is *every* root file, a package can expose several small entry points (`index.ts`, `client.ts`, `server.ts`) instead of funnelling everything through one giant `index.ts`. Barrel files that re-export a whole subtree are discouraged; keep entry points small and hide implementation in subfolders.
+**Точки входа, а не barrel-файл.** Поскольку публичная поверхность состоит из *каждого* корневого файла, пакет может открывать несколько маленьких точек входа (`index.ts`, `client.ts`, `server.ts`), а не пропускать всё через один гигантский `index.ts`. Barrel-файлы, которые реэкспортируют целое поддерево, не приветствуются: держи точки входа маленькими, а реализацию прячь в подпапках.
 
-Layering (which packages may depend on which) is a *different* concern and is left as a commented stub in the config for this repo to fill in.
+Слоистость (какие пакеты от каких могут зависеть) представляет собой *отдельный* вопрос, и в конфиге он оставлен закомментированной заготовкой, которую этот репозиторий заполнит сам.
 
-## Steps
+## Шаги
 
-### 1. Detect the environment
+### 1. Определи окружение
 
-- **Package manager**: `pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, `bun.lockb` → bun, else npm. Use it for every command below (`pnpm`/`yarn`/`npm run`/`bunx`).
-- **Packages root**: if `src/` exists use `src/packages`, else `packages`. Confirm the choice with the user if the repo already has a different obvious convention.
-- **Existing config**: check for a `.dependency-cruiser.*` file. If one exists, do **not** overwrite it: merge the four rules and the options in, and tell the user what you added.
+- **Пакетный менеджер**: `pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, `bun.lockb` → bun, иначе npm. Используй его для каждой команды ниже (`pnpm`/`yarn`/`npm run`/`bunx`).
+- **Корень пакетов**: если существует `src/`, используй `src/packages`, иначе `packages`. Подтверди выбор с пользователем, если в репозитории уже есть другое очевидное соглашение.
+- **Существующий конфиг**: проверь, есть ли файл `.dependency-cruiser.*`. Если есть, **не** перезаписывай его: влей в него четыре правила и опции и скажи пользователю, что ты добавил.
 
-**Done when:** package manager, packages root, and existing-config status are all known.
+**Готово, когда:** известны пакетный менеджер, корень пакетов и наличие существующего конфига.
 
-### 2. Install dependency-cruiser
+### 2. Установи dependency-cruiser
 
-Install `dependency-cruiser` as a devDependency with the detected package manager.
+Установи `dependency-cruiser` как devDependency найденным пакетным менеджером.
 
-**Done when:** `dependency-cruiser` is in `devDependencies`.
+**Готово, когда:** `dependency-cruiser` есть в `devDependencies`.
 
-### 3. Write the config
+### 3. Напиши конфиг
 
-Copy [`dependency-cruiser.config.cjs`](./dependency-cruiser.config.cjs) to the repo root as `.dependency-cruiser.cjs`. Set `PACKAGES_ROOT` to the root detected in step 1. The rules are path-depth based and extension-agnostic, so nothing else needs adapting.
+Скопируй [`dependency-cruiser.config.cjs`](./dependency-cruiser.config.cjs) в корень репозитория как `.dependency-cruiser.cjs`. Установи `PACKAGES_ROOT` в корень, найденный на шаге 1. Правила основаны на глубине пути и не зависят от расширений файлов, поэтому больше ничего адаптировать не нужно.
 
-**Done when:** `.dependency-cruiser.cjs` exists with the correct `PACKAGES_ROOT`, and the four forbidden rules are present.
+**Готово, когда:** `.dependency-cruiser.cjs` существует с правильным `PACKAGES_ROOT`, и в нём есть четыре запрещающих правила.
 
-### 4. Wire it into the checks
+### 4. Встрой его в проверки
 
-- Add a `lint:boundaries` script: `depcruise <packages-root>` (or `depcruise src`).
-- Fold it into the repo's umbrella check command, the one that already runs typecheck (e.g. a `check` / `ci` / `validate` script). Do **not** touch `tsconfig` or add path aliases.
-- If there is no umbrella script, add `lint:boundaries` and tell the user to include it in CI.
+- Добавь скрипт `lint:boundaries`: `depcruise <packages-root>` (или `depcruise src`).
+- Включи его в общую команду проверок репозитория, ту, что уже запускает проверку типов (например, скрипт `check` / `ci` / `validate`). **Не** трогай `tsconfig` и не добавляй алиасы путей.
+- Если общего скрипта нет, добавь `lint:boundaries` и скажи пользователю включить его в CI.
 
-**Done when:** `lint:boundaries` exists and runs as part of the same command as typecheck.
+**Готово, когда:** `lint:boundaries` существует и запускается в составе той же команды, что и проверка типов.
 
-### 5. Scaffold the example package
+### 5. Создай пакет-пример
 
-Create a committed `<packages-root>/example/` as a copy-me template:
+Создай закоммиченный `<packages-root>/example/` как шаблон для копирования:
 
-- `index.ts` is an entry point. Export one function that delegates to an internal file (so the package is visibly *deep*, not a pass-through).
-- `lib/impl.ts`: an internal file in a **subfolder**, imported by `index.ts`, not reachable from outside.
-- `tests/example.test.ts` imports **only** `../index` (an entry point) and asserts against the public function.
+- `index.ts` является точкой входа. Экспортируй одну функцию, которая делегирует работу внутреннему файлу (чтобы пакет был заметно *глубоким*, а не простым проходом).
+- `lib/impl.ts`: внутренний файл в **подпапке**, импортируется из `index.ts`, недоступен снаружи.
+- `tests/example.test.ts` импортирует **только** `../index` (точку входа) и проверяет публичную функцию.
 
-Tell the user this is a starter template to copy or delete.
+Скажи пользователю, что это стартовый шаблон, который можно скопировать или удалить.
 
-**Done when:** the example package exists, exposes its behaviour through a root entry point, and hides `impl` in a subfolder.
+**Готово, когда:** пакет-пример существует, открывает своё поведение через корневую точку входа и прячет `impl` в подпапке.
 
-### 6. Prove the rules bite
+### 6. Докажи, что правила срабатывают
 
-This is the completion criterion for the whole skill: a config that doesn't fail on a violation is worthless.
+Это критерий завершения всего скилла: конфиг, который не падает на нарушении, ничего не стоит.
 
-1. Run `lint:boundaries`. It must **pass** on the clean example.
-2. Temporarily add a deep import to `tests/example.test.ts` (e.g. `import { thing } from "../lib/impl"`). Run `lint:boundaries` again; it must **fail** with `tests-through-entrypoints`.
-3. Revert the deep import. Run once more, and it must **pass**.
+1. Запусти `lint:boundaries`. На чистом примере он должен **пройти**.
+2. Временно добавь глубокий импорт в `tests/example.test.ts` (например, `import { thing } from "../lib/impl"`). Снова запусти `lint:boundaries`: он должен **упасть** с `tests-through-entrypoints`.
+3. Откати глубокий импорт. Запусти ещё раз, и он должен **пройти**.
 
-**Done when:** you have observed a pass, then a fail on the deep import, then a pass again. If step 2 does not fail, the rules are not wired correctly, so fix before finishing.
+**Готово, когда:** ты увидел прохождение, затем падение на глубоком импорте, затем снова прохождение. Если шаг 2 не падает, правила подключены неправильно, так что исправь это до завершения.
 
-### 7. Document the convention
+### 7. Задокументируй соглашение
 
-Write a `README.md` **in the packages folder** (`<packages-root>/README.md`, next to the packages it governs) covering: the `src/packages/<name>/` layout (entry points at the root, `lib/` for implementation, `tests/` for tests), "import only through a package's entry points (its root files)", and how to run `lint:boundaries`. **Discourage barrel files** explicitly: expose several small entry points instead of re-exporting a whole subtree through one index. Keep it to the copy-me snippet plus the four rules in one paragraph each.
+Напиши `README.md` **в папке пакетов** (`<packages-root>/README.md`, рядом с пакетами, которыми он управляет), где описаны: структура `src/packages/<name>/` (точки входа в корне, `lib/` для реализации, `tests/` для тестов), правило «импортируй только через точки входа пакета (его корневые файлы)» и способ запустить `lint:boundaries`. Явно **не рекомендуй barrel-файлы**: вместо реэкспорта целого поддерева через один index открывай несколько маленьких точек входа. Ограничься сниппетом для копирования и четырьмя правилами, по одному абзацу на каждое.
 
-Then add a **context pointer** to it from the repo's agent-instructions file (`CLAUDE.md` if present, else `AGENTS.md`, creating `AGENTS.md` if neither exists). One line is enough, e.g. `Packages are deep modules: see [src/packages/README.md](./src/packages/README.md) before adding or importing one.` This is what makes an agent discover the boundary rule instead of tripping over it.
+Затем добавь на него **контекстный указатель** из файла инструкций для агентов в репозитории (`CLAUDE.md`, если он есть, иначе `AGENTS.md`; создай `AGENTS.md`, если нет ни того, ни другого). Хватит одной строки, например `Packages are deep modules: see [src/packages/README.md](./src/packages/README.md) before adding or importing one.` Именно это заставляет агента узнать о правиле границ, а не споткнуться о него.
 
-**Done when:** `<packages-root>/README.md` exists and discourages barrels, and the repo's `CLAUDE.md`/`AGENTS.md` links to it.
+**Готово, когда:** `<packages-root>/README.md` существует и не рекомендует barrel-файлы, а `CLAUDE.md`/`AGENTS.md` репозитория ссылается на него.
 
-## Notes
+## Примечания
 
-- The config's `$1` back-references (dependency-cruiser's group matching) are what let a package reach its own internals while outsiders can't. Don't flatten them into separate per-package rules.
-- Public vs private is decided by **depth**: a package's root files are entry points; anything in a subfolder is private. The conventional subfolders are `lib/` (implementation) and `tests/`, but the rule doesn't hardcode them: any subfolder is private, so a new folder never needs a config change. Adding an entry point is just adding a root file (no barrel).
-- Packages are **flat**: one tier of immediate children under the root. A package's internals may nest as deep as you like; a package may not contain another package.
-- Use `.cjs` (not `.js`) so the config's `module.exports` works even in `"type": "module"` repos.
+- Обратные ссылки `$1` в конфиге (групповое сопоставление dependency-cruiser) позволяют пакету обращаться к собственным внутренностям, а посторонним нет. Не разворачивай их в отдельные правила для каждого пакета.
+- Публичное или приватное определяется **глубиной**: корневые файлы пакета являются точками входа, всё в подпапке приватно. Обычные подпапки: `lib/` (реализация) и `tests/`, но правило не зашивает их жёстко: любая подпапка приватна, так что новая папка никогда не требует изменения конфига. Добавить точку входа значит просто добавить корневой файл (без barrel-файла).
+- Пакеты **плоские**: один уровень непосредственных потомков под корнем. Внутренности пакета могут быть вложены сколь угодно глубоко, но пакет не может содержать другой пакет.
+- Используй `.cjs` (а не `.js`), чтобы `module.exports` в конфиге работал даже в репозиториях с `"type": "module"`.
