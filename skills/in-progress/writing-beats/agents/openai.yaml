@@ -1,5 +1,5 @@
 interface:
   display_name: "Writing Beats"
-  short_description: "Assemble raw material into beats"
+  short_description: "Сборка сырого материала в биты"
 policy:
   allow_implicit_invocation: false

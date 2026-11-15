@@ -1,67 +1,67 @@
 ---
 name: writing-beats
-description: Writing, exploit; assemble raw material into a journey of beats, grounding each term before a beat leans on it.
+description: Письмо, эксплуатация (exploit); собери из сырого материала путь из битов, заземляя каждый термин до того, как на него опрётся бит.
 disable-model-invocation: true
 ---
 
 <what-to-do>
 
-The user has passed (or will pass) a markdown file of raw material. This is **exploit**: the exploring is done, the pile is fixed. Commit to a path through it and mine the pile to fill each beat.
+Пользователь передал (или передаст) markdown-файл с сырым материалом. Это **эксплуатация** (exploit): исследование закончено, куча (pile) зафиксирована. Выбери путь через неё и добывай из кучи материал, чтобы заполнить каждый бит.
 
-If the user did not say where to save the article, ask once and remember the path.
+Если пользователь не сказал, куда сохранить статью, спроси один раз и запомни путь.
 
-Then run a beat-by-beat journey, choose-your-own-adventure style:
+Затем веди путь бит за битом, в стиле книги-игры «выбери своё приключение»:
 
-1. **Establish the prerequisites.** Before any beats, settle with the user what the audience already knows walking in: the concepts that are **grounded** from the start. Everything else must be grounded by a beat before a later beat can use it. See [Grounding](#grounding).
-2. Write 2–3 candidate **starting beats**, drawn from the raw material. Each is a different entry point into the article. Each may only lean on grounded concepts; note what new concepts each one grounds. Show the user the beats before writing to the article file. The user picks one. Preview what beats that pick unlocks, as if the user is seeing a little way down the path.
-3. Once the user picks a starting beat, write **only that beat** to the article file. A beat may be one sentence or several paragraphs, whatever that beat naturally is. Stop there.
-4. Re-read the article file from disk. Then offer 2–3 candidate **next beats**: different directions the journey could pivot to from where the article now stands. Each must be reachable from the current grounded set; note what each one grounds.
-5. Loop steps 3–5 until the article reaches a natural end.
+1. **Установи предпосылки.** До любых битов договорись с пользователем, что аудитория уже знает заранее: какие понятия **заземлены** с самого начала. Всё остальное должно быть заземлено каким-то битом, прежде чем более поздний бит сможет это использовать. См. [Заземление](#заземление).
+2. Напиши 2–3 варианта **стартового бита**, взятых из сырого материала. Каждый является своей точкой входа в статью. Каждый может опираться только на заземлённые понятия; отметь, какие новые понятия заземляет каждый из них. Покажи пользователю биты, прежде чем писать в файл статьи. Пользователь выбирает один. Покажи заранее, какие биты открывает этот выбор, как будто пользователь видит путь чуть вперёд.
+3. Когда пользователь выбрал стартовый бит, запиши в файл статьи **только этот бит**. Бит может быть одним предложением или несколькими абзацами, каким он естественно получается. На этом остановись.
+4. Перечитай файл статьи с диска. Затем предложи 2–3 варианта **следующего бита**: разные направления, в которые путь может повернуть с того места, где статья сейчас стоит. Каждый должен быть достижим из текущего набора заземлённого; отметь, что заземляет каждый.
+5. Повторяй шаги 3–5, пока статья не придёт к естественному концу.
 
 </what-to-do>
 
 <supporting-info>
 
-## Grounding
+## Заземление
 
-Every **concept** has to be **grounded** before a beat can lean on it: the audience either walked in knowing it or met it in an earlier beat. A beat that reaches for an ungrounded concept loses the reader; that is the one move the journey can't make. The unit is the concept, not the word for it: a beat can lean on an idea the reader lacks even with no jargon in sight. Where a concept has a name (a **term**), grounding it means landing the idea and the term together.
+Каждое **понятие** должно быть **заземлено** (grounded), прежде чем бит сможет на него опереться: аудитория либо пришла, уже зная его, либо встретила его в одном из предыдущих битов. Бит, который тянется к незаземлённому понятию, теряет читателя; это единственный ход, который путь сделать не может. Единицей здесь служит понятие, а не слово для него: бит может опираться на идею, которой у читателя нет, даже если никакого жаргона не видно. Если у понятия есть имя (**термин**), заземлить его значит донести идею и термин вместе.
 
-A concept gets grounded one of two ways:
+Понятие заземляется одним из двух способов:
 
-- **Prerequisite**: grounded before the first beat. The audience brings it. Fixed at the start.
-- **Introduced**: a beat establishes it, and from then on it's grounded for every later beat.
+- **Предпосылка**: заземлено до первого бита. Аудитория приносит его с собой. Фиксируется в самом начале.
+- **Введено**: его устанавливает какой-то бит, и с этого момента оно заземлено для всех последующих битов.
 
-So each beat does two jobs: it **requires** concepts that are already grounded, and it **grounds** new ones. Keep a running list of what's grounded so far, and update it each time a beat lands.
+Поэтому каждый бит делает две работы: он **требует** понятий, которые уже заземлены, и **заземляет** новые. Веди текущий список заземлённого на данный момент и обновляй его каждый раз, когда бит ложится в текст.
 
-This is what shapes the choose-your-own-adventure. A candidate beat is only reachable if everything it requires is already grounded; picking a beat that grounds concept X unlocks every beat that was waiting on X. When you offer next beats, they must all be reachable from the current grounded set, and say what each one grounds, so the user can see which paths it opens.
+Именно это задаёт форму «выбери своё приключение». Вариант бита достижим, только если всё, что он требует, уже заземлено; выбор бита, который заземляет понятие X, открывает все биты, ждавшие X. Когда предлагаешь следующие биты, все они должны быть достижимы из текущего набора заземлённого, и скажи, что заземляет каждый, чтобы пользователь видел, какие пути он открывает.
 
-The big lever is what you make a prerequisite versus what you ground inside the piece. Demand too much up front and you shut out readers who don't have it; ground too much inside and the early beats drown in definitions. Settle this with the user when you establish prerequisites, and revisit it whenever a tempting beat turns out to require a concept nothing has grounded yet: the fix is either a grounding beat before it, or promoting the concept to a prerequisite.
+Главный рычаг в том, что ты делаешь предпосылкой, а что заземляешь внутри текста. Потребуешь слишком много заранее, и отсечёшь читателей, у которых этого нет; заземлишь слишком много внутри, и ранние биты утонут в определениях. Реши это с пользователем, когда устанавливаешь предпосылки, и возвращайся к этому каждый раз, когда соблазнительный бит оказывается требующим понятия, которое ещё ничто не заземлило: исправление либо в заземляющем бите перед ним, либо в повышении понятия до предпосылки.
 
-## What is a beat
+## Что такое бит
 
-A beat is one move in the journey. It does one thing: sets a scene, lands a point, asks a question, drops an aside, twists the angle. Then it stops, leaving the reader at a place where the next beat can pivot.
+Бит (beat) представляет собой один ход в пути. Он делает одно дело: задаёт сцену, доносит мысль, задаёт вопрос, бросает отступление, поворачивает угол зрения. Потом он останавливается, оставляя читателя в точке, откуда следующий бит может повернуть.
 
-A beat is sized by what it needs:
+Размер бита определяется тем, что ему нужно:
 
-- A single sentence if that's all the move is ("And then nothing happened for three weeks.").
-- A short paragraph if the move needs setup.
-- Multiple paragraphs if the beat is a self-contained vignette, argument, or example.
+- Одно предложение, если весь ход только в этом («А потом три недели ничего не происходило.»).
+- Короткий абзац, если ходу нужна подготовка.
+- Несколько абзацев, если бит является самостоятельной зарисовкой, аргументом или примером.
 
-If a "beat" needs five paragraphs and three subheadings, it's not a beat; it's two beats glued together. Split it.
+Если «биту» нужны пять абзацев и три подзаголовка, это не бит, а два бита, склеенные вместе. Раздели его.
 
-## Pulling from the pile
+## Добыча из кучи
 
-Pull material from the raw pile to populate each beat. You can paraphrase, split, recombine, or quote. The pile is a quarry.
+Бери материал из сырой кучи, чтобы наполнить каждый бит. Можно пересказывать, разбивать, перекомбинировать или цитировать. Куча служит каменоломней, из которой добывают материал.
 
-## Ending the journey
+## Завершение пути
 
-The article ends when the journey is complete, not when the pile is empty. Most piles will have leftover fragments that don't make it in. That is fine; that is the point of having more raw material than you need.
+Статья заканчивается, когда путь завершён, а не когда куча опустела. В большинстве куч останутся фрагменты, которые не войдут в текст. Это нормально: в этом и смысл иметь больше сырого материала, чем нужно.
 
-## Writing rhythm
+## Ритм записи
 
-- Append one beat at a time. Never write ahead.
-- Re-read the article file from disk before every write. Preserve user edits absolutely.
-- If the user edits a previous beat substantially, let it change what comes next.
-- If the user says "rewrite that beat" or "go back and try a different beat 3", do it: edit in place, leave the rest alone.
+- Дописывай по одному биту за раз. Никогда не пиши наперёд.
+- Перед каждой записью перечитывай файл статьи с диска. Правки пользователя сохраняй безусловно.
+- Если пользователь существенно правит предыдущий бит, позволь этому изменить то, что идёт дальше.
+- Если пользователь говорит «перепиши этот бит» или «вернись и попробуй другой бит 3», сделай это: правь на месте, остальное не трогай.
 
 </supporting-info>
