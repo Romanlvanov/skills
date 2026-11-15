@@ -1,5 +1,5 @@
 interface:
   display_name: "Writing Shape"
-  short_description: "Shape raw material into an article"
+  short_description: "Форма статьи из сырого материала"
 policy:
   allow_implicit_invocation: false
