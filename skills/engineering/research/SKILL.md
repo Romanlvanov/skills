@@ -1,12 +1,12 @@
 ---
 name: research
-description: Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the user wants a topic researched, docs or API facts gathered, or reading legwork delegated to a background agent.
+description: Исследуй вопрос по первоисточникам с высоким доверием и зафиксируй находки в Markdown-файле в репозитории. Используй, когда пользователь хочет исследовать тему («исследуй», "research"), собрать факты из документации или API или поручить чтение источников фоновому агенту.
 ---
 
-Spin up a **background agent** to do the research, so you keep working while it reads. Start it with a fresh context window.
+Запусти **фонового агента** для исследования, чтобы ты продолжал работать, пока он читает. Запускай его с чистым контекстным окном.
 
-Its job:
+Его задача:
 
-1. Investigate the question against **primary sources** (official docs, source code, specs, first-party APIs), not a secondary write-up of them. Follow every claim back to the source that owns it.
-2. Write the findings to a single Markdown file, citing each claim's source.
-3. Save it where the repo already keeps such notes; match the existing convention, and if there is none, put it somewhere sensible and say where.
+1. Исследовать вопрос по **первоисточникам** (официальная документация, исходный код, спецификации, собственные API поставщика), а не по чужим пересказам. Проследить каждое утверждение до источника, которому оно принадлежит.
+2. Записать находки в один Markdown-файл, указав источник каждого утверждения.
+3. Сохранить файл там, где репозиторий уже хранит такие заметки: следуй существующему соглашению, а если его нет, положи файл в разумное место и скажи, куда.
