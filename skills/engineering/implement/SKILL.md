@@ -1,17 +1,17 @@
 ---
 name: implement
-description: "Implement a piece of work based on a spec or set of tickets."
+description: "Реализуй работу по спецификации или набору тикетов."
 disable-model-invocation: true
 ---
 
-Implement the work described by the user in the spec or tickets.
+Реализуй работу, которую пользователь описал в спецификации или тикетах.
 
-If the user passes a ticket reference, fetch it from the issue tracker and state its title before starting. If the reference is ambiguous, ask.
+Если пользователь передал ссылку на тикет, получи его из трекера задач и назови его заголовок перед началом. Если ссылка неоднозначна, спроси.
 
-Call the Skill tool with "tdd" where possible, at pre-agreed seams.
+По возможности вызывай инструмент Skill с "tdd" на заранее согласованных швах.
 
-Run typechecking regularly, single test files regularly, and the full test suite once at the end.
+Регулярно запускай проверку типов, регулярно запускай отдельные файлы тестов, а полный набор тестов запусти один раз в конце.
 
-Once done, call the Skill tool with "code-review" to review the work.
+Когда закончишь, вызови инструмент Skill с "code-review", чтобы проверить работу.
 
-Commit your work to the current branch.
+Закоммить работу в текущую ветку.
