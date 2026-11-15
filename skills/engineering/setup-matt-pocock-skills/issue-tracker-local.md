@@ -20,7 +20,7 @@
 
 ## Wayfinding operations
 
-Используется `/wayfinder`. **Карта** (map) это файл, а для каждого тикета есть один **дочерний** (child) файл.
+Используется `/wayfinder`. **Карта** (map) хранится в файле, а для каждого тикета есть один **дочерний** (child) файл.
 
 - **Карта**: `.scratch/<effort>/map.md` (тело с Notes / Decisions-so-far / Fog).
 - **Дочерний тикет**: `.scratch/<effort>/issues/NN-<slug>.md`, нумерация с `01`, вопрос в теле. Строка `Type:` хранит тип тикета (`research`/`prototype`/`grilling`/`task`); строка `Status:` хранит `claimed`/`resolved`.
