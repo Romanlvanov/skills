@@ -1,32 +1,32 @@
 ---
 name: loop-me
-description: Grill me about specs for the workflows I want to build, within this workspace.
+description: Допрос о спецификациях рабочих процессов, которые я хочу построить в этом рабочем пространстве.
 disable-model-invocation: true
-argument-hint: "A workflow to design, or nothing to go find one"
+argument-hint: "Рабочий процесс для проектирования или ничего, чтобы найти его самому"
 ---
 
-Run a stateful `/grilling` session whose only output is **workflow** specs. Use the grilling discipline (relentless, a round of questions at a time, a recommended answer attached to each) aimed at the vocabulary and goal below. Create, edit, and delete specs as the grilling resolves things.
+Проведи сессию `/grilling` с сохранением состояния, единственный результат которой: спецификации **рабочих процессов** (workflow). Применяй дисциплину допроса (grilling): без поблажек, по одному раунду вопросов за раз, к каждому вопросу приложен рекомендуемый ответ. Направляй её на словарь и цель, описанные ниже. Создавай, правь и удаляй спецификации по мере того, как допрос что-то проясняет.
 
-## The loop lens
+## Линза цикла
 
-A **loop** is a recurring pattern in the user's life: their career, their week, their morning, a single repeated activity. Picturing a life as loops within loops reveals how predictable its activities really are, which is what makes them worth **delegating**. Use the lens to find loops worth specifying, and propose ones the user hasn't noticed.
+**Цикл** (loop) это повторяющийся паттерн в жизни пользователя: его карьера, его неделя, его утро, одно повторяющееся занятие. Если представить жизнь как циклы внутри циклов, видно, насколько предсказуемы её занятия на самом деле, и именно поэтому их стоит **делегировать**. Используй эту линзу, чтобы находить циклы, которые стоит специфицировать, и предлагай те, которых пользователь не заметил.
 
-A **workflow** is the spec of one loop, made real. You run a workflow on a loop: the loop is its running instantiation. Workflows live in `workflows/*.md` and are the source of truth.
+**Рабочий процесс** это спецификация одного цикла, воплощённая в жизнь. Ты запускаешь рабочий процесс на цикле: цикл является его работающим экземпляром. Рабочие процессы лежат в `workflows/*.md` и являются источником истины.
 
-## Vocabulary
+## Словарь
 
-A shared language, reached for only when a workflow calls for it: never a checklist. **Mandate nothing structural**: a workflow needs no AI, no checkpoint, and no schedule unless the grilling shows it does.
+Общий язык, к которому обращаются, только когда этого требует рабочий процесс: никогда не чек-лист. **Ничего не навязывай структурно**: рабочему процессу не нужны ни ИИ, ни контрольная точка, ни расписание, пока допрос не покажет обратное.
 
-- **Trigger**: what fires each run, an **event** (a new email, a new issue) or a **schedule** (every morning). Event-triggering is usually the more efficient.
-- **Checkpoint**: a human-in-the-loop point where the user is asked to verify or decide. Some workflows have none and run autonomously; some use no AI at all.
-- **Push right**: defer the checkpoint as far as it will go. Do maximal work before involving the human, so they are asked once, late, with everything prepared.
-- **Brief**: what a checkpoint presents, a tight, decision-ready summary (what was produced, why, and a link down to the asset itself), never the raw output. The user reads a brief, not a draft. Speed of review is imperative.
+- **Триггер** (trigger): что запускает каждый прогон, **событие** (новое письмо, новая задача) или **расписание** (каждое утро). Запуск по событию обычно эффективнее.
+- **Контрольная точка** (checkpoint): точка с человеком в контуре, где пользователя просят проверить или решить. В некоторых рабочих процессах их нет, и они работают автономно; некоторые вообще не используют ИИ.
+- **Сдвиг вправо** (push right): откладывай контрольную точку как можно дальше. Сделай максимум работы до привлечения человека, чтобы его спросили один раз, поздно и со всем подготовленным.
+- **Бриф** (brief): то, что показывает контрольная точка, сжатая сводка, готовая для решения (что сделано, почему и ссылка на сам результат), но никогда не сырой вывод. Пользователь читает бриф, а не черновик. Скорость проверки критически важна.
 
-## Definition of done
+## Критерий готовности
 
-A workflow spec is done when an implementer agent could build it without asking a single question. Grill until then; nothing is done while a question remains.
+Спецификация рабочего процесса готова, когда агент-исполнитель может построить его, не задав ни одного вопроса. Допрашивай до этого момента; пока остаётся хоть один вопрос, ничего не готово.
 
-## The workspace
+## Рабочее пространство
 
-- `workflows/*.md`: one spec per workflow.
-- `NOTES.md`: raw notes on the user's world, the tools they use, the channels they process, and their own terminology for both. When it is empty or thin, interview them about their world before specifying anything. Sharpen fuzzy terms into canonical ones as they surface, and record them here.
+- `workflows/*.md`: одна спецификация на рабочий процесс.
+- `NOTES.md`: черновые заметки о мире пользователя, инструментах, которыми он пользуется, каналах, которые он обрабатывает, и его собственной терминологии для того и другого. Если файл пуст или скуден, сначала расспроси пользователя о его мире, а потом уже что-то специфицируй. Уточняй расплывчатые термины до канонических по мере их появления и записывай их сюда.
