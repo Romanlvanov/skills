@@ -1,30 +1,30 @@
-# Issue tracker: Local Markdown
+# Трекер задач: локальный Markdown
 
-Issues and specs for this repo live as markdown files in `.scratch/`.
+Задачи и спецификации этого репозитория живут как markdown-файлы в `.scratch/`.
 
-## Conventions
+## Соглашения
 
-- One feature per directory: `.scratch/<feature-slug>/`
-- The spec is `.scratch/<feature-slug>/spec.md`
-- Implementation issues are one file per ticket at `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01`, never a single combined tickets file
-- Triage state is recorded as a `Status:` line near the top of each issue file (see `triage-labels.md` for the role strings)
-- Comments and conversation history append to the bottom of the file under a `## Comments` heading
+- Одна фича на каталог: `.scratch/<feature-slug>/`
+- Спецификация лежит в `.scratch/<feature-slug>/spec.md`
+- Задачи на реализацию хранятся по одному файлу на тикет в `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, нумерация с `01`, и никогда не одним общим файлом тикетов
+- Состояние триажа записывается строкой `Status:` в начале каждого файла задачи (строки ролей см. в `triage-labels.md`)
+- Комментарии и история обсуждения дописываются в конец файла под заголовком `## Comments`
 
 ## When a skill says "publish to the issue tracker"
 
-Create a new file under `.scratch/<feature-slug>/` (creating the directory if needed).
+(Когда скилл говорит «опубликуй в трекер задач».) Создай новый файл в `.scratch/<feature-slug>/` (создав каталог при необходимости).
 
 ## When a skill says "fetch the relevant ticket"
 
-Read the file at the referenced path. The user will normally pass the path or the issue number directly.
+(Когда скилл говорит «получи нужный тикет».) Прочитай файл по указанному пути. Обычно пользователь передаёт путь или номер задачи напрямую.
 
 ## Wayfinding operations
 
-Used by `/wayfinder`. The **map** is a file with one **child** file per ticket.
+Используется `/wayfinder`. **Карта** (map) хранится в файле, а для каждого тикета есть один **дочерний** (child) файл.
 
-- **Map**: `.scratch/<effort>/map.md` (the Notes / Decisions-so-far / Fog body).
-- **Child ticket**: `.scratch/<effort>/issues/NN-<slug>.md`, numbered from `01`, with the question in the body. A `Type:` line records the ticket type (`research`/`prototype`/`grilling`/`task`); a `Status:` line records `claimed`/`resolved`.
-- **Blocking**: a `Blocked by: NN, NN` line near the top. A ticket is unblocked when every file it lists is `resolved`.
-- **Frontier**: scan `.scratch/<effort>/issues/` for files that are open, unblocked, and unclaimed; first by number wins.
-- **Claim**: set `Status: claimed` and save before any work.
-- **Resolve**: append the answer under an `## Answer` heading, set `Status: resolved`, then append a context pointer (gist + link) to the map's Decisions-so-far in `map.md`.
+- **Карта**: `.scratch/<effort>/map.md` (тело с Notes / Decisions-so-far / Fog).
+- **Дочерний тикет**: `.scratch/<effort>/issues/NN-<slug>.md`, нумерация с `01`, вопрос в теле. Строка `Type:` хранит тип тикета (`research`/`prototype`/`grilling`/`task`); строка `Status:` хранит `claimed`/`resolved`.
+- **Блокировка**: строка `Blocked by: NN, NN` в начале файла. Тикет разблокирован, когда каждый перечисленный в ней файл в состоянии `resolved`.
+- **Фронт** (frontier): просмотри `.scratch/<effort>/issues/` в поисках открытых, незаблокированных и не забранных файлов; побеждает первый по номеру.
+- **Забрать** (claim): выставь `Status: claimed` и сохрани до начала любой работы.
+- **Решить** (resolve): допиши ответ под заголовком `## Answer`, выставь `Status: resolved`, затем допиши контекстный указатель (суть + ссылка) в Decisions-so-far карты в `map.md`.
