@@ -1,3 +1,3 @@
 interface:
   display_name: "Domain Modeling"
-  short_description: "Построить и уточнить доменную модель"
+  short_description: "Построить и уточнить модель предметной области"
