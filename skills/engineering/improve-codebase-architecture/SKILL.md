@@ -1,71 +1,71 @@
 ---
 name: improve-codebase-architecture
-description: Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.
+description: Найди в кодовой базе возможности для углубления модулей, покажи их наглядным HTML-отчётом, затем проведи допрос по выбранной.
 disable-model-invocation: true
 ---
 
-# Improve Codebase Architecture
+# Улучшение архитектуры кодовой базы
 
-Surface architectural friction and propose **deepening opportunities**: refactors that turn shallow modules into deep ones. The aim is testability and AI-navigability.
+Выяви архитектурное трение и предложи **возможности для углубления**: рефакторинги, которые превращают мелкие модули в глубокие. Цель: тестируемость и удобство навигации для ИИ.
 
-This command is _informed_ by the project's domain model and built on a shared design vocabulary:
+Эта команда _опирается_ на доменную модель проекта и построена на общем словаре проектирования:
 
-- Call the Skill tool with "codebase-design" for the architecture vocabulary (**module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**) and its principles (the deletion test, "the interface is the test surface", "one adapter = hypothetical seam, two = real"). Use these terms exactly in every suggestion, and don't drift into "component," "service," "API," or "boundary."
-- The domain language in `GLOSSARY.md` gives names to good seams; ADRs in `docs/adr/` record decisions this command should not re-litigate.
+- Вызови инструмент Skill с "codebase-design", чтобы получить архитектурный словарь (**модуль**, **интерфейс**, **глубина**, **шов**, **адаптер**, **рычаг**, **локальность**) и его принципы (тест удаления, «интерфейс является поверхностью тестирования», «один адаптер = гипотетический шов, два = настоящий»). Используй эти термины точно в каждом предложении и не сползай в «компонент», «сервис», «API» или «граница».
+- Язык предметной области в `GLOSSARY.md` даёт имена хорошим швам; ADR в `docs/adr/` фиксируют решения, которые эта команда не должна пересматривать заново.
 
-## Process
+## Процесс
 
-### 1. Explore
+### 1. Исследуй
 
-**Scope before you scan: YAGNI.** Deepening a module pays off by making future changes to it easier, so put extra weight on the parts of the codebase that have recently changed. Decide *where* to look before you look:
+**Сначала определи область, потом сканируй: YAGNI.** Углубление модуля окупается тем, что будущие изменения в нём становятся проще, поэтому придавай больший вес частям кодовой базы, которые недавно менялись. Реши, *где* смотреть, до того как начнёшь смотреть:
 
-- If the user named a direction (a module, a subsystem, a pain point), take it, and skip the inference below.
-- Otherwise, walk back a good stretch of the commit history (`git log --oneline`) to find the codebase's hot spots, the files and areas that keep coming up, and let those paths pull your attention first. If the changes are scattered with no clear hot spot, widen the net.
+- Если пользователь указал направление (модуль, подсистему, болевую точку), возьми его и пропусти рассуждения ниже.
+- Иначе пройди назад по истории коммитов на приличную глубину (`git log --oneline`), чтобы найти горячие точки кодовой базы: файлы и области, которые постоянно всплывают, и пусть эти пути первыми привлекут твоё внимание. Если изменения разбросаны и явной горячей точки нет, расширь охват.
 
-Read the project's domain glossary (`GLOSSARY.md`) and any ADRs in the area you're touching first.
+Сначала прочитай глоссарий предметной области проекта (`GLOSSARY.md`) и все ADR в той области, которую затрагиваешь.
 
-Then spawn a sub-agent with a fresh context window to walk the codebase. Don't follow rigid heuristics; explore organically and note where you experience friction:
+Затем запусти субагента с чистым контекстным окном, чтобы он прошёл по кодовой базе. Не следуй жёстким эвристикам; исследуй органично и отмечай, где ощущаешь трение:
 
-- Where does understanding one concept require bouncing between many small modules?
-- Where are modules **shallow**, with an interface nearly as complex as the implementation?
-- Where have pure functions been extracted just for testability, but the real bugs hide in how they're called (no **locality**)?
-- Where do tightly-coupled modules leak across their seams?
-- Which parts of the codebase are untested, or hard to test through their current interface?
+- Где для понимания одного понятия приходится прыгать между множеством мелких модулей?
+- Где модули **мелкие**, с интерфейсом почти таким же сложным, как реализация?
+- Где чистые функции вынесены только ради тестируемости, а настоящие баги прячутся в том, как их вызывают (нет **локальности**)?
+- Где сильно связанные модули протекают через свои швы?
+- Какие части кодовой базы не покрыты тестами или трудно тестируются через текущий интерфейс?
 
-Apply the **deletion test** to anything you suspect is shallow: would deleting it concentrate complexity, or just move it? A "yes, concentrates" is the signal you want.
+Применяй **тест удаления** ко всему, что подозреваешь в мелкости: удаление сконцентрирует сложность или просто переместит её? Ответ «да, сконцентрирует» и есть нужный сигнал.
 
-### 2. Present candidates as an HTML report
+### 2. Представь кандидатов в виде HTML-отчёта
 
-Write a self-contained HTML file to the OS temp directory so nothing lands in the repo. Resolve the temp dir from `$TMPDIR`, falling back to `/tmp` (or `%TEMP%` on Windows), and write to `<tmpdir>/architecture-review-<timestamp>.html` so each run gets a fresh file. Open it for the user (`xdg-open <path>` on Linux, `open <path>` on macOS, `start <path>` on Windows) and tell them the absolute path.
+Запиши самодостаточный HTML-файл во временный каталог ОС, чтобы ничего не попало в репозиторий. Определи временный каталог из `$TMPDIR`, с откатом на `/tmp` (или `%TEMP%` в Windows), и пиши в `<tmpdir>/architecture-review-<timestamp>.html`, чтобы каждый запуск получал новый файл. Открой его для пользователя (`xdg-open <path>` в Linux, `open <path>` в macOS, `start <path>` в Windows) и сообщи абсолютный путь.
 
-The report uses **Tailwind via CDN** for layout and styling, and **Mermaid via CDN** for diagrams where a graph/flow/sequence reliably communicates the structure. Mix Mermaid with hand-crafted CSS/SVG visuals: use Mermaid when relationships are graph-shaped (call graphs, dependencies, sequences), and hand-built divs/SVG when you want something more editorial (mass diagrams, cross-sections, collapse animations). Each candidate gets a **before/after visualisation**. Be visual.
+Отчёт использует **Tailwind через CDN** для раскладки и стилей и **Mermaid через CDN** для диаграмм там, где граф/поток/последовательность надёжно передают структуру. Сочетай Mermaid с визуалом на CSS/SVG ручной работы: Mermaid, когда связи имеют форму графа (графы вызовов, зависимости, последовательности), и вручную собранные div/SVG, когда нужно что-то более редакционное (диаграммы массы, поперечные срезы, анимации схлопывания). Каждый кандидат получает **визуализацию «до/после»**. Будь нагляден.
 
-For each candidate, render a card with:
+Для каждого кандидата отрисуй карточку, в которой есть:
 
-- **Files**: which files/modules are involved
-- **Problem**: why the current architecture is causing friction
-- **Solution**: plain English description of what would change
-- **Benefits**: explained in terms of locality and leverage, and how tests would improve
-- **Before / After diagram**: side-by-side, custom-drawn, illustrating the shallowness and the deepening
-- **Recommendation strength**: one of `Strong`, `Worth exploring`, `Speculative`, rendered as a badge
+- **Файлы**: какие файлы/модули затронуты
+- **Проблема**: почему текущая архитектура вызывает трение
+- **Решение**: описание простым языком, что изменится
+- **Выгоды**: объяснённые через локальность и рычаг, а также как улучшатся тесты
+- **Диаграмма «до / после»**: бок о бок, нарисованная вручную, показывающая мелкость и углубление
+- **Сила рекомендации**: одно из `Strong`, `Worth exploring`, `Speculative`, в виде бейджа
 
-End the report with a **Top recommendation** section: which candidate you'd tackle first and why.
+Заверши отчёт разделом **Главная рекомендация**: какого кандидата ты взял бы первым и почему.
 
-**Use GLOSSARY.md vocabulary for the domain, and the `/codebase-design` vocabulary for the architecture.** If `GLOSSARY.md` defines "Order," talk about "the Order intake module," not "the FooBarHandler," and not "the Order service."
+**Используй словарь GLOSSARY.md для предметной области и словарь `/codebase-design` для архитектуры.** Если `GLOSSARY.md` определяет «Order», говори о «модуле приёма Order», а не о «FooBarHandler» и не о «сервисе Order».
 
-**ADR conflicts**: if a candidate contradicts an existing ADR, only surface it when the friction is real enough to warrant revisiting the ADR. Mark it clearly in the card (e.g. a warning callout: _"contradicts ADR-0007, but worth reopening because…"_). Don't list every theoretical refactor an ADR forbids.
+**Конфликты с ADR**: если кандидат противоречит существующему ADR, показывай его, только когда трение достаточно реально, чтобы оправдать пересмотр ADR. Чётко отметь это в карточке (например, врезкой-предупреждением: _«противоречит ADR-0007, но стоит пересмотреть, потому что…»_). Не перечисляй каждый теоретический рефакторинг, который запрещает ADR.
 
-See [HTML-REPORT.md](HTML-REPORT.md) for the full HTML scaffold, diagram patterns, and styling guidance.
+Полный каркас HTML, паттерны диаграмм и рекомендации по стилю смотри в [HTML-REPORT.md](HTML-REPORT.md).
 
-Do NOT propose interfaces yet. After the file is written, ask the user: "Which of these would you like to explore?"
+Пока НЕ предлагай интерфейсы. После того как файл записан, спроси пользователя: «Какой из них ты хотел бы исследовать?»
 
-### 3. Grilling loop
+### 3. Цикл допроса (grilling)
 
-Once the user picks a candidate, call the Skill tool with "grilling" to walk the decision tree with them: constraints, dependencies, the shape of the deepened module, what sits behind the seam, what tests survive.
+Когда пользователь выберет кандидата, вызови инструмент Skill с "grilling", чтобы пройти с ним по дереву решений: ограничения, зависимости, форма углублённого модуля, что стоит за швом, какие тесты выживут.
 
-Side effects happen inline as decisions crystallize; call the Skill tool with "domain-modeling" to keep the domain model current as you go:
+Побочные эффекты происходят по ходу, по мере того как решения кристаллизуются; вызови инструмент Skill с "domain-modeling", чтобы доменная модель оставалась актуальной на ходу:
 
-- **Naming a deepened module after a concept not in `GLOSSARY.md`?** Add the term to `GLOSSARY.md`. Create the file lazily if it doesn't exist.
-- **Sharpening a fuzzy term during the conversation?** Update `GLOSSARY.md` right there.
-- **User rejects the candidate with a load-bearing reason?** Offer an ADR, framed as: _"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ Only offer when the reason would actually be needed by a future explorer to avoid re-suggesting the same thing; skip ephemeral reasons ("not worth it right now") and self-evident ones.
-- **Want to explore alternative interfaces for the deepened module?** Call the Skill tool with "codebase-design" and use its design-it-twice parallel sub-agent pattern.
+- **Называешь углублённый модуль по понятию, которого нет в `GLOSSARY.md`?** Добавь термин в `GLOSSARY.md`. Создай файл лениво, если его нет.
+- **Уточняешь размытый термин во время разговора?** Обнови `GLOSSARY.md` прямо на месте.
+- **Пользователь отклоняет кандидата по весомой причине?** Предложи ADR в такой формулировке: _«Записать это как ADR, чтобы будущие архитектурные ревью не предлагали это снова?»_ Предлагай, только если причина действительно понадобится будущему исследователю, чтобы не предложить то же самое; пропускай мимолётные причины («сейчас не стоит того») и самоочевидные.
+- **Хочешь исследовать альтернативные интерфейсы для углублённого модуля?** Вызови инструмент Skill с "codebase-design" и используй его паттерн design-it-twice с параллельными субагентами.
