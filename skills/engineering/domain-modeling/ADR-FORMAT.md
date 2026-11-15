@@ -1,10 +1,10 @@
-# ADR Format
+# Формат ADR
 
-ADRs live in `docs/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc.
+ADR лежат в `docs/adr/` и нумеруются последовательно: `0001-slug.md`, `0002-slug.md` и т.д.
 
-Create the `docs/adr/` directory lazily: only when the first ADR is needed.
+Создавай каталог `docs/adr/` лениво: только когда понадобится первый ADR.
 
-## Template
+## Шаблон
 
 ```md
 # {Short title of the decision}
@@ -12,36 +12,36 @@ Create the `docs/adr/` directory lazily: only when the first ADR is needed.
 {1-3 sentences: what's the context, what did we decide, and why.}
 ```
 
-That's it. An ADR can be a single paragraph. The value is in recording *that* a decision was made and *why*, not in filling out sections.
+Это всё. ADR может состоять из одного абзаца. Ценность в том, чтобы зафиксировать, *что* решение было принято и *почему*, а не в заполнении разделов.
 
-## Optional sections
+## Необязательные разделы
 
-Only include these when they add genuine value. Most ADRs won't need them.
+Включай их, только когда они дают настоящую пользу. Большинству ADR они не понадобятся.
 
-- **Status** frontmatter (`proposed | accepted | deprecated | superseded by ADR-NNNN`): useful when decisions are revisited
-- **Considered Options**: only when the rejected alternatives are worth remembering
-- **Consequences**: only when non-obvious downstream effects need to be called out
+- **Status** во frontmatter (`proposed | accepted | deprecated | superseded by ADR-NNNN`): полезно, когда решения пересматриваются
+- **Considered Options**: только когда отвергнутые альтернативы стоит помнить
+- **Consequences**: только когда нужно указать неочевидные последствия
 
-## Numbering
+## Нумерация
 
-Scan `docs/adr/` for the highest existing number and increment by one.
+Найди в `docs/adr/` наибольший существующий номер и увеличь его на единицу.
 
-## When to offer an ADR
+## Когда предлагать ADR
 
-All three of these must be true:
+Все три условия должны быть выполнены:
 
-1. **Hard to reverse**: the cost of changing your mind later is meaningful
-2. **Surprising without context**: a future reader will look at the code and wonder "why on earth did they do it this way?"
-3. **The result of a real trade-off**: there were genuine alternatives and you picked one for specific reasons
+1. **Трудно отменить**: цена того, чтобы передумать позже, существенна
+2. **Удивительно без контекста**: будущий читатель посмотрит на код и задастся вопросом «с какой стати они сделали именно так?»
+3. **Результат реального компромисса**: были настоящие альтернативы, и ты выбрал одну по конкретным причинам
 
-If a decision is easy to reverse, skip it: you'll just reverse it. If it's not surprising, nobody will wonder why. If there was no real alternative, there's nothing to record beyond "we did the obvious thing."
+Если решение легко отменить, пропусти его: ты его просто отменишь. Если оно не удивляет, никто не будет гадать почему. Если реальной альтернативы не было, записывать нечего, кроме «мы сделали очевидное».
 
-### What qualifies
+### Что подходит
 
-- **Architectural shape.** "We're using a monorepo." "The write model is event-sourced, the read model is projected into Postgres."
-- **Integration patterns between contexts.** "Ordering and Billing communicate via domain events, not synchronous HTTP."
-- **Technology choices that carry lock-in.** Database, message bus, auth provider, deployment target. Not every library: just the ones that would take a quarter to swap out.
-- **Boundary and scope decisions.** "Customer data is owned by the Customer context; other contexts reference it by ID only." The explicit no-s are as valuable as the yes-s.
-- **Deliberate deviations from the obvious path.** "We're using manual SQL instead of an ORM because X." Anything where a reasonable reader would assume the opposite. These stop the next engineer from "fixing" something that was deliberate.
-- **Constraints not visible in the code.** "We can't use AWS because of compliance requirements." "Response times must be under 200ms because of the partner API contract."
-- **Rejected alternatives when the rejection is non-obvious.** If you considered GraphQL and picked REST for subtle reasons, record it; otherwise someone will suggest GraphQL again in six months.
+- **Архитектурная форма.** «Мы используем монорепозиторий.» «Модель записи построена на event sourcing, модель чтения проецируется в Postgres.»
+- **Паттерны интеграции между контекстами.** «Ordering и Billing общаются через доменные события, а не синхронным HTTP.»
+- **Выбор технологий с привязкой к поставщику.** База данных, шина сообщений, провайдер аутентификации, целевая платформа развёртывания. Не каждая библиотека: только те, замена которых заняла бы квартал.
+- **Решения о границах и охвате.** «Данными клиентов владеет контекст Customer; другие контексты ссылаются на них только по ID.» Явные «нет» так же ценны, как «да».
+- **Сознательные отступления от очевидного пути.** «Мы используем ручной SQL вместо ORM, потому что X.» Всё, где разумный читатель предположил бы обратное. Такие записи не дают следующему инженеру «исправить» то, что было сделано намеренно.
+- **Ограничения, не видимые в коде.** «Мы не можем использовать AWS из-за требований комплаенса.» «Время ответа должно быть меньше 200 мс из-за контракта с API партнёра.»
+- **Отвергнутые альтернативы, когда причина отказа неочевидна.** Если ты рассматривал GraphQL и выбрал REST по тонким причинам, запиши это; иначе через полгода кто-нибудь снова предложит GraphQL.
