@@ -1,5 +1,5 @@
 interface:
   display_name: "Improve Codebase Architecture"
-  short_description: "Найти и допросить улучшения архитектуры"
+  short_description: "Найти улучшения архитектуры и допросить по ним"
 policy:
   allow_implicit_invocation: false
