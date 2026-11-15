@@ -1,76 +1,76 @@
-## What it does
+## Что делает
 
-`handoff` compacts the conversation you are in into a **handoff document**: one markdown file, written to your OS's temporary directory rather than into the workspace, that a fresh [agent](https://www.aihero.dev/ai-coding-dictionary/agent) can read to pick the work up.
+`handoff` сжимает текущий разговор в **документ передачи** (handoff): один markdown-файл, записанный во временный каталог ОС, а не в рабочее пространство, который свежий [агент](https://www.aihero.dev/ai-coding-dictionary/agent) может прочитать и подхватить работу.
 
-What it gives you is **portability**, not compression, so the skill is narrower than it sounds. You need a file only when the work has to *travel*: to a new [harness](https://www.aihero.dev/ai-coding-dictionary/harness), a new directory, a colleague, or a side task you want to fork off. If nothing is travelling, you do not need a handoff. Staying in the [session](https://www.aihero.dev/ai-coding-dictionary/session), `/clear`, a [subagent](https://www.aihero.dev/ai-coding-dictionary/subagent) and `/compact` cover the ordinary end-of-phase case, and `/compact` covers it more often than this skill does.
+Он даёт тебе **переносимость**, а не сжатие, поэтому скилл уже, чем кажется. Файл нужен только тогда, когда работе предстоит *переезд*: в новый [харнесс](https://www.aihero.dev/ai-coding-dictionary/harness) (harness), в новый каталог, к коллеге или в побочную задачу, которую ты хочешь отщепить. Если ничего никуда не переезжает, передача не нужна. Оставаться в [сессии](https://www.aihero.dev/ai-coding-dictionary/session), `/clear`, [субагент](https://www.aihero.dev/ai-coding-dictionary/subagent) и `/compact` покрывают обычный случай конца фазы, и `/compact` покрывает его чаще, чем этот скилл.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke this by typing `/handoff`; the agent won't reach for it on its own. Pass a note about what the next session is for, and the skill writes the document for that purpose.
+Ты вызываешь его, набрав `/handoff`; агент сам к нему не потянется. Передай заметку о том, для чего нужна следующая сессия, и скилл напишет документ под эту цель.
 
-There are four triggers, and only four:
+Поводов четыре, и только четыре:
 
-| Situation | Why a file |
+| Ситуация | Зачем файл |
 | --- | --- |
-| Swapping harness (Claude → Codex) | The new harness cannot see the old [context](https://www.aihero.dev/ai-coding-dictionary/context) |
-| Moving to a different directory or repo | A prototype directory is the common case |
-| Sending the work to a colleague | They need something they can read |
-| Forking a side task found mid-phase | You keep working; a second agent takes the fork |
+| Смена харнесса (Claude → Codex) | Новый харнесс не видит старый [контекст](https://www.aihero.dev/ai-coding-dictionary/context) |
+| Переход в другой каталог или репозиторий | Типичный случай: каталог прототипа |
+| Передача работы коллеге | Ему нужно что-то, что можно прочитать |
+| Отщепление побочной задачи, найденной посреди фазы | Ты продолжаешь работать; второй агент берёт ответвление |
 
-For anything else (same harness, same directory, you are done [grilling](https://www.aihero.dev/ai-coding-dictionary/grilling) and moving to implementation), use `/compact`. [ask-matt](https://aihero.dev/skills-ask-matt) has the ordered tree over all five options at a phase boundary.
+Во всех остальных случаях (тот же харнесс, тот же каталог, ты закончил [допрос](https://www.aihero.dev/ai-coding-dictionary/grilling) и переходишь к реализации) используй `/compact`. В [ask-matt](https://aihero.dev/skills-ask-matt) есть упорядоченное дерево по всем пяти вариантам на границе фаз.
 
-## Branching is the use people skip
+## Ветвление: применение, которое пропускают
 
-The skill's description reads like session resumption: write a summary, end here, resume there. Read that way, it looks like a worse `/compact`, so people skip it. The fork case is the one worth knowing. You **stay in your session** and hand a copy of the accumulated context to a second agent working in parallel.
+Описание скилла читается как возобновление сессии: напиши сводку, закончи здесь, продолжи там. При таком прочтении он выглядит как худший `/compact`, и его пропускают. Стоит знать именно случай ответвления. Ты **остаёшься в своей сессии** и отдаёшь копию накопленного контекста второму агенту, работающему параллельно.
 
-That is what the detour through [prototype](https://aihero.dev/skills-prototype) uses. You are deep in a design conversation, you hit a question that only running code will settle, and you do not want to spend the thread you built on finding out. Hand off to a prototype session, get the answer, hand the answer back, and reference it from the original thread. The work crosses over twice, your original conversation stays live, and you re-explain nothing.
+Именно это используется при обходе через [prototype](https://aihero.dev/skills-prototype). Ты глубоко в обсуждении дизайна, натыкаешься на вопрос, который решит только работающий код, и не хочешь тратить выстроенную ветку разговора на выяснение. Передай работу в сессию прототипа, получи ответ, передай его обратно и сошлись на него из исходной ветки. Работа пересекает границу дважды, исходный разговор остаётся живым, и ничего не приходится объяснять заново.
 
-Three of the five options at a phase boundary preserve different things: `/compact` preserves your intent, `/clear` preserves nothing, `/handoff` preserves the work's ability to move.
+Три из пяти вариантов на границе фаз сохраняют разное: `/compact` сохраняет твоё намерение, `/clear` не сохраняет ничего, `/handoff` сохраняет способность работы переезжать.
 
-## What travels, and what doesn't
+## Что переезжает, а что нет
 
-The document carries the live thread (what's in flight, why, and what's next) plus a **suggested skills** section naming what the next agent should reach for. The skill redacts secrets before it writes the file.
+Документ несёт живую нить (что в работе, зачем и что дальше) плюс раздел **рекомендуемых скиллов** с тем, к чему следует обратиться следующему агенту. Перед записью файла скилл вычищает секреты.
 
-It deliberately does not carry anything already written down. The document references specs, plans, ADRs, issues, commits and diffs by path or URL, and never copies them. That keeps the file small, and it keeps the settled detail in one place instead of two copies that drift apart.
+Он намеренно не несёт ничего, что уже записано. Документ ссылается на спецификации, планы, ADR, задачи, коммиты и диффы по пути или URL и никогда их не копирует. Так файл остаётся маленьким, а устоявшиеся детали живут в одном месте, а не в двух расходящихся копиях.
 
-## Common questions
+## Частые вопросы
 
-**Handoff or compact?**
-`/compact` unless something is travelling. Staying on the same task is a compact, not a handoff. When the harness and directory stay the same and you need to stay in the loop, the phase-boundary tree ends at `/compact` most days. `/handoff` does not summarise better. Its advantage is that the result is a file you can carry somewhere `/compact` can't reach.
+**Handoff или compact?**
+`/compact`, если только ничего не переезжает. Продолжение той же задачи требует compact, а не handoff. Когда харнесс и каталог те же и тебе нужно оставаться в контуре, дерево на границе фаз в большинстве случаев заканчивается на `/compact`. `/handoff` не делает сводку лучше. Его преимущество в том, что результатом будет файл, который можно унести туда, куда `/compact` не дотянется.
 
-**So what's the actual difference between compact, clear and handoff?**
-Each one preserves something different. `/compact` compresses this context and continues in a fresh window, so your intent survives. `/clear` empties the window and starts from nothing. That is correct when everything behind you is disposable, and you cannot undo it if it isn't. `/handoff` writes a portable file, so the work survives the move to somewhere else. All three turn a **[primary source](https://www.aihero.dev/ai-coding-dictionary/primary-source)** (the conversation as it happened) into a **[secondary source](https://www.aihero.dev/ai-coding-dictionary/secondary-source)** (a summary of it). Continuing is the only option that doesn't, which is why you rule it out first.
+**Так в чём реальная разница между compact, clear и handoff?**
+Каждый сохраняет своё. `/compact` сжимает текущий контекст и продолжает в чистом окне, так что твоё намерение выживает. `/clear` опустошает окно и начинает с нуля. Это правильно, когда всё позади одноразовое, и отменить это нельзя, если это не так. `/handoff` пишет переносимый файл, так что работа переживает переезд в другое место. Все три превращают **[первоисточник](https://www.aihero.dev/ai-coding-dictionary/primary-source)** (разговор как он шёл) во **[вторичный источник](https://www.aihero.dev/ai-coding-dictionary/secondary-source)** (его сводку). Не делает этого только продолжение, поэтому его ты исключаешь первым.
 
-**Where did my handoff file go?**
-It goes to the temp directory, which is the most-reported problem with the skill. The skill resolves it as `$TMPDIR`, else `/tmp` (`%TEMP%` on Windows), but the paths are long. Ask for the path back and keep it before you move on. Temp is deliberate, because a handoff is a document in transit, not an artifact you maintain. Temp is also not durable, as the next question explains.
+**Куда делся мой файл передачи?**
+Он лежит во временном каталоге, и это самая частая жалоба на скилл. Скилл определяет его как `$TMPDIR`, иначе `/tmp` (`%TEMP%` в Windows), но пути длинные. Попроси назвать путь и сохрани его, прежде чем двигаться дальше. Временный каталог выбран намеренно: документ передачи находится в пути, это не артефакт, который ты поддерживаешь. При этом временный каталог не надёжен, как объясняет следующий вопрос.
 
-**My handoff vanished between sessions.**
-Some environments clear temp between sessions (Codex is the reported case), and a reboot empties `/private/tmp`. If the next session isn't starting within the hour, or is starting under a different harness, copy the file somewhere durable yourself as soon as it's written. The same applies to anything the document *points at*: if a dispatch references other files in temp, the next agent can't follow it.
+**Мой файл передачи исчез между сессиями.**
+Некоторые окружения чистят временный каталог между сессиями (сообщают о Codex), а перезагрузка опустошает `/private/tmp`. Если следующая сессия начнётся не в течение часа или в другом харнессе, сразу после записи сам скопируй файл в надёжное место. То же касается всего, на что документ *ссылается*: если передача ссылается на другие файлы во временном каталоге, следующий агент не сможет по ним пройти.
 
-**How do I actually hand it to the next agent?**
-Open the fresh session and point it at the path: read this file, then continue. Point at the file rather than pasting the summary into a shell command. The shell mangles a summary that contains backticks or `$(...)` when you interpolate it into `claude "<summary>"`. The usual result is silent truncation rather than an error, so the new agent starts with an incomplete brief and nothing tells you.
+**Как на самом деле передать его следующему агенту?**
+Открой новую сессию и укажи путь: прочитай этот файл, затем продолжай. Указывай на файл, а не вставляй сводку в shell-команду. Shell портит сводку с обратными кавычками или `$(...)`, когда ты подставляешь её в `claude "<summary>"`. Обычно это тихое обрезание, а не ошибка, так что новый агент стартует с неполным брифом, и ничто тебе об этом не сообщит.
 
-**Is this the same as `/branch`, `--fork-session`, or the built-in `/handoff`?**
-They are similar, not identical. `/branch` isn't a shipped skill here; `/handoff` is the canonical name. A fork inherits an exact copy of the context; this skill produces a *targeted* compression aimed at a stated next task, in a file. Where a fork will do (same machine, same harness, same directory), a fork is less work. The file is the better choice when the destination is somewhere the fork can't go.
+**Это то же самое, что `/branch`, `--fork-session` или встроенный `/handoff`?**
+Похоже, но не одно и то же. `/branch` здесь не поставляется как скилл; каноническое имя `/handoff`. Форк наследует точную копию контекста; этот скилл даёт *целевое* сжатие под заявленную следующую задачу, в файле. Там, где подходит форк (та же машина, тот же харнесс, тот же каталог), форк требует меньше работы. Файл лучше, когда пункт назначения находится там, куда форк не дойдёт.
 
-**When does something belong in `CLAUDE.md` instead?**
-Ask whether it's true next month. `CLAUDE.md` is standing context about the project, loaded into every session whether it's relevant or not. A handoff is about one piece of work in flight and is useless once that work lands. If you keep re-explaining a fact, it belongs in `CLAUDE.md`. A half-finished task belongs in a handoff.
+**Когда что-то должно лежать в `CLAUDE.md`?**
+Спроси себя, будет ли это верно через месяц. `CLAUDE.md` содержит постоянный контекст о проекте и загружается в каждую сессию, нужен он или нет. Документ передачи касается одной работы в процессе и бесполезен, когда она завершена. Если ты раз за разом объясняешь один и тот же факт, ему место в `CLAUDE.md`. Недоделанной задаче место в документе передачи.
 
-**It captures the what, not the why.**
-This is a fair criticism, and people raise it often. Two things help. Pass the argument (tell it what the next session is for), so the skill keeps the reasoning that bears on *that* rather than flattening it. And watch for confident claims the session never verified, such as "X isn't built" or "Y is done". The next agent trusts the document and does not re-check it, so a belief written as a fact becomes a false premise for everything that follows. Read the document before you hand it over, and downgrade anything you only assumed.
+**Он фиксирует «что», а не «почему».**
+Это справедливая критика, и её высказывают часто. Помогают две вещи. Передавай аргумент (скажи, для чего следующая сессия), чтобы скилл сохранил рассуждения, относящиеся именно к *этому*, а не сплющил их. И следи за уверенными утверждениями, которые сессия так и не проверила, вроде «X не построен» или «Y сделан». Следующий агент доверяет документу и не перепроверяет его, так что убеждение, записанное как факт, становится ложной посылкой для всего дальнейшего. Прочитай документ перед передачей и понизь до допущения всё, что ты только предполагал.
 
-**Why is it a skill rather than a slash command?**
-Both work; they suit different situations. As a skill, it ships and updates through the same install path as everything else here, which makes it shareable. Its frontmatter, not the mechanism, is what stops the agent from firing it on its own.
+**Почему это скилл, а не slash-команда?**
+Работает и то и другое; они подходят для разных ситуаций. Как скилл он поставляется и обновляется тем же путём установки, что и всё остальное здесь, и им легко делиться. Не даёт агенту запустить его самостоятельно frontmatter, а не сам механизм.
 
-## It's working if
+## Работает, если
 
-- The document is a small fraction of the conversation, and the specs, issues and diffs appear in it as paths and URLs rather than as copied text.
-- You can read it cold, without the original session open, and know what to do next.
-- The fresh agent starts working instead of asking you to re-explain the setup.
-- In the fork case, your original session is unchanged when you come back to it.
-- The suggested-skills section names the skill you'd have reached for yourself.
-- Nothing in it is a key, a token, or a password.
+- Документ составляет малую долю разговора, а спецификации, задачи и диффы представлены в нём путями и URL, а не скопированным текстом.
+- Его можно прочитать с нуля, без открытой исходной сессии, и понять, что делать дальше.
+- Свежий агент начинает работать, а не просит заново объяснить обстановку.
+- В случае ответвления исходная сессия при возвращении не изменилась.
+- Раздел рекомендуемых скиллов называет тот скилл, к которому ты обратился бы сам.
+- В нём нет ни ключей, ни токенов, ни паролей.
 
-## Where it fits
+## Место в общей картине
 
-`handoff` is a **reach-for-it-anytime standalone**. It works between sessions rather than inside a build chain. It is a narrow one, and you'll use it less often than the other four options at a phase boundary. Its closest neighbour is [prototype](https://aihero.dev/skills-prototype), because a prototype lives in its own directory and the round trip out and back is the move this skill is for. When you're at a boundary and unsure whether to continue, clear, hand off, delegate or compact, [ask-matt](https://aihero.dev/skills-ask-matt) has the tree that orders those five, and routes you across the rest of the set.
+`handoff`: **самостоятельный инструмент, к которому можно обратиться в любой момент**. Он работает между сессиями, а не внутри цепочки разработки. Он узкий, и пользоваться им ты будешь реже, чем остальными четырьмя вариантами на границе фаз. Его ближайший сосед: [prototype](https://aihero.dev/skills-prototype), потому что прототип живёт в своём каталоге, а путь туда и обратно как раз то, для чего этот скилл. Если ты на границе и не уверен, продолжать, очистить, передать, делегировать или сжать, в [ask-matt](https://aihero.dev/skills-ask-matt) есть дерево, упорядочивающее эти пять вариантов, и он проложит маршрут по остальному набору.

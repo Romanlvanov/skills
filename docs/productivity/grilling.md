@@ -1,87 +1,87 @@
-## What it does
+## Что делает
 
-`grilling` is the interview loop that stress-tests a plan, a decision, or an idea before anyone acts on it. It maps the subject as a **design tree**: every decision branches into the decisions that hang off it, and interviews you branch by branch until no assumption stays unstated.
+`grilling`: цикл интервью, который проверяет на прочность план, решение или идею до того, как кто-то начнёт действовать. Он представляет тему как **дерево решений** (design tree): каждое решение ветвится на зависящие от него решения, и он расспрашивает тебя ветвь за ветвью, пока не останется ни одного невысказанного допущения.
 
-It does not ask one question at a time, and it does not ask everything at once. Each **round** asks the whole **frontier**: every decision whose prerequisites are already settled, and nothing else. Two questions never share a round if one depends on the other; a question that hinges on an answer still open belongs to a later round. Your answers settle decisions, the frontier moves outward, and the next round asks what that unblocked. Thirteen questions typically land in about three rounds rather than thirteen.
+Он не задаёт вопросы по одному и не задаёт всё сразу. Каждый **раунд** охватывает весь **фронт** (frontier): все решения, предпосылки которых уже закрыты, и ничего больше. Два вопроса никогда не попадают в один раунд, если один зависит от другого; вопрос, упирающийся в ещё открытый ответ, относится к более позднему раунду. Твои ответы закрывают решения, фронт сдвигается вперёд, и следующий раунд спрашивает то, что стало доступно. Тринадцать вопросов обычно укладываются примерно в три раунда, а не в тринадцать.
 
-## When to reach for it
+## Когда к нему обращаться
 
-Type `/grilling`, or the [agent](https://www.aihero.dev/ai-coding-dictionary/agent) reaches for it on its own when a task fits. It is the only [skill](https://www.aihero.dev/ai-coding-dictionary/skill) in the grilling family that is model-invoked, so you rarely type it. Usually a skill you *did* type runs it for you.
+Набери `/grilling`, или [агент](https://www.aihero.dev/ai-coding-dictionary/agent) сам потянется к нему, когда задача подходит. Это единственный [скилл](https://www.aihero.dev/ai-coding-dictionary/skill) в семействе допроса (grilling), вызываемый моделью, поэтому набирать его приходится редко. Обычно его запускает за тебя скилл, который ты *всё-таки* набрал.
 
-Typing `/grilling` directly gets you the plain interview and nothing else. Where you want something more than that:
+Если набрать `/grilling` напрямую, получишь просто интервью и ничего больше. Если нужно что-то большее:
 
-| What you have | Reach for |
+| Что у тебя есть | К чему обратиться |
 | --- | --- |
-| You aren't working in a working directory | [grill-me](https://aihero.dev/skills-grill-me): the same [session](https://www.aihero.dev/ai-coding-dictionary/session), under a name the agent will never fire by itself |
-| You are in a working directory | [grill-with-docs](https://aihero.dev/skills-grill-with-docs): the same session, and it writes `GLOSSARY.md` and ADRs as it goes |
-| An effort too big to hold in one session | [wayfinder](https://aihero.dev/skills-wayfinder): it charts a map and runs grilling inside the decision tickets |
-| A question that talking cannot settle: how something should look or feel | [prototype](https://aihero.dev/skills-prototype): build the throwaway version, then come back |
-| A skill of your own that needs an interview | Invoke `/grilling` from it, rather than writing another interview |
+| Ты работаешь не в рабочем каталоге | [grill-me](https://aihero.dev/skills-grill-me): та же [сессия](https://www.aihero.dev/ai-coding-dictionary/session) под именем, которое агент никогда не запустит сам |
+| Ты в рабочем каталоге | [grill-with-docs](https://aihero.dev/skills-grill-with-docs): та же сессия, но по ходу пишет `GLOSSARY.md` и ADR |
+| Работа слишком велика для одной сессии | [wayfinder](https://aihero.dev/skills-wayfinder): строит карту и проводит допрос внутри тикетов-решений |
+| Вопрос, который не решить разговором: как что-то должно выглядеть или ощущаться | [prototype](https://aihero.dev/skills-prototype): собери одноразовую версию, затем вернись |
+| Собственный скилл, которому нужно интервью | Вызывай из него `/grilling`, а не пиши ещё одно интервью |
 
-## The round, the frontier, and who decides
+## Раунд, фронт и кто решает
 
-The skill rests on three ideas.
+Скилл держится на трёх идеях.
 
-The **design tree** is the model of the subject: decisions with decisions hanging off them. The **frontier** is the set of decisions whose prerequisites are all settled: the only questions the agent can ask yet. A **round** is one frontier, asked in full and answered in full.
+**Дерево решений** моделирует тему: решения, от которых зависят другие решения. **Фронт** образуют решения, все предпосылки которых закрыты: это единственные вопросы, которые агент уже может задать. **Раунд** охватывает один фронт, заданный полностью и полностью отвеченный.
 
-Inside a round, every question has a fixed format: numbered and titled behind a `❓`, then the body, then the agent's recommended answer alone on a `➡️` line. This format lets you answer a round by number ("1 yes, 2 the second option, 3 no, here's why") instead of by quoting questions back. The format has one known problem. The recommendation sometimes argues *against* the question as it was worded, so agreeing with the recommendation means answering "no" to the question. When that happens, answer the recommendation and say so.
+Внутри раунда у каждого вопроса фиксированный формат: номер и заголовок после `❓`, затем тело, затем рекомендуемый агентом ответ отдельной строкой после `➡️`. Такой формат позволяет отвечать на раунд по номерам («1 да, 2 второй вариант, 3 нет, и вот почему»), а не цитировать вопросы обратно. У формата есть одна известная проблема. Рекомендация иногда спорит *против* вопроса в его формулировке, так что согласие с рекомендацией означает ответ «нет» на вопрос. В таком случае отвечай на рекомендацию и так и скажи.
 
-The other half of the design is the split between facts and decisions. Facts are the skill's own job. When a frontier question needs something the [environment](https://www.aihero.dev/ai-coding-dictionary/environment) can settle, the agent dispatches a [sub-agent](https://www.aihero.dev/ai-coding-dictionary/subagent) to find out rather than asking you. The round does not wait for that research; only the questions that depend on it wait. Decisions are yours, and the agent must wait for them. An agent running `grilling` that answers its own decisions has broken the skill. The session ends when the frontier is empty. The agent then waits for you to confirm a shared understanding before it acts on what you agreed.
+Вторая половина замысла: разделение фактов и решений. Факты устанавливает сам скилл. Когда вопросу с фронта нужно то, что можно установить из [окружения](https://www.aihero.dev/ai-coding-dictionary/environment), агент отправляет [субагента](https://www.aihero.dev/ai-coding-dictionary/subagent) выяснить это, а не спрашивает тебя. Раунд не ждёт этого исследования; ждут только зависящие от него вопросы. Решения принадлежат тебе, и агент обязан их дождаться. Агент, который в `grilling` сам отвечает на свои решения, сломал скилл. Сессия заканчивается, когда фронт пуст. Затем агент ждёт, пока ты подтвердишь общее понимание, и только потом действует по согласованному.
 
-The frontier has one limit. The agent chooses it by judgement; it does not compute it from a graph. So it can put two questions in one round and only later find that one answer should have changed the other. The only guard is to tell it. That reopens the affected branch in the next round.
+У фронта есть одно ограничение. Агент выбирает его по суждению, а не вычисляет по графу. Поэтому он может поставить два вопроса в один раунд и лишь потом обнаружить, что один ответ должен был изменить другой. Единственная защита: сказать ему об этом. Тогда затронутая ветвь заново откроется в следующем раунде.
 
-## What lives here and what lives in the wrappers
+## Что описано здесь, а что в обёртках
 
-This page covers the mechanism. The wrapper skills' pages answer the questions people ask most often.
+Эта страница описывает механизм. Страницы скиллов-обёрток отвечают на самые частые вопросы.
 
-| Question | Where it is answered |
+| Вопрос | Где на него ответ |
 | --- | --- |
-| The tree, the frontier, rounds, the question format, facts vs decisions | Here |
-| How long a session should run, what to do with a question you can't answer by talking, how to avoid nodding along | [grill-me](https://aihero.dev/skills-grill-me) |
-| What gets written to `GLOSSARY.md`, what becomes an ADR | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
+| Дерево, фронт, раунды, формат вопроса, факты и решения | Здесь |
+| Сколько должна длиться сессия, что делать с вопросом, на который не ответить разговором, как не кивать машинально | [grill-me](https://aihero.dev/skills-grill-me) |
+| Что пишется в `GLOSSARY.md`, что становится ADR | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
 
-## Common questions
+## Частые вопросы
 
-**Can I go back to one question at a time?**
-Yes, and a large part of the audience does. Add this to your global `CLAUDE.md`:
+**Можно вернуться к вопросам по одному?**
+Да, и многие так и делают. Добавь это в свой глобальный `CLAUDE.md`:
 
 ```
 When grilling, ask one question at a time.
 ```
 
-Not everyone prefers the round-based default. Users who read slowly, who work in a second language, or who use the sequential format to help them focus report that one question at a time works better for them. The opt-out is a supported setting, not a workaround.
+Не всем подходит режим раундов по умолчанию. Пользователи, которые читают медленно, работают не на родном языке или используют последовательный формат, чтобы сосредоточиться, говорят, что вопросы по одному им удобнее. Этот отказ от раундов поддерживается как настройка, а не обходным путём.
 
-**Where did `/batch-grill-me` go?**
-Into this skill. Round-based questioning shipped briefly as a separate skill, then moved into `grilling` itself, so everything built on the primitive (`grill-me`, `grill-with-docs`, `triage`, `wayfinder`) got it at once. There is no `batch-grill-me` to install, and no separate sequential skill either; the `CLAUDE.md` line above is the way back to one-at-a-time.
+**Куда делся `/batch-grill-me`?**
+В этот скилл. Опрос раундами недолго жил отдельным скиллом, затем переехал в сам `grilling`, и всё, что построено на этом примитиве (`grill-me`, `grill-with-docs`, `triage`, `wayfinder`), получило его разом. Устанавливать `batch-grill-me` не нужно, отдельного последовательного скилла тоже нет; строка в `CLAUDE.md` выше и есть способ вернуться к вопросам по одному.
 
-**Asking a whole round at once must lose the questions my earlier answers would have raised. Doesn't it?**
-This is the most common objection to rounds, and the frontier answers it. A round only contains questions that do not depend on each other, so no answer in a round can invalidate another question in that round. Your answers still change what comes after them, because the agent works out each next round from scratch. You do lose something, but less than "all questions at once" implies. See the frontier's limit above.
+**Если задавать весь раунд сразу, наверняка теряются вопросы, которые породили бы мои предыдущие ответы?**
+Это самое частое возражение против раундов, и ответ на него даёт фронт. В раунд попадают только вопросы, не зависящие друг от друга, поэтому ни один ответ в раунде не может сделать недействительным другой вопрос того же раунда. Твои ответы по-прежнему меняют то, что идёт после, потому что агент выстраивает каждый следующий раунд заново. Кое-что ты теряешь, но меньше, чем подразумевает «все вопросы сразу». См. ограничение фронта выше.
 
-**It ran out of questions and started building.**
-The confirmation gate exists for this. The skill is finished when you say the understanding is shared, not when the frontier empties. Weaker and faster [models](https://www.aihero.dev/ai-coding-dictionary/model) still skip the gate. Users report this most often on lower-effort or non-frontier models, which collapse "interview until shared understanding" into a couple of questions and an outline. If yours does it, the reliable fix is a line in your own `AGENTS.md` or `CLAUDE.md` telling the agent not to implement without permission.
+**У него кончились вопросы, и он начал строить.**
+Для этого и существует контрольная точка подтверждения. Скилл завершён, когда ты говоришь, что понимание общее, а не когда опустел фронт. Более слабые и быстрые [модели](https://www.aihero.dev/ai-coding-dictionary/model) всё равно её пропускают. Чаще всего об этом сообщают на моделях с низким уровнем усилий или не флагманских: они сводят «интервью до общего понимания» к паре вопросов и наброску. Если твоя так делает, надёжное средство: строка в твоём `AGENTS.md` или `CLAUDE.md`, запрещающая агенту реализовывать без разрешения.
 
-**It answered its own questions instead of asking me.**
-That is a bug in the run, and it is the reason the skill's text separates facts from decisions. It happens most when another skill runs `grilling` to resolve a ticket, and the agent takes that task as permission to keep moving. The same constraint is why there is no async mode. People have asked for a variant that reads a GitHub issue and posts one consolidated decision memo, and that is a different skill, because a grilling session that nobody answers has produced the agent's opinion rather than yours.
+**Он сам отвечал на свои вопросы, вместо того чтобы спрашивать меня.**
+Это баг в прогоне, и именно поэтому текст скилла отделяет факты от решений. Чаще всего так бывает, когда другой скилл запускает `grilling`, чтобы разрешить тикет, и агент воспринимает эту задачу как разрешение двигаться дальше. Из того же ограничения следует, что асинхронного режима нет. Просили вариант, который читает задачу на GitHub и публикует одну сводную записку с решениями, но это другой скилл: сессия допроса, на которую никто не отвечает, выдаёт мнение агента, а не твоё.
 
-**Can I cap the number of questions?**
-No, and a cap is out of scope on purpose. Some plans need three questions and some need fifty; a fixed ceiling either truncates the hard case or feels arbitrary on the easy one. The intended control is plain language. Tell it to wrap up, or stop and accept the plan where it stands. If a session is running very long, the cause is usually that the scope was too big; break the work up and grill the pieces.
+**Можно ограничить число вопросов?**
+Нет, и такой лимит намеренно вне рамок. Одним планам нужно три вопроса, другим пятьдесят; фиксированный потолок либо обрезает трудный случай, либо выглядит произвольным в лёгком. Задуманный способ управления: обычные слова. Скажи ему закругляться или остановись и прими план в текущем виде. Если сессия тянется очень долго, причина обычно в слишком больших границах задачи; разбей работу и допроси части.
 
-**I installed `grill-me` on its own and nothing happens.**
-`grill-me` is a one-line skill whose whole body is "run a `/grilling` session", so it needs this skill installed too. The same is true of `grill-with-docs`, which additionally needs [domain-modeling](https://aihero.dev/skills-domain-modeling). Installing the whole set avoids the problem; installing selectively means installing the primitives as well.
+**Я установил только `grill-me`, и ничего не происходит.**
+`grill-me`: однострочный скилл, всё тело которого: «запусти сессию `/grilling`», поэтому ему нужен и этот скилл. То же верно для `grill-with-docs`, которому дополнительно нужен [domain-modeling](https://aihero.dev/skills-domain-modeling). Установка всего набора снимает проблему; при выборочной установке ставь и примитивы.
 
-**`grill-with-docs` ran, but it never loaded `grilling`.**
-This is a real bug, still unfixed, and users report it across [harnesses](https://www.aihero.dev/ai-coding-dictionary/harness) and models. A skill that names another skill does not reliably cause that skill to load, and `grill-with-docs` names two. The sign is a session that asks everything at once with no recommendations. That means the model is improvising an interview rather than running this one. Asking the agent directly whether it loaded `grilling` and `domain-modeling` usually recovers it.
+**`grill-with-docs` запустился, но так и не загрузил `grilling`.**
+Это настоящий баг, до сих пор не исправленный, и о нём сообщают на разных [харнессах](https://www.aihero.dev/ai-coding-dictionary/harness) (harness) и моделях. Если скилл упоминает другой скилл, это не гарантирует, что тот загрузится, а `grill-with-docs` упоминает два. Признак: сессия, которая спрашивает всё сразу и без рекомендаций. Значит, модель импровизирует интервью, а не проводит это. Обычно помогает прямо спросить агента, загрузил ли он `grilling` и `domain-modeling`.
 
-## It's working if
+## Работает, если
 
-- A round arrives as a numbered list, each question with its recommendation on a separate `➡️` line, and you can answer the whole round by number.
-- Nothing in a round needs another question in the same round answered first.
-- Later rounds ask things the first round could not have asked.
-- It goes and looks facts up (reading files, dispatching a sub-agent) rather than asking you something it could have found out.
-- Research running in the background does not stall the round; only the questions that depend on it wait.
-- It stops at the end and asks you to confirm the understanding is shared, instead of starting work.
-- Question count stays high while round count stays low.
+- Раунд приходит нумерованным списком, у каждого вопроса рекомендация на отдельной строке с `➡️`, и на весь раунд можно ответить по номерам.
+- Ни один вопрос раунда не требует сначала ответа на другой вопрос того же раунда.
+- Поздние раунды спрашивают то, что первый раунд спросить не мог.
+- Он сам ищет факты (читает файлы, отправляет субагента), а не спрашивает тебя о том, что мог выяснить сам.
+- Фоновое исследование не стопорит раунд; ждут только зависящие от него вопросы.
+- В конце он останавливается и просит подтвердить общее понимание, а не начинает работу.
+- Вопросов много, а раундов мало.
 
-## Where it fits
+## Место в общей картине
 
-`grilling` is a **primitive**, not a step you schedule: the single source of truth for the interview technique, kept in one place so every skill that needs an interview reaches for it instead of inventing one. [grill-me](https://aihero.dev/skills-grill-me) and [grill-with-docs](https://aihero.dev/skills-grill-with-docs) are its two user-invoked front doors, and `grill-with-docs` is where the main build chain begins, ahead of [to-spec](https://aihero.dev/skills-to-spec). [wayfinder](https://aihero.dev/skills-wayfinder) runs it to resolve decision tickets, [triage](https://aihero.dev/skills-triage) to grill a vague report into a workable one, and [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) to walk the tree once you have picked a candidate to deepen. When you are unsure which entry point fits, [ask-matt](https://aihero.dev/skills-ask-matt) routes you.
+`grilling` служит **примитивом**, а не шагом, который ты планируешь: единственный источник истины для техники интервью, собранный в одном месте, чтобы каждый скилл, которому нужно интервью, обращался к нему, а не изобретал своё. [grill-me](https://aihero.dev/skills-grill-me) и [grill-with-docs](https://aihero.dev/skills-grill-with-docs) служат двумя его входами, вызываемыми пользователем, а с `grill-with-docs` начинается основная цепочка разработки, перед [to-spec](https://aihero.dev/skills-to-spec). [wayfinder](https://aihero.dev/skills-wayfinder) запускает его, чтобы разрешать тикеты-решения, [triage](https://aihero.dev/skills-triage), чтобы допросом превратить расплывчатый отчёт в рабочий, а [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture), чтобы пройти по дереву, когда ты выбрал кандидата на углубление. Если не уверен, какая точка входа подходит, [ask-matt](https://aihero.dev/skills-ask-matt) подскажет маршрут.

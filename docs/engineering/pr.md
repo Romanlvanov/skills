@@ -1,79 +1,79 @@
-## What it does
+## Что делает
 
-`pr` defines the shape of a pull request body: a **Summary** that shows the change, **Evidence** that it works, and a **Merge Danger** call on how risky it is to land. It is a format reference, not a workflow. It does not push a branch, open the PR, or decide what goes into it. It tells the [agent](https://www.aihero.dev/ai-coding-dictionary/agent) what the body should look like when it writes one.
+`pr` задаёт форму описания pull request: раздел **Summary**, который показывает изменение, раздел **Evidence**, доказывающий, что оно работает, и оценку **Merge Danger** о том, насколько рискованно его вливать. Это справочник по формату, а не рабочий процесс. Он не пушит ветку, не открывает PR и не решает, что в него войдёт. Он говорит [агенту](https://www.aihero.dev/ai-coding-dictionary/agent), как должно выглядеть описание, когда тот его пишет.
 
-The summary is a visual, not a paragraph. A default PR body describes the diff in prose. This one picks the **smallest view** that makes the key point clear (pseudocode, a call tree, a component tree, a file tree, a Mermaid diagram, or a shaped diff) and keeps the words around it brief. The reviewer already has the diff open, so the body shows them its shape before they read it.
+Summary: наглядная схема, а не абзац. Обычное описание PR пересказывает дифф прозой. Это выбирает **минимальное представление**, которое проясняет главную мысль (псевдокод, дерево вызовов, дерево компонентов, дерево файлов, Mermaid-диаграмма или оформленный дифф), а слова вокруг него держит краткими. Дифф у ревьюера уже открыт, поэтому описание показывает ему форму изменения до того, как он начнёт читать.
 
-## When to reach for it
+## Когда к нему обращаться
 
-Type `/pr`, or the agent reaches for it automatically whenever it is writing a PR body.
+Набери `/pr`, или агент сам потянется к нему, когда пишет описание PR.
 
-| Your situation | Reach for |
+| Твоя ситуация | К чему обратиться |
 | --- | --- |
-| A branch is ready and needs a body a reviewer can scan | `pr` |
-| The code is written but nobody has reviewed it yet | [code-review](https://aihero.dev/skills-code-review) first, then `pr` |
-| The PR is open and review comments are coming back | Nothing in this set yet; `pr` only writes the body |
+| Ветка готова, и ей нужно описание, которое ревьюер может быстро просмотреть | `pr` |
+| Код написан, но его ещё никто не проверял | Сначала [code-review](https://aihero.dev/skills-code-review), затем `pr` |
+| PR открыт, и приходят комментарии ревью | В этом наборе пока ничего; `pr` только пишет описание |
 
-## The template
+## Шаблон
 
-Three sections, in this order:
+Три раздела, в таком порядке:
 
-- **Summary**: one or more small visuals, each placed next to the short text it supports. Use one, sometimes several, rarely all of them. Keep only the calls, files, props, and boundaries the reviewer needs.
-- **Evidence**: a before and after. A screenshot is the strongest evidence when the change is visual and the [environment](https://www.aihero.dev/ai-coding-dictionary/environment) can take one. Otherwise, use the exact test that failed and now passes, written as pseudocode, or the console output that changed.
-- **Merge Danger**: whether the change is a **one-way door** or a **two-way door**, and its **blast radius**. A two-way door is cheap to reverse; a one-way door (a destructive migration, a public API removal, a hard-to-reverse decision) is not. Blast radius names what could break if the change is wrong: layout shift, consumers of an API, mobile responsiveness.
+- **Summary**: одна или несколько маленьких наглядных схем, каждая рядом с коротким текстом, который она поддерживает. Используй одну, иногда несколько, редко все. Оставляй только те вызовы, файлы, props и границы, которые нужны ревьюеру.
+- **Evidence**: «до» и «после». Скриншот служит самым сильным доказательством, когда изменение визуальное и [окружение](https://www.aihero.dev/ai-coding-dictionary/environment) позволяет его сделать. Иначе используй точный тест, который падал, а теперь проходит, записанный псевдокодом, или изменившийся вывод консоли.
+- **Merge Danger**: является ли изменение **дверью в одну сторону** (one-way door) или **дверью в обе стороны** (two-way door), и его **радиус поражения** (blast radius). Дверь в обе стороны дёшево обратить; дверь в одну сторону (разрушительная миграция, удаление публичного API, трудно обратимое решение) нет. Радиус поражения называет, что может сломаться, если изменение неверно: сдвиг вёрстки, потребители API, адаптивность на мобильных.
 
-The door call is the leading idea. It changes "is this safe to merge?" from a gut feeling into a stated claim the reviewer can disagree with. It also tells them where to spend their [human review](https://www.aihero.dev/ai-coding-dictionary/human-review). Skim a two-way door with a small blast radius, and read a one-way door slowly.
+Оценка двери и есть ведущая идея. Она превращает «безопасно ли это вливать?» из ощущения в высказанное утверждение, с которым ревьюер может не согласиться. Кроме того, она подсказывает, куда тратить [человеческое ревью](https://www.aihero.dev/ai-coding-dictionary/human-review). Дверь в обе стороны с маленьким радиусом поражения просматривай бегло, а дверь в одну сторону читай медленно.
 
-## Common questions
+## Частые вопросы
 
-**Can I trust the agent's own door call?**
+**Можно ли доверять оценке двери, которую дал сам агент?**
 
-Not blindly, and that is the point of stating it. The agent that wrote the change is the one grading it, so be most suspicious when it says "two-way, small blast radius". The diff also often hides whether a change can be reversed. As one user put it, "rolling back a commit won't unsend a batch of emails", and a flagged rollout stays two-way only until the first write lands in the new format. The skill gives the agent a definition (destructive actions and hard-to-reverse decisions are one-way), not a checklist, so check the Merge Danger line most carefully. Two things help: make sure the agent has the [ticket](https://www.aihero.dev/ai-coding-dictionary/ticket) or [spec](https://www.aihero.dev/ai-coding-dictionary/spec) in front of it, not just the diff, and write down the changes your repo always treats as one-way (schema migrations, anything that ships outward or deletes) where the agent will read them before it makes the call.
+Не вслепую, и именно поэтому её нужно высказывать. Изменение оценивает тот же агент, который его написал, поэтому больше всего подозрений должно вызывать «в обе стороны, маленький радиус поражения». Кроме того, дифф часто скрывает, можно ли изменение обратить. Как сказал один пользователь, «откат коммита не отменит отправку пачки писем» ("rolling back a commit won't unsend a batch of emails"), а выкатка под флагом остаётся дверью в обе стороны только до первой записи в новом формате. Скилл даёт агенту определение (разрушительные действия и трудно обратимые решения считаются дверью в одну сторону), а не чек-лист, так что строку Merge Danger проверяй внимательнее всего. Помогают две вещи: убедись, что перед агентом [тикет](https://www.aihero.dev/ai-coding-dictionary/ticket) или [спецификация](https://www.aihero.dev/ai-coding-dictionary/spec), а не только дифф, и запиши изменения, которые твой репозиторий всегда считает дверью в одну сторону (миграции схемы, всё, что уходит наружу или удаляет), туда, где агент прочитает их до оценки.
 
-**Does it open the PR for me?**
+**Открывает ли он PR за меня?**
 
-No. `pr` covers only the body. [implement](https://aihero.dev/skills-implement) ends by committing to the current branch. Requests for a skill or option that opens the PR (a `/to-pr`, or `implement` opening a PR instead of committing) are still open proposals. One user's workaround is a one-sentence local override of `implement` that tells it to open a PR. [implement-spec](https://aihero.dev/skills-implement-spec) is the exception: it opens a draft PR when your issue tracker closes work through PRs or when you ask for one. Because `pr` is model-invoked, the agent uses this shape for the body whenever you ask it to open a PR.
+Нет. `pr` касается только описания. [implement](https://aihero.dev/skills-implement) заканчивается коммитом в текущую ветку. Запросы на скилл или опцию, открывающую PR (`/to-pr` или `implement`, открывающий PR вместо коммита), остаются открытыми предложениями. Обходной путь одного пользователя: локальное переопределение `implement` в одно предложение, которое велит ему открыть PR. Исключение: [implement-spec](https://aihero.dev/skills-implement-spec): он открывает черновой PR, когда твой трекер задач закрывает работу через PR или когда ты об этом просишь. Поскольку `pr` вызывается моделью, агент использует эту форму описания всякий раз, когда ты просишь его открыть PR.
 
-**Won't it just produce another wall of text and diagrams?**
+**Не выдаст ли он очередную стену текста и диаграмм?**
 
-The skill is designed to prevent that, but it can still happen. Users' complaint about agent PR bodies is consistent: "a long summary but all I need to know is what changed, how it was verified, what could break, and whether it's safe to merge." The skill tells the agent to skip preambles, keep prose brief, and pick the smallest view, usually one visual and rarely all of them. If you still get a stack of diagrams, the agent has ignored that. If the body is huge because the diff is huge, the problem is the size of the PR, and `pr` will not split it for you.
+Скилл задуман, чтобы это предотвратить, но такое всё равно может случиться. Жалоба пользователей на описания PR от агентов одна и та же: «длинная сводка, а мне нужно знать только, что изменилось, как проверено, что может сломаться и безопасно ли вливать» ("a long summary but all I need to know is what changed, how it was verified, what could break, and whether it's safe to merge."). Скилл велит агенту пропускать вступления, писать прозу кратко и выбирать минимальное представление, обычно одну схему и редко все. Если ты всё равно получаешь стопку диаграмм, агент это проигнорировал. Если описание огромное, потому что огромен дифф, проблема в размере PR, и `pr` не разделит его за тебя.
 
-**My repo already has a PR template. Which one wins?**
+**В моём репозитории уже есть шаблон PR. Какой победит?**
 
-Neither, by default. `pr` has its own template and does not look for `.github/pull_request_template.md` or anything like it. Several users asked for the skill to use the repo's template. If you do nothing, the agent has two competing instructions for the same document. Settle it in your repo's agent docs, for example by filling the repo template and putting Summary, Evidence and Merge Danger under it.
+По умолчанию ни один. У `pr` свой шаблон, и он не ищет `.github/pull_request_template.md` или что-то подобное. Несколько пользователей просили, чтобы скилл использовал шаблон репозитория. Если ничего не делать, у агента будут две конкурирующие инструкции для одного документа. Реши это в документации для агентов своего репозитория, например заполняя шаблон репозитория и помещая под ним Summary, Evidence и Merge Danger.
 
-**Is the output HTML? Why doesn't the Mermaid diagram render?**
+**Результат в HTML? Почему не отрисовывается Mermaid-диаграмма?**
 
-The output is a markdown PR body, not an HTML page. GitHub and GitLab render Mermaid blocks in a PR description, but a terminal does not, so the diagram looks like raw text while the agent is still showing it to you locally. Users on CLI harnesses have worked around that with an ASCII Mermaid renderer or by having the agent attach an HTML version to the PR. Mermaid is one of six views. A call tree, file tree or shaped diff reads the same everywhere.
+Результатом служит markdown-описание PR, а не HTML-страница. GitHub и GitLab отрисовывают блоки Mermaid в описании PR, а терминал нет, поэтому, пока агент показывает её тебе локально, диаграмма выглядит как сырой текст. Пользователи CLI-харнессов (harness) обходят это ASCII-рендерером Mermaid или просят агента приложить к PR HTML-версию. Mermaid даёт лишь одно из шести представлений. Дерево вызовов, дерево файлов или оформленный дифф читаются одинаково везде.
 
-**Can it sort through the review comments that come back?**
+**Может ли он разобрать приходящие комментарии ревью?**
 
-No. It writes the body and stops. Users have asked more than once for a way to triage comments from other developers or review bots (which are worth acting on, which are non-issues). This skill does not do that.
+Нет. Он пишет описание и останавливается. Пользователи не раз просили способ триажа комментариев от других разработчиков или ботов ревью (какие стоят действий, какие нет). Этот скилл такого не делает.
 
-**Does it keep the body up to date as the PR changes?**
+**Поддерживает ли он описание в актуальном состоянии по мере изменения PR?**
 
-No. It writes the body at one point in time, and a PR that changes under review leaves that body stale. Ask the agent to rewrite the body after a large change. The agent is writing a PR body again, so it uses the same shape.
+Нет. Он пишет описание в один момент времени, и PR, меняющийся в ходе ревью, оставляет это описание устаревшим. После крупного изменения попроси агента переписать описание. Агент снова пишет описание PR, так что использует ту же форму.
 
-**My change has no UI. What goes in Evidence?**
+**У моего изменения нет UI. Что писать в Evidence?**
 
-Everything except the screenshot. The screenshot is the strongest evidence only when the change is visual. For a migration, a background job or a refactor, the evidence is the exact test that failed before and passes now, or the console output that changed. "Tests are green" on its own is a claim, not a before and after.
+Всё, кроме скриншота. Скриншот служит самым сильным доказательством, только когда изменение визуальное. Для миграции, фоновой задачи или рефакторинга доказательством будет точный тест, который раньше падал, а теперь проходит, или изменившийся вывод консоли. «Тесты зелёные» само по себе остаётся лишь утверждением, а не «до» и «после».
 
-**Can it mark the body as written by an LLM?**
+**Может ли он помечать описание как написанное LLM?**
 
-Not by itself. One user's approach is a standing instruction in the repo's agent docs that every issue, comment, and PR the agent writes ends with a disclosure line. That rule belongs in the repo, where it covers everything the agent posts, rather than in a template for one kind of document.
+Сам по себе нет. Подход одного пользователя: постоянная инструкция в документации для агентов репозитория, согласно которой каждая задача, комментарий и PR, написанные агентом, заканчиваются строкой раскрытия. Этому правилу место в репозитории, где оно покрывает всё, что публикует агент, а не в шаблоне для одного вида документов.
 
-## It's working if
+## Работает, если
 
-- You can tell what the PR changes from the Summary visual alone, before opening the diff.
-- The body has no preamble: it starts at the Summary heading.
-- The Evidence section shows a before and an after, not a claim that tests pass.
-- Every PR states a door and a blast radius, and the one-way doors are the ones you slow down on.
+- По одной схеме из Summary понятно, что меняет PR, ещё до открытия диффа.
+- В описании нет вступления: оно начинается с заголовка Summary.
+- Раздел Evidence показывает «до» и «после», а не утверждение, что тесты проходят.
+- Каждый PR называет дверь и радиус поражения, и именно на дверях в одну сторону ты замедляешься.
 
-## Where it fits
+## Место в общей картине
 
-`pr` comes between review and retro when the build ships as a pull request: `to-spec → to-tickets → implement → code-review → pr → retro`. It is model-invoked, so it also fires on its own any time the agent writes a PR body outside that chain.
+`pr` стоит между ревью и ретро, когда разработка выпускается через pull request: `to-spec → to-tickets → implement → code-review → pr → retro`. Он вызывается моделью, так что срабатывает и сам по себе всякий раз, когда агент пишет описание PR вне этой цепочки.
 
-- [code-review](https://aihero.dev/skills-code-review) runs before it, because a PR body should describe a diff that has already been reviewed.
-- [implement](https://aihero.dev/skills-implement) produces the commits the body describes.
+- [code-review](https://aihero.dev/skills-code-review) идёт перед ним, потому что описание PR должно описывать уже проверенный дифф.
+- [implement](https://aihero.dev/skills-implement) производит коммиты, которые описание описывает.
 
-[ask-matt](https://aihero.dev/skills-ask-matt) routes across the whole set when you are unsure which skill the situation wants.
+Если не уверен, какой скилл нужен в ситуации, [ask-matt](https://aihero.dev/skills-ask-matt) проложит маршрут по всему набору.

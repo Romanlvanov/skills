@@ -1,88 +1,88 @@
-## What it does
+## Что делает
 
-`codebase-design` fixes the words you use to design a module: **module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**. It defines each one precisely, bans the loose substitutes ("component", "service", "API", "boundary"), and states the handful of principles that follow from them.
+`codebase-design` фиксирует слова, которыми ты проектируешь модуль: **модуль**, **интерфейс**, **глубина**, **шов**, **адаптер**, **рычаг**, **локальность**. Он точно определяет каждое, запрещает расплывчатые заменители («компонент», «сервис», «API», «граница») и формулирует несколько принципов, которые из них следуют.
 
-It is a reference, not a process. It runs no loop, produces no artifact, and never stops to ask you a question. Every other skill that touches design uses its vocabulary. On its own, it gives you the words and stops. Know this before you invoke it. If you point a [session](https://www.aihero.dev/ai-coding-dictionary/session) at a skill with no process and no stopping rule and say "go", the agent invents a process. The questions below show what that looks like.
+Это справочник, а не процесс. Он не запускает цикл, не производит артефакт и никогда не останавливается, чтобы задать тебе вопрос. Его словарём пользуется каждый другой скилл, касающийся дизайна. Сам по себе он даёт тебе слова и останавливается. Знай это, прежде чем его вызывать. Если направить [сессию](https://www.aihero.dev/ai-coding-dictionary/session) на скилл без процесса и без правила остановки и сказать «вперёд», агент придумает процесс сам. Вопросы ниже показывают, как это выглядит.
 
-## When to reach for it
+## Когда к нему обращаться
 
-Type `/codebase-design`, or the agent reaches for it automatically when a design task fits.
+Набери `/codebase-design`, или агент сам потянется к нему, когда задача дизайна подходит.
 
-Reach for it when you already know which code you're redesigning and you need to think about its shape: where the seam goes, how small the interface can get, whether an extraction removes complexity from its callers. Also use it to settle an argument about what a design word means.
+Обращайся к нему, когда ты уже знаешь, какой код перепроектируешь, и нужно подумать о его форме: где пройдёт шов, насколько маленьким может стать интерфейс, убирает ли выделение сложность у вызывающих. Ещё он помогает разрешить спор о том, что значит то или иное слово дизайна.
 
-Several skills are close to it. Pick by the problem you have:
+Рядом с ним несколько скиллов. Выбирай по своей проблеме:
 
-| The problem | The skill |
+| Проблема | Скилл |
 |---|---|
-| The shape of one module: its interface, its seam, its depth | `codebase-design` |
-| The *words of the domain*: "account" means three things, two people mean different things by "cancellation" | [domain-modeling](https://aihero.dev/skills-domain-modeling) |
-| You don't yet know *which* module to redesign | [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) (the survey that finds candidates) |
-| You want the design argued with, not just named | [grilling](https://aihero.dev/skills-grilling) |
-| There's a concrete behaviour to build and you want tests that survive a refactor | [tdd](https://aihero.dev/skills-tdd) |
+| Форма одного модуля: его интерфейс, шов, глубина | `codebase-design` |
+| *Слова предметной области*: «аккаунт» значит три разные вещи, два человека понимают «отмену» по-разному | [domain-modeling](https://aihero.dev/skills-domain-modeling) |
+| Ты ещё не знаешь, *какой* модуль перепроектировать | [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) (обследование, которое находит кандидатов) |
+| Ты хочешь, чтобы с дизайном спорили, а не просто называли его | [grilling](https://aihero.dev/skills-grilling) |
+| Нужно построить конкретное поведение, и ты хочешь тесты, переживающие рефакторинг | [tdd](https://aihero.dev/skills-tdd) |
 
-## The vocabulary
+## Словарь
 
-The glossary is the skill. The skill defines every term against the others, and gives each one the word it replaces.
+Глоссарий и есть скилл. Скилл определяет каждый термин через остальные и для каждого указывает слово, которое тот заменяет.
 
-| Term | What it means | Don't say |
+| Термин | Что означает | Не говори |
 |---|---|---|
-| **Module** | Anything with an interface and an implementation. Deliberately scale-agnostic: a function, a class, a package, a slice spanning tiers. | unit, component, service |
-| **Interface** | Everything a caller must know to use it correctly: the type signature, plus invariants, ordering constraints, error modes, required config, performance characteristics. | API, signature |
-| **Depth** | Leverage at the interface: how much behaviour a caller or a test can exercise per unit of interface they have to learn. **Deep**: a lot of behaviour behind a small interface. **Shallow**: the interface is nearly as complex as the implementation. | none |
-| **Seam** | Michael Feathers' term: a place you can alter behaviour without editing in that place. It is the *location* of an interface, and where to put it is its own decision, separate from what goes behind it. | boundary |
-| **Adapter** | A concrete thing satisfying an interface at a seam. It names a role, not a kind of thing: an in-memory fake and a Postgres repo are both adapters. | none |
-| **Leverage** | What callers get from depth: more capability per unit of interface learned. | none |
-| **Locality** | What maintainers get from depth: changes, bugs and verification stay in one place, so one fix covers every caller. | none |
+| **Модуль** | Всё, у чего есть интерфейс и реализация. Намеренно не привязан к масштабу: функция, класс, пакет, срез через несколько слоёв. | юнит, компонент, сервис |
+| **Интерфейс** | Всё, что вызывающему нужно знать, чтобы правильно им пользоваться: сигнатура типов плюс инварианты, ограничения порядка, режимы ошибок, обязательная конфигурация, характеристики производительности. | API, сигнатура |
+| **Глубина** | Рычаг на интерфейсе: сколько поведения вызывающий или тест может задействовать на единицу интерфейса, которую ему нужно выучить. **Глубокий**: много поведения за маленьким интерфейсом. **Мелкий**: интерфейс почти так же сложен, как реализация. | нет |
+| **Шов** | Термин Майкла Физерса: место, где можно изменить поведение, не редактируя код в этом месте. Это *местоположение* интерфейса, а где его разместить, решается отдельно, независимым от того, что за ним стоит. | граница |
+| **Адаптер** | Конкретная вещь, реализующая интерфейс на шве. Это название роли, а не вида вещей: фейк в памяти и репозиторий на Postgres оба служат адаптерами. | нет |
+| **Рычаг** | Что вызывающие получают от глубины: больше возможностей на единицу выученного интерфейса. | нет |
+| **Локальность** | Что получают от глубины те, кто сопровождает код: изменения, баги и проверка остаются в одном месте, так что одно исправление покрывает всех вызывающих. | нет |
 
-The skill does *not* define depth as the ratio of implementation lines to interface lines, which is Ousterhout's own definition. That metric rewards padding the implementation, so the skill uses depth-as-leverage instead.
+Скилл *не* определяет глубину как отношение строк реализации к строкам интерфейса, хотя это собственное определение Остерхаута. Такая метрика поощряет раздувание реализации, поэтому скилл использует глубину как рычаг.
 
-## The four principles
+## Четыре принципа
 
-- **Depth is a property of the interface, not the implementation.** A deep module can be built internally from small swappable parts. Callers just don't see them. A module can have internal seams its own tests use, and one external seam at its interface.
-- **The deletion test.** Imagine deleting the module. If complexity disappears, the module was a pass-through. If it reappears across N callers, the module was hiding real complexity.
-- **The interface is the test surface.** Callers and tests cross the same seam. If you want to test *past* the interface, the module is the wrong shape.
-- **One adapter means a hypothetical seam. Two adapters means a real one.** Don't cut a seam until something varies across it. A single-adapter seam is just indirection.
+- **Глубина: свойство интерфейса, а не реализации.** Глубокий модуль может быть внутри собран из маленьких заменяемых частей. Вызывающие их просто не видят. У модуля могут быть внутренние швы, которыми пользуются его собственные тесты, и один внешний шов на его интерфейсе.
+- **Тест удаления.** Представь, что модуль удалили. Если сложность исчезает, модуль был простым транзитом. Если она снова появляется у N вызывающих, модуль скрывал реальную сложность.
+- **Интерфейс служит поверхностью тестирования.** Вызывающие и тесты пересекают один и тот же шов. Если хочется тестировать *в обход* интерфейса, у модуля неправильная форма.
+- **Один адаптер означает гипотетический шов. Два адаптера означают настоящий.** Не прорезай шов, пока что-то не начнёт по нему меняться. Шов с единственным адаптером даёт лишь косвенность.
 
-Two supporting files go further, and the skill reads them on demand rather than up front. [DEEPENING.md](https://github.com/mattpocock/skills/blob/main/skills/engineering/codebase-design/DEEPENING.md) classifies a candidate's dependencies into four categories (in-process, local-substitutable, remote-but-owned, true-external), because the category decides how you test the deepened module across its seam. [DESIGN-IT-TWICE.md](https://github.com/mattpocock/skills/blob/main/skills/engineering/codebase-design/DESIGN-IT-TWICE.md) starts parallel [sub-agents](https://www.aihero.dev/ai-coding-dictionary/subagent) to produce three or more radically different interfaces for the same module, then compares them on depth, locality and seam placement.
+Два вспомогательных файла идут дальше, и скилл читает их по требованию, а не заранее. [DEEPENING.md](https://github.com/mattpocock/skills/blob/main/skills/engineering/codebase-design/DEEPENING.md) делит зависимости кандидата на четыре категории (внутрипроцессные, локально заменяемые, удалённые, но свои, по-настоящему внешние), потому что категория определяет, как тестировать углублённый модуль через его шов. [DESIGN-IT-TWICE.md](https://github.com/mattpocock/skills/blob/main/skills/engineering/codebase-design/DESIGN-IT-TWICE.md) запускает параллельных [субагентов](https://www.aihero.dev/ai-coding-dictionary/subagent), чтобы получить три или больше радикально разных интерфейса для одного модуля, а затем сравнивает их по глубине, локальности и размещению шва.
 
-## Common questions
+## Частые вопросы
 
-**How do I actually build a deep module in TypeScript?**
+**Как на самом деле построить глубокий модуль на TypeScript?**
 
-This is the most-asked question about the skill and the skill does not answer it. It defines what a deep module *is*; it says nothing about how to stop a stray import from reaching past the interface. [Issue #458](https://github.com/mattpocock/skills/issues/458) put it plainly: "let's say we're happy with the interface, it hides the details, etc. But how do we enforce it? I think without linting or clear guardrails, humans and LLMs alike will start making it messy over time." The answer in that thread gave three options: wrap it in a class or IIFE and accept that the class gets enormous; make it a package in a monorepo and accept the monorepo tooling; or use a linter like [dependency-cruiser](https://github.com/sverweij/dependency-cruiser) to forbid imports that bypass the interface. Of these mechanisms, Effect is the best and dependency-cruiser the second-best. There is a `setup-ts-deep-modules` skill in the repo's `in-progress/` bucket that lays down a `src/packages/<name>/index.ts` convention, but it is a beta-channel skill with no docs page, and it ships no lint rule.
+Это самый частый вопрос о скилле, и скилл на него не отвечает. Он определяет, что такое глубокий модуль; он ничего не говорит о том, как не дать случайному импорту залезть за интерфейс. [Задача #458](https://github.com/mattpocock/skills/issues/458) сформулировала это прямо: «допустим, интерфейс нас устраивает, он скрывает детали и т.д. Но как это обеспечить? Думаю, без линтинга или чётких ограждений и люди, и LLM со временем начнут всё запутывать» ("let's say we're happy with the interface, it hides the details, etc. But how do we enforce it? I think without linting or clear guardrails, humans and LLMs alike will start making it messy over time."). Ответ в том обсуждении дал три варианта: обернуть в класс или IIFE и смириться, что класс станет огромным; сделать пакет в монорепозитории и смириться с инструментарием монорепозитория; или использовать линтер вроде [dependency-cruiser](https://github.com/sverweij/dependency-cruiser), запрещающий импорты в обход интерфейса. Из этих механизмов лучшим считается Effect, вторым dependency-cruiser. В разделе `in-progress/` репозитория есть скилл `setup-ts-deep-modules`, который вводит соглашение `src/packages/<name>/index.ts`, но это скилл бета-канала без страницы документации, и правила линтера он не поставляет.
 
-**I pointed a session at it and it burned 100k [tokens](https://www.aihero.dev/ai-coding-dictionary/token) redesigning things I never asked about.**
+**Я направил на него сессию, и он сжёг 100 тыс. [токенов](https://www.aihero.dev/ai-coding-dictionary/token), перепроектируя то, о чём я не просил.**
 
-This is a known problem, filed as [issue #449](https://github.com/mattpocock/skills/issues/449). The skill is model-invoked and describes itself as vocabulary, but nothing in it hard-stops an agent from treating it as a runnable process. Told to "resume in /codebase-design and drive the open decisions", an agent picked the part of the skill closest to a process: the parallel sub-agents in `DESIGN-IT-TWICE.md`. It re-explored code a previous session had already mapped, and worked for a long time before it asked anything. This skill has none of the guardrails a driver skill has (checkpoints, one question at a time, no auto-advance), because it is a reference. The workaround is to invoke a driver skill (`/grill-with-docs`, `/improve-codebase-architecture` or `/tdd`) and use `codebase-design` as its vocabulary. The issue is open.
+Это известная проблема, заведённая как [задача #449](https://github.com/mattpocock/skills/issues/449). Скилл вызывается моделью и описывает себя как словарь, но ничто в нём не останавливает жёстко агента, решившего считать его выполнимым процессом. Получив указание «продолжи в /codebase-design и доведи открытые решения» ("resume in /codebase-design and drive the open decisions"), агент выбрал ту часть скилла, что ближе всего к процессу: параллельных субагентов из `DESIGN-IT-TWICE.md`. Он заново исследовал код, который прошлая сессия уже нанесла на карту, и долго работал, прежде чем что-нибудь спросить. У этого скилла нет ни одного ограждения, которые есть у ведущих скиллов (контрольные точки, один вопрос за раз, никакого автоперехода), потому что он справочник. Обходной путь: вызвать ведущий скилл (`/grill-with-docs`, `/improve-codebase-architecture` или `/tdd`) и использовать `codebase-design` как его словарь. Задача открыта.
 
-**Where did `design-an-interface` go? And is there an `/interface-design` skill?**
+**Куда делся `design-an-interface`? И есть ли скилл `/interface-design`?**
 
-This skill replaced `design-an-interface` and took over its content. Nothing is missing. Its "design it twice" technique (parallel sub-agents generating radically different designs, from Ousterhout) ships here as `DESIGN-IT-TWICE.md`. Separately, several people have asked for a dedicated `/interface-design` skill for the deep-module/thin-interface philosophy; this skill already covers that philosophy, and no separate skill is planned. If you came looking for either name, this is the page.
+Этот скилл заменил `design-an-interface` и забрал его содержимое. Ничего не потеряно. Его техника «спроектируй дважды» (параллельные субагенты, генерирующие радикально разные варианты, по Остерхауту) поставляется здесь как `DESIGN-IT-TWICE.md`. Отдельно несколько человек просили выделенный скилл `/interface-design` для философии «глубокий модуль, тонкий интерфейс»; этот скилл уже покрывает эту философию, и отдельный скилл не планируется. Если ты пришёл искать любое из этих имён, тебе сюда.
 
-**Isn't this a file-structure convention, such as folders, barrel files, feature slices?**
+**Разве это не соглашение о структуре файлов: папки, barrel-файлы, срезы по фичам?**
 
-No. People have pushed back on this many times, and the skill has not changed. [Issue #95](https://github.com/mattpocock/skills/issues/95) proposed a formalised fractal-tree file structure as the concrete implementation of deep modules; the reply was that the two are independent: "deep modules are about the design of the interface and accessing through a strict interface, no matter what the file system looks like. It seems perfectly possible that you could have shallow modules with this approach." The same came up in #458: "I think you might be tying the concept of modules too closely to the file system. The file system can certainly be a useful hint to the shape of modules, but there's no need to use the file system in the construction of deep modules." The glossary defines **module** as scale-agnostic on purpose.
+Нет. С этим много раз спорили, а скилл не изменился. [Задача #95](https://github.com/mattpocock/skills/issues/95) предлагала формализованную фрактальную структуру файлов как конкретную реализацию глубоких модулей; ответ был, что эти вещи независимы: «глубокие модули касаются дизайна интерфейса и доступа через строгий интерфейс, как бы ни выглядела файловая система. Вполне возможно, что при таком подходе у тебя получатся мелкие модули» ("deep modules are about the design of the interface and accessing through a strict interface, no matter what the file system looks like. It seems perfectly possible that you could have shallow modules with this approach."). То же всплыло в #458: «Мне кажется, ты слишком тесно связываешь понятие модуля с файловой системой. Файловая система, безусловно, может быть полезной подсказкой о форме модулей, но использовать её при построении глубоких модулей не нужно» ("I think you might be tying the concept of modules too closely to the file system. The file system can certainly be a useful hint to the shape of modules, but there's no need to use the file system in the construction of deep modules."). Глоссарий намеренно определяет **модуль** как не привязанный к масштабу.
 
-**Does `tdd` actually use this vocabulary?**
+**Использует ли `tdd` на самом деле этот словарь?**
 
-It does now, but for a long time it did not. v1.0 removed the inline deep-module notes from `tdd` in favour of this shared skill, but nobody added a pointer to replace them, so `tdd` defined "seam" for itself and referenced nothing. The pointer is now in `tdd`, and the agent follows it when the open question is the shape of the interface, not the tests. `tdd` still owns "seam" as the boundary you *test* at; this skill owns the module shape behind it.
+Теперь да, но долгое время нет. v1.0 убрала из `tdd` встроенные заметки о глубоких модулях в пользу этого общего скилла, но указатель взамен никто не добавил, так что `tdd` определял «шов» сам и ни на что не ссылался. Теперь указатель в `tdd` есть, и агент идёт по нему, когда открытый вопрос касается формы интерфейса, а не тестов. За `tdd` по-прежнему остаётся «шов» как граница, на которой ты *тестируешь*; за этим скиллом форма модуля за ней.
 
-**Does the design-it-twice pattern work outside Claude Code?**
+**Работает ли паттерн «спроектируй дважды» вне Claude Code?**
 
-Not cleanly. `DESIGN-IT-TWICE.md` says "spawn 3+ sub-agents in parallel using the Agent tool", and "Agent" is the name of a Claude Code [tool](https://www.aihero.dev/ai-coding-dictionary/tool). The repo ships metadata for other [harnesses](https://www.aihero.dev/ai-coding-dictionary/harness), including Codex, and those may have no tool with that name. So the parallel-design phase is less portable than the skill's metadata suggests. [Issue #564](https://github.com/mattpocock/skills/issues/564) tracks this, and it is open.
+Не гладко. `DESIGN-IT-TWICE.md` говорит "spawn 3+ sub-agents in parallel using the Agent tool", а "Agent" называется [инструмент](https://www.aihero.dev/ai-coding-dictionary/tool) Claude Code. Репозиторий поставляет метаданные для других [харнессов](https://www.aihero.dev/ai-coding-dictionary/harness) (harness), включая Codex, а там инструмента с таким именем может не быть. Поэтому фаза параллельного проектирования менее переносима, чем подразумевают метаданные скилла. Это отслеживается в [задаче #564](https://github.com/mattpocock/skills/issues/564), и она открыта.
 
-**Can I add my own concepts to the glossary, such as connascence, module secrets, [progressive disclosure](https://www.aihero.dev/ai-coding-dictionary/progressive-disclosure)?**
+**Можно ли добавить в глоссарий свои понятия, например коннасценцию, секреты модуля, [постепенное раскрытие](https://www.aihero.dev/ai-coding-dictionary/progressive-disclosure)?**
 
-People have proposed those. [Issue #180](https://github.com/mattpocock/skills/issues/180) adds Parnas's module secrets and Page-Jones's connascence as a naming layer for *what* is leaking across a seam, with a working diff attached; [issue #303](https://github.com/mattpocock/skills/issues/303) proposes progressive disclosure inside the implementation, so a module that is deep at its public interface also has structure inside it. Both are open and unmerged. The shipped glossary is small on purpose, and the skill itself gives the reason: consistent language is the whole point, and a term nobody uses consistently is worse than no term.
+Их предлагали. [Задача #180](https://github.com/mattpocock/skills/issues/180) добавляет секреты модуля по Парнасу и коннасценцию по Пейдж-Джонсу как слой имён для того, *что* протекает через шов, с приложенным рабочим диффом; [задача #303](https://github.com/mattpocock/skills/issues/303) предлагает постепенное раскрытие внутри реализации, чтобы у модуля, глубокого на публичном интерфейсе, была структура и внутри. Обе открыты и не смержены. Поставляемый глоссарий маленький намеренно, и сам скилл объясняет почему: весь смысл в единообразном языке, а термин, который никто не использует единообразно, хуже, чем отсутствие термина.
 
-## It's working if
+## Работает, если
 
-- The design conversation stops producing the words "component", "service" and "boundary", and starts producing "module", "interface" and "seam".
-- Someone can point at a proposed extraction and say whether it passes the deletion test, without hedging.
-- A proposed seam comes with a second adapter named, not just the first one.
-- Discussion of an interface covers invariants, ordering and error modes, not only the type signature.
-- Invoking it does not start a session. If the agent begins reading files and proposing refactors from `/codebase-design` alone, it has mistaken the reference for a driver.
+- В обсуждении дизайна перестают звучать слова «компонент», «сервис» и «граница», и начинают звучать «модуль», «интерфейс» и «шов».
+- Любой может указать на предлагаемое выделение и без оговорок сказать, проходит ли оно тест удаления.
+- Предлагаемый шов приходит с названным вторым адаптером, а не только с первым.
+- Обсуждение интерфейса охватывает инварианты, порядок и режимы ошибок, а не только сигнатуру типов.
+- Его вызов не запускает сессию работы. Если от одного `/codebase-design` агент начинает читать файлы и предлагать рефакторинги, он принял справочник за ведущий скилл.
 
-## Where it fits
+## Место в общей картине
 
-`codebase-design` is a **reach-for-it-anytime standalone**, and the vocabulary layer underneath the engineering skills rather than a step in any chain. Its closest neighbour is [domain-modeling](https://aihero.dev/skills-domain-modeling), the parallel reference for the *problem domain*'s words rather than the module's shape. The two are usually wanted together, since naming a deep module well needs both. [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) is the other: it surveys a codebase for deepening candidates and writes every one of them in this glossary, so it finds the module and you design it in this skill's words. When you're unsure which skill or flow fits, [ask-matt](https://aihero.dev/skills-ask-matt) routes you.
+`codebase-design`: **самостоятельный инструмент, к которому можно обратиться в любой момент**, словарный слой под инженерными скиллами, а не шагом какой-либо цепочки. Его ближайший сосед: [domain-modeling](https://aihero.dev/skills-domain-modeling), параллельный справочник по словам *предметной области*, а не по форме модуля. Обычно их хотят вместе, потому что для хорошего названия глубокого модуля нужны оба. Другой сосед: [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture): он обследует кодовую базу в поисках кандидатов на углубление и описывает каждого в терминах этого глоссария, так что он находит модуль, а ты проектируешь его словами этого скилла. Если не уверен, какой скилл или поток (flow) подходит, [ask-matt](https://aihero.dev/skills-ask-matt) подскажет маршрут.

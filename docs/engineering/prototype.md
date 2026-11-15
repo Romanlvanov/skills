@@ -1,67 +1,67 @@
-## What it does
+## Что делает
 
-`prototype` writes **throwaway code that answers a question**: does this state model feel right, or what should this screen look like. The question comes first and decides what you build. A prototype that answers the wrong question is wasted, however good it looks.
+`prototype` пишет **одноразовый код, который отвечает на вопрос**: правильно ли ощущается эта модель состояний или как должен выглядеть этот экран. Сначала вопрос, и он решает, что строить. Прототип, отвечающий не на тот вопрос, потрачен впустую, как бы хорошо он ни выглядел.
 
-Throwaway is a constraint on how the code is *written*, not a promise to destroy it. No tests, no error handling beyond what makes it run, no abstractions, no persistence, because none of that helps you learn the one thing you're trying to learn. Two things survive. The answer goes into the real code, and the prototype goes onto a branch out of main as evidence for the answer.
+Одноразовость ограничивает то, как код *пишется*, а не обещает его уничтожить. Никаких тестов, никакой обработки ошибок сверх того, что нужно для запуска, никаких абстракций, никакого хранения данных, потому что ничто из этого не помогает узнать ту одну вещь, которую ты пытаешься узнать. Выживают две вещи. Ответ уходит в настоящий код, а прототип уходит в ветку от main как свидетельство этого ответа.
 
-## When to reach for it
+## Когда к нему обращаться
 
-Type `/prototype`, or the [agent](https://www.aihero.dev/ai-coding-dictionary/agent) reaches for it automatically when a task fits.
+Набери `/prototype`, или [агент](https://www.aihero.dev/ai-coding-dictionary/agent) сам потянется к нему, когда задача подходит.
 
-Reach for it the moment you hit a question you can't settle by talking: a state machine whose edge cases you can't hold in your head, a screen you can't picture until you see three versions side by side. [Grilling](https://www.aihero.dev/ai-coding-dictionary/grilling) sessions grow long on these questions. The agent rephrases, you guess, and the scope grows. Stop grilling, build the throwaway version, look at it, then answer in one line. If instead something already built is misbehaving and you want to know why, use [diagnosing-bugs](https://aihero.dev/skills-diagnosing-bugs); prototyping explores what to build, not why the built thing is broken.
+Обращайся к нему, как только наткнёшься на вопрос, который не решить разговором: конечный автомат, граничные случаи которого не удержать в голове, экран, который невозможно представить, пока не увидишь три версии рядом. На таких вопросах сессии [допроса](https://www.aihero.dev/ai-coding-dictionary/grilling) (grilling) затягиваются. Агент переформулирует, ты гадаешь, и объём растёт. Прекрати допрос, собери одноразовую версию, посмотри на неё, затем ответь одной строкой. Если же что-то уже построенное ведёт себя неправильно и ты хочешь знать почему, используй [diagnosing-bugs](https://aihero.dev/skills-diagnosing-bugs); прототипирование исследует, что строить, а не почему построенное сломалось.
 
-You will also arrive here without choosing to. [wayfinder](https://aihero.dev/skills-wayfinder) files `prototype` decision [tickets](https://www.aihero.dev/ai-coding-dictionary/ticket) on its map, and you work one with this skill.
+Сюда ты попадёшь и не выбирая. [wayfinder](https://aihero.dev/skills-wayfinder) заводит на своей карте [тикеты](https://www.aihero.dev/ai-coding-dictionary/ticket)-решения типа `prototype`, и такой тикет ты прорабатываешь этим скиллом.
 
-## Two branches
+## Две ветки
 
-The question picks the branch, and the branches produce different artifacts:
+Вопрос выбирает ветку, и ветки производят разные артефакты:
 
-- **"Does this logic / state model feel right?"**: a **single shareable HTML file**. One self-contained page, no build and no server, that someone opens by double-clicking. It carries a labelled state panel that re-renders after every click, free-play buttons for poking at the model in any order, and tabbed **guided walkthroughs** (one scenario per tab, each with the ordered buttons to press underneath it). Everything is labelled in domain language, so you can hand it to a designer, a PM or a domain expert and let them try the model themselves. The logic behind the page is a small pure module (a reducer, a machine, a set of functions) with no DOM code in it, so you can move the validated version straight into the real code.
-- **"What should this look like?"**: several **radically different** UI variations on one route, switchable from a floating bottom bar and a `?variant=` URL param. Variants must disagree about structure, not colour; three card grids with small tweaks answer nothing. They render inside a real page wherever possible, against real data and real density, because a variant judged on an empty page always looks fine.
+- **«Правильно ли ощущается эта логика / модель состояний?»**: **один HTML-файл, которым можно поделиться**. Одна самодостаточная страница без сборки и сервера, которую открывают двойным щелчком. В ней подписанная панель состояния, перерисовываемая после каждого щелчка, кнопки свободной игры, чтобы тыкать в модель в любом порядке, и **пошаговые сценарии** на вкладках (по одному сценарию на вкладку, под каждым кнопки, которые нужно нажимать по порядку). Всё подписано языком предметной области, так что её можно отдать дизайнеру, PM или эксперту предметной области, чтобы они сами попробовали модель. Логика за страницей живёт в маленьком чистом модуле (редьюсер, автомат, набор функций) без кода DOM, так что проверенную версию можно сразу перенести в настоящий код.
+- **«Как это должно выглядеть?»**: несколько **радикально разных** вариантов UI на одном маршруте, переключаемых плавающей нижней панелью и URL-параметром `?variant=`. Варианты должны расходиться в структуре, а не в цвете; три сетки карточек с мелкими правками ни на что не отвечают. Где только можно, они отрисовываются внутри настоящей страницы, на реальных данных и реальной плотности, потому что вариант, оценённый на пустой странице, всегда выглядит нормально.
 
-Both keep state in memory, start with no setup, and show you the full state after every step. The moment you find yourself hardening one (adding a test, wiring the real database, generalising for a case you might want later), you have stopped prototyping.
+Обе ветки хранят состояние в памяти, стартуют без настройки и показывают полное состояние после каждого шага. Как только ловишь себя на том, что укрепляешь прототип (добавляешь тест, подключаешь настоящую базу данных, обобщаешь под случай, который может понадобиться позже), ты перестал прототипировать.
 
-## The prototype is a primary source
+## Прототип как первоисточник
 
-A finished prototype leaves two things, and they go to different places.
+Законченный прототип оставляет две вещи, и они идут в разные места.
 
-You record the **answer** (the verdict plus the question it settled) somewhere permanent: a commit message, an ADR, the implementation issue. Main keeps the answer, in the real code.
+**Ответ** (вердикт плюс вопрос, который он решил) ты записываешь куда-то навсегда: в сообщение коммита, ADR, задачу на реализацию. Main хранит ответ, в настоящем коде.
 
-The **prototype** is the runnable evidence the answer came from, and you do not delete it. It doesn't belong in main either, because nobody maintains it and it goes stale fast. So you commit it to a throwaway `prototype/<name>` branch out of main, never merge it, and leave a [context pointer](https://www.aihero.dev/ai-coding-dictionary/context-pointer) to that branch on the implementation issue. Main stays clean, and whoever picks the work up next can find and re-run the prototype.
+**Прототип** служит работающим свидетельством, из которого пришёл ответ, и ты его не удаляешь. В main ему тоже не место, потому что его никто не поддерживает и он быстро устаревает. Поэтому ты коммитишь его в одноразовую ветку `prototype/<name>` от main, никогда её не мержишь и оставляешь [контекстный указатель](https://www.aihero.dev/ai-coding-dictionary/context-pointer) на эту ветку в задаче на реализацию. Main остаётся чистым, а тот, кто возьмёт работу следующим, может найти и перезапустить прототип.
 
-## Common questions
+## Частые вопросы
 
-**Wait, isn't the prototype supposed to be deleted?**
-Not any more. It used to be: build it, keep the answer, bin the code. The strongest objection to that was not about speed. It was *who picks up the work next [session](https://www.aihero.dev/ai-coding-dictionary/session), and what do they have to work from?* A prose summary of a prototype loses the thing that made it convincing. So the skill now treats the prototype as a [primary source](https://www.aihero.dev/ai-coding-dictionary/primary-source). It lands on a `prototype/<name>` branch out of main and the implementation issue points at it. What changed is where the code lives, not the discipline; it still never merges into main.
+**Погоди, разве прототип не положено удалять?**
+Уже нет. Раньше положено было: построй, сохрани ответ, выброси код. Самое сильное возражение против этого касалось не скорости. Оно звучало так: *кто подхватит работу в следующей [сессии](https://www.aihero.dev/ai-coding-dictionary/session) и с чем ему работать?* Прозаическая сводка прототипа теряет то, что делало его убедительным. Поэтому теперь скилл считает прототип [первоисточником](https://www.aihero.dev/ai-coding-dictionary/primary-source). Он попадает в ветку `prototype/<name>` от main, а задача на реализацию на него указывает. Изменилось место, где живёт код, а не дисциплина; в main он по-прежнему никогда не вливается.
 
-**It used to build a terminal app. Where did that go?**
-The logic branch now emits a single shareable HTML file instead. A terminal app can only be driven by someone with the repo cloned and a runtime installed, which rules out the people whose opinion the prototype needs: the designer, the PM, the domain expert who knows what the state model is supposed to mean. One self-contained file that opens by double-click and still works after being emailed can be driven by anyone. The pure logic module underneath is unchanged, and is still the part you move into the real code.
+**Раньше он строил терминальное приложение. Куда это делось?**
+Ветка логики теперь выдаёт один HTML-файл, которым можно поделиться. Терминальным приложением может управлять только тот, у кого склонирован репозиторий и установлен рантайм, а это исключает людей, чьё мнение прототипу нужно: дизайнера, PM, эксперта предметной области, который знает, что должна означать модель состояний. Одним самодостаточным файлом, который открывается двойным щелчком и работает даже после пересылки по почте, может управлять кто угодно. Чистый модуль логики под ним не изменился, и именно его ты по-прежнему переносишь в настоящий код.
 
-**An agent told me to `/prototype` when I should have been implementing.**
-This is a known naming problem. An agent that does not know the flow reads `prototype`, a generic and appealing word, as "the obvious next step" once tickets exist. So agents recommend it by name even where the design was settled in conversation. If you already know what to build, the next step is `/implement`, per ticket. Reach for a prototype only when a specific design question is unresolved and talking won't resolve it.
+**Агент велел мне запустить `/prototype`, когда мне нужно было реализовывать.**
+Это известная проблема с именем. Агент, не знающий потока (flow), воспринимает `prototype`, общее и привлекательное слово, как «очевидный следующий шаг», как только появились тикеты. Поэтому агенты рекомендуют его по имени даже там, где дизайн уже решён в разговоре. Если ты уже знаешь, что строить, следующий шаг: `/implement`, по тикету. Обращайся к прототипу, только когда конкретный вопрос дизайна не решён и разговором его не решить.
 
-**Should I prototype the whole application before building any of its production features (say, to demo it to prospects)?**
-That is a different artifact that happens to share this skill's name. A prototype here is scoped to one question, and "what is the whole app?" isn't one. A full-app prototype has no natural stopping point, so it drifts into being the production app: the cleanup pass never happens, and code written under prototype rules (no tests, no error handling) ends up in front of users. If you need a sales demo, build it as a demo on purpose and be explicit that none of it is production. If you need to settle a design question, cut it down to that question.
+**Стоит ли прототипировать всё приложение до того, как строить его продакшен-фичи (скажем, чтобы показать потенциальным клиентам)?**
+Это другой артефакт, который просто носит то же имя, что и скилл. Прототип здесь ограничен одним вопросом, а «каким будет всё приложение?» к одному вопросу не сводится. У прототипа всего приложения нет естественной точки остановки, поэтому он сползает в продакшен-приложение: проход по уборке так и не случается, а код, написанный по правилам прототипа (без тестов, без обработки ошибок), оказывается перед пользователями. Если нужна демо для продаж, строй её как демо намеренно и явно оговори, что ничто из неё не продакшен. Если нужно решить вопрос дизайна, урежь задачу до этого вопроса.
 
-**How do I run it in its own session?**
-A prototype lives in its own directory and generates a lot of [context](https://www.aihero.dev/ai-coding-dictionary/context) you don't want in the thread that asked the question, so run it somewhere else and bring back only the answer. Use [handoff](https://aihero.dev/skills-handoff) to move the work into that session and to bring the answer back.
+**Как запустить его в отдельной сессии?**
+Прототип живёт в своём каталоге и порождает много [контекста](https://www.aihero.dev/ai-coding-dictionary/context), которого не хочется в ветке разговора, задавшей вопрос, поэтому запускай его в другом месте и приноси назад только ответ. Используй [handoff](https://aihero.dev/skills-handoff), чтобы перенести работу в ту сессию и вернуть ответ.
 
-**Isn't this the fastest possible way to burn tokens?**
-It can be, if you prototype questions you could have answered by talking, or let one prototype sprawl across a whole feature. The comparison that matters isn't tokens against zero; it's [tokens](https://www.aihero.dev/ai-coding-dictionary/token) against building the wrong state model and finding out after it has production callers. Keep the question narrow and the run short, and the spend stays proportionate.
+**Разве это не самый быстрый способ сжечь токены?**
+Может им стать, если прототипировать вопросы, на которые можно было ответить разговором, или позволить одному прототипу расползтись на целую фичу. Сравнивать нужно не токены с нулём, а [токены](https://www.aihero.dev/ai-coding-dictionary/token) с постройкой неправильной модели состояний, которая обнаружится, когда у неё уже будут вызывающие в продакшене. Держи вопрос узким, а прогон коротким, и расходы останутся соразмерными.
 
-## It's working if
+## Работает, если
 
-- You can say in one sentence what question the prototype exists to answer, and it's written at the top of the demo, not just in your head.
-- Someone who doesn't read code can drive the logic demo. They open the file, press the buttons in a walkthrough tab, and describe what they see in their own words.
-- Someone says "wait, that shouldn't be possible" or "huh, I assumed X". That's a bug in the *idea*, which is what the prototype is for.
-- The UI variants disagree about layout and information hierarchy, not just colour and copy, and the feedback you get is "the header from B with the sidebar from C".
-- It is answered in one sitting. If you're still building it a day later, the question was too big; split it.
-- When it's over, main contains the decision and none of the prototype, and the implementation issue points at the branch that still holds it.
+- Ты можешь одним предложением сказать, на какой вопрос отвечает прототип, и это написано в начале демо, а не только у тебя в голове.
+- Человек, не читающий код, может управлять демо логики. Он открывает файл, нажимает кнопки во вкладке сценария и своими словами описывает, что видит.
+- Кто-то говорит «погоди, такого не должно быть» или «хм, я думал, что X». Это баг в *идее*, а именно для этого и нужен прототип.
+- Варианты UI расходятся в раскладке и информационной иерархии, а не только в цвете и тексте, а обратная связь звучит как «шапка из B с боковой панелью из C».
+- Ответ получен за один присест. Если через день ты всё ещё строишь, вопрос был слишком большим; раздели его.
+- Когда всё закончено, в main лежит решение и ничего из прототипа, а задача на реализацию указывает на ветку, где он по-прежнему хранится.
 
-## Where it fits
+## Место в общей картине
 
-`prototype` is a **reach-for-it-anytime standalone**: you use it to settle one design question, then go back to your work. Another skill also runs it.
+`prototype`: **самостоятельный инструмент, к которому можно обратиться в любой момент**: ты используешь его, чтобы решить один вопрос дизайна, а затем возвращаешься к работе. Запускает его и другой скилл.
 
-The skill that runs it most is [wayfinder](https://aihero.dev/skills-wayfinder). A wayfinder map is made of **decision tickets**, and `prototype` is one of the four types a ticket can be: the one used when the blocking question is "how should this look" or "how should it behave", which no amount of discussion resolves. When a discussion is vague, wayfinder makes something concrete to react to, and this skill builds that thing. The answer resolves a prototype ticket, and the map links to the prototype as an asset.
+Чаще всего его запускает [wayfinder](https://aihero.dev/skills-wayfinder). Карта wayfinder состоит из **тикетов-решений**, и `prototype` входит в четыре типа тикета: это тот, что используется, когда блокирующий вопрос звучит как «как это должно выглядеть» или «как это должно себя вести», и никакое обсуждение его не решает. Когда обсуждение расплывчато, wayfinder делает что-то конкретное, на что можно отреагировать, и строит это этот скилл. Ответ закрывает тикет типа prototype, а карта ссылается на прототип как на ресурс.
 
-The other neighbours are upstream and downstream of that. [grill-me](https://aihero.dev/skills-grill-me) and [grill-with-docs](https://aihero.dev/skills-grill-with-docs) answer grillable questions; the ungrillable ones come here instead, and the one-line answer goes back into the interview. Downstream, a validated state model or UI direction becomes settled input for [to-spec](https://aihero.dev/skills-to-spec), which can inline the decision-rich snippet the prototype produced rather than describing it in prose. For anything else, [ask-matt](https://aihero.dev/skills-ask-matt) routes you over the whole set.
+Остальные соседи стоят выше и ниже по течению. [grill-me](https://aihero.dev/skills-grill-me) и [grill-with-docs](https://aihero.dev/skills-grill-with-docs) отвечают на вопросы, решаемые допросом; нерешаемые приходят сюда, а ответ одной строкой возвращается в интервью. Ниже по течению проверенная модель состояний или направление UI становится утверждённым входом для [to-spec](https://aihero.dev/skills-to-spec), который может встроить насыщенный решениями фрагмент из прототипа, а не описывать его прозой. Во всём остальном [ask-matt](https://aihero.dev/skills-ask-matt) проложит маршрут по всему набору.

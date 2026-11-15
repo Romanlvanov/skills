@@ -1,82 +1,82 @@
-## What it does
+## Что делает
 
-`grill-with-docs` interviews you about a plan or design until you and the [agent](https://www.aihero.dev/ai-coding-dictionary/agent) share one understanding of it, and writes the vocabulary and the hard decisions into your repo while it does. It is the same interview [grill-me](https://aihero.dev/skills-grill-me) runs (a round of questions, then wait, then the next round), pointed at a codebase.
+`grill-with-docs` расспрашивает тебя о плане или дизайне, пока у тебя и [агента](https://www.aihero.dev/ai-coding-dictionary/agent) не сложится одно общее понимание, и по ходу записывает словарь и трудные решения в твой репозиторий. Это то же интервью, что проводит [grill-me](https://aihero.dev/skills-grill-me) (раунд вопросов, ожидание, следующий раунд), только направленное на кодовую базу.
 
-It is **[stateful](https://www.aihero.dev/ai-coding-dictionary/stateful)**. Every other grilling skill leaves the [session](https://www.aihero.dev/ai-coding-dictionary/session) in your head; this one leaves files on disk. When a term resolves, the skill writes it to `GLOSSARY.md` at once, not in a batch at the end. When a decision passes three gates, the skill writes it as an ADR. That is the whole difference, and it also causes most of the trouble people have with the skill. The artifacts are real files in a real repo, so they can be missing when you expected them, and they can drift when more than one person writes them.
+Он работает **[с состоянием](https://www.aihero.dev/ai-coding-dictionary/stateful)**. Остальные скиллы допроса (grilling) оставляют [сессию](https://www.aihero.dev/ai-coding-dictionary/session) у тебя в голове; этот оставляет файлы на диске. Когда термин утверждён, скилл сразу записывает его в `GLOSSARY.md`, а не пачкой в конце. Когда решение проходит три проверки, скилл записывает его как ADR. В этом вся разница, и из неё же растёт большая часть проблем, которые возникают у людей со скиллом. Артефакты здесь: настоящие файлы в настоящем репозитории, поэтому их может не оказаться там, где ты ожидал, и они могут расходиться, когда их пишет больше одного человека.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke this by typing `/grill-with-docs`, and the agent won't reach for it on its own.
+Ты вызываешь его, набрав `/grill-with-docs`, и агент сам к нему не потянется.
 
-Reach for it at the start of a change, in a repo, when the plan is still fuzzy and the words for the thing are not settled yet. It is the single-session tool. Which grilling skill you want depends on what is in front of you:
+Обращайся к нему в начале изменения, в репозитории, когда план ещё расплывчат, а слова для предмета ещё не устоялись. Это инструмент на одну сессию. Какой скилл допроса тебе нужен, зависит от того, что перед тобой:
 
-| What you have | Reach for |
+| Что у тебя есть | К чему обратиться |
 | --- | --- |
-| You aren't working in a working directory at all | [grill-me](https://aihero.dev/skills-grill-me) |
-| A repo, and a change you can settle in one session | `grill-with-docs` |
-| An effort too big to hold in one session (a greenfield build, a large feature) | [wayfinder](https://aihero.dev/skills-wayfinder) |
-| A repo with no domain docs at all, and no particular feature in mind | `grill-with-docs`, aimed at the repo rather than a change |
-| A decision blocked on knowledge in someone else's head | [to-questionnaire](https://aihero.dev/skills-to-questionnaire) |
+| Ты вообще не работаешь в рабочем каталоге | [grill-me](https://aihero.dev/skills-grill-me) |
+| Репозиторий и изменение, которое можно решить за одну сессию | `grill-with-docs` |
+| Работа слишком велика для одной сессии (разработка с нуля, большая фича) | [wayfinder](https://aihero.dev/skills-wayfinder) |
+| Репозиторий без документов предметной области и без конкретной фичи в планах | `grill-with-docs`, направленный на репозиторий, а не на изменение |
+| Решение упирается в знание в чужой голове | [to-questionnaire](https://aihero.dev/skills-to-questionnaire) |
 
-The wayfinder split comes down to session count: `/grill-with-docs` for single-session planning, `/wayfinder` for multi-session planning.
+Граница с wayfinder сводится к числу сессий: `/grill-with-docs` для планирования в одну сессию, `/wayfinder` для планирования в несколько.
 
-## Prerequisites
+## Предварительные условия
 
-The skill writes into your repo, so you need to be somewhere it is safe to write. Resolved terms go to a `GLOSSARY.md` glossary at the root, or to the relevant context's `GLOSSARY.md`, if a `GLOSSARY-MAP.md` at the root marks the repo as multi-context. Decisions go to `docs/adr/`. The skill creates both only when it needs them. Nothing exists until the first term or decision is settled, so you set up nothing in advance.
+Скилл пишет в твой репозиторий, поэтому ты должен находиться там, где писать безопасно. Утверждённые термины идут в глоссарий `GLOSSARY.md` в корне или в `GLOSSARY.md` нужного контекста, если `GLOSSARY-MAP.md` в корне помечает репозиторий как многоконтекстный. Решения идут в `docs/adr/`. Скилл создаёт оба места, только когда они нужны. Пока не утверждены первый термин или решение, ничего не существует, так что заранее ничего настраивать не нужно.
 
-It also needs two other skills present, because its own `SKILL.md` is one line that delegates to them. [grilling](https://aihero.dev/skills-grilling) supplies the interview, and [domain-modeling](https://aihero.dev/skills-domain-modeling) supplies the writing. Installing `grill-with-docs` alone gets you a skill that does not work.
+Ему также нужны два других скилла, потому что его собственный `SKILL.md` состоит из одной строки, делегирующей им. [grilling](https://aihero.dev/skills-grilling) даёт интервью, а [domain-modeling](https://aihero.dev/skills-domain-modeling) даёт запись. Если установить только `grill-with-docs`, получишь неработающий скилл.
 
-## The paper trail
+## Бумажный след
 
-Three things come out of a session, and they are not equal.
+Из сессии выходят три вещи, и они не равноценны.
 
-| What resolved | Where it lands |
+| Что решено | Куда попадает |
 | --- | --- |
-| A term: the project's own word for a thing | `GLOSSARY.md`, inline, the moment it resolves |
-| A decision that is hard to reverse, surprising without context, and a real trade-off | An ADR under `docs/adr/` |
-| Everything else you decided | The conversation, and nowhere else |
+| Термин: собственное слово проекта для чего-либо | `GLOSSARY.md`, по ходу, в момент утверждения |
+| Решение, которое трудно обратить, удивительное без контекста и представляющее реальный компромисс | ADR в `docs/adr/` |
+| Всё остальное, что ты решил | Разговор, и больше нигде |
 
-That third row is the one that catches people out. `GLOSSARY.md` is only a glossary. It holds no implementation details, no [spec](https://www.aihero.dev/ai-coding-dictionary/spec), and no scratch notes. An ADR needs all three conditions at once, so most decisions do not qualify and most sessions produce none. A session that yields a sharper glossary and zero ADRs is working as designed, but it means most of what you agreed exists only in the [context window](https://www.aihero.dev/ai-coding-dictionary/context-window) you agreed it in. Hand that same conversation to [to-spec](https://aihero.dev/skills-to-spec) rather than [clearing](https://www.aihero.dev/ai-coding-dictionary/clearing) it.
+Именно третья строка застаёт людей врасплох. `GLOSSARY.md` служит только глоссарием. В нём нет деталей реализации, [спецификации](https://www.aihero.dev/ai-coding-dictionary/spec) и черновых заметок. ADR требует всех трёх условий одновременно, поэтому большинство решений не проходят, и большинство сессий не дают ни одного. Сессия, давшая более точный глоссарий и ноль ADR, работает как задумано, но это значит, что большая часть согласованного существует только в [контекстном окне](https://www.aihero.dev/ai-coding-dictionary/context-window), где ты это согласовал. Передай тот же разговор в [to-spec](https://aihero.dev/skills-to-spec), а не [очищай](https://www.aihero.dev/ai-coding-dictionary/clearing) его.
 
-The glossary is the main output. This skill builds domain language: the project's own words, agreed once, so you, the agent and your colleagues do not have to work them out again. Not everyone agrees that this improves agent performance. The strongest objection is that a term and its plain-English expansion get the same result from the [model](https://www.aihero.dev/ai-coding-dictionary/model), and that the vocabulary mainly shortens communication between the humans who share it. On that view the glossary is still valuable, but the value goes to the humans.
+Глоссарий служит главным результатом. Этот скилл строит язык предметной области: собственные слова проекта, согласованные один раз, чтобы тебе, агенту и коллегам не приходилось выводить их заново. Не все согласны, что это улучшает работу агента. Самое сильное возражение: термин и его развёрнутое описание простыми словами дают у [модели](https://www.aihero.dev/ai-coding-dictionary/model) одинаковый результат, а словарь в основном сокращает общение между людьми, которые его разделяют. С этой точки зрения глоссарий всё равно ценен, но ценность достаётся людям.
 
-## Common questions
+## Частые вопросы
 
-**Should I use this or `/wayfinder`?**
-Scope decides it. Use this for anything you can settle in one session; use [wayfinder](https://aihero.dev/skills-wayfinder) when the effort is too big to hold in one, and it charts the work as a map of decision [tickets](https://www.aihero.dev/ai-coding-dictionary/ticket) first. Wayfinder is slower and denser, and reaching for it on a well-scoped feature is the common mistake. It does not replace this skill, and it can start a grilling session for the parts of the map that suit one.
+**Использовать его или `/wayfinder`?**
+Решает объём. Используй этот для всего, что можно решить за одну сессию; используй [wayfinder](https://aihero.dev/skills-wayfinder), когда работа слишком велика для одной, и он сначала размечает её как карту [тикетов](https://www.aihero.dev/ai-coding-dictionary/ticket)-решений. Wayfinder медленнее и плотнее, и обращаться к нему для хорошо очерченной фичи: типичная ошибка. Он не заменяет этот скилл и может запустить сессию допроса для тех частей карты, которым она подходит.
 
-**It ran, but no `GLOSSARY.md` and no ADRs appeared.**
-There are two known causes. The first is that nothing qualified. ADRs need all three gates, and a session about a change with no new vocabulary has nothing to write. The second is a real bug. When the skill runs inside another orchestration layer (a spec-driven-development wrapper, a multi-agent framework, a rule that invokes it as a step in someone else's pipeline), users report that the file-writing half silently does not happen, while the interview still runs. The bug is filed and unfixed. If you are in that setup, check the working directory before you trust the session's output.
+**Он отработал, но ни `GLOSSARY.md`, ни ADR не появилось.**
+Есть две известные причины. Первая: ничто не прошло планку. ADR требует всех трёх проверок, а сессии об изменении без нового словаря нечего записывать. Вторая: настоящий баг. Когда скилл работает внутри другого слоя оркестрации (обёртки для spec-driven development, мультиагентного фреймворка, правила, вызывающего его как шаг чужого конвейера), пользователи сообщают, что половина, отвечающая за запись файлов, молча не выполняется, хотя интервью идёт. Баг заведён и не исправлен. Если у тебя такая конфигурация, проверь рабочий каталог, прежде чем доверять результату сессии.
 
-**It asked everything at once, with no recommendations, and never mentioned `GLOSSARY.md`.**
-That is the skill failing to load its two dependencies. Because `SKILL.md` is a one-line delegation, an agent that does not pick up [grilling](https://aihero.dev/skills-grilling) and [domain-modeling](https://aihero.dev/skills-domain-modeling) guesses at what grilling means, and you get every question at once with no structure. Partial loading is more confusing. `grilling` loads, `domain-modeling` does not, and you get a good interview with no paper trail. How often it happens depends on the model and the [effort](https://www.aihero.dev/ai-coding-dictionary/effort) level, and it is the most reported problem with this skill. If you suspect it, ask the agent directly which skills it loaded.
+**Он спросил всё сразу, без рекомендаций, и ни разу не упомянул `GLOSSARY.md`.**
+Так проявляется сбой загрузки двух его зависимостей. Поскольку `SKILL.md` состоит из однострочного делегирования, агент, не подхвативший [grilling](https://aihero.dev/skills-grilling) и [domain-modeling](https://aihero.dev/skills-domain-modeling), гадает, что значит «допрос», и ты получаешь все вопросы разом без структуры. Частичная загрузка сбивает с толку сильнее. `grilling` загружается, `domain-modeling` нет, и ты получаешь хорошее интервью без бумажного следа. Частота зависит от модели и уровня [усилий](https://www.aihero.dev/ai-coding-dictionary/effort), и это самая частая жалоба на скилл. Если подозреваешь такое, прямо спроси агента, какие скиллы он загрузил.
 
-**Where did all my other decisions go?**
-Into the conversation only. This is the most serious open complaint about the skill. The glossary is not a spec, most answers do not earn an ADR, and no record links each resolved answer to a spec, a ticket and a test. Later steps soften precise answers (ordering guarantees, negative requirements, numeric defaults) into weaker prose, and the result can look complete while missing the thing you decided. For now, keep the session and feed it straight to [to-spec](https://aihero.dev/skills-to-spec). Then re-read the spec against your own answers rather than assuming it captured them.
+**Куда делись все остальные мои решения?**
+Только в разговор. Это самая серьёзная открытая претензия к скиллу. Глоссарий не спецификация, большинство ответов не заслуживают ADR, и нет записи, связывающей каждый принятый ответ со спецификацией, тикетом и тестом. Последующие шаги размывают точные ответы (гарантии порядка, отрицательные требования, числовые значения по умолчанию) в более слабую прозу, и результат может выглядеть полным, упуская то, что ты решил. Пока что сохраняй сессию и передавай её прямо в [to-spec](https://aihero.dev/skills-to-spec). Затем перечитай спецификацию, сверяя со своими ответами, а не предполагай, что она их зафиксировала.
 
-**Can I point it at an existing repo that has no docs at all?**
-Yes. This is the right skill for a codebase with no ADRs, no domain language and no design principles: invoke it and say "help me document my repo". Users often pair it with [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) for building or repairing a `GLOSSARY.md`. Expect to steer it. It reads code and asks you about what it finds, and you decide which of the words already in the codebase are the right ones.
+**Можно направить его на существующий репозиторий совсем без документации?**
+Да. Это правильный скилл для кодовой базы без ADR, без языка предметной области и без принципов дизайна: вызови его и скажи «помоги задокументировать мой репозиторий». Пользователи часто сочетают его с [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture), чтобы построить или починить `GLOSSARY.md`. Готовься им управлять. Он читает код и спрашивает тебя о найденном, а ты решаешь, какие из слов, уже имеющихся в кодовой базе, правильные.
 
-**What should I do when the session ends?**
-The skill's closing message is often open-ended, which is a known problem. In the main flow the answer is [to-spec](https://aihero.dev/skills-to-spec), in the same conversation. If the change is small enough to build immediately, go straight to [implement](https://aihero.dev/skills-implement) instead.
+**Что делать, когда сессия закончилась?**
+Заключительное сообщение скилла часто открытое, и это известная проблема. В основном потоке (flow) ответ: [to-spec](https://aihero.dev/skills-to-spec) в том же разговоре. Если изменение достаточно мало, чтобы строить сразу, иди прямо в [implement](https://aihero.dev/skills-implement).
 
-**Why is it called that?**
-Nobody is happy with the name. There is an open suggestion to rename it `grill-domain-model`, which describes the behaviour more accurately. Nothing has moved on it. If a rename ever lands, the docs page moves with it and the URL changes.
+**Почему он так называется?**
+Название никого не устраивает. Есть открытое предложение переименовать его в `grill-domain-model`, что точнее описывает поведение. Движения по нему нет. Если переименование когда-нибудь случится, страница документации переедет вместе с ним, и URL изменится.
 
-## It's working if
+## Работает, если
 
-- `GLOSSARY.md` changes *during* the session, term by term, rather than appearing in one lump at the end.
-- The glossary reads as pure vocabulary (your project's words with tight definitions) and contains no implementation detail or spec-like prose.
-- Questions the codebase can answer get answered by reading the codebase, not asked of you.
-- You get few or no ADRs, and the ones you get are decisions you would be annoyed to have to argue again.
-- It challenges a word you used because your existing glossary defines it differently.
+- `GLOSSARY.md` меняется *во время* сессии, термин за термином, а не появляется одним куском в конце.
+- Глоссарий читается как чистый словарь (слова твоего проекта с плотными определениями) и не содержит деталей реализации или прозы в духе спецификации.
+- На вопросы, на которые может ответить кодовая база, отвечают чтением кодовой базы, а не спрашивают тебя.
+- ADR мало или нет вовсе, и те, что есть, касаются решений, которые тебе было бы досадно отстаивать заново.
+- Он оспаривает употреблённое тобой слово, потому что твой существующий глоссарий определяет его иначе.
 
-## Where it fits
+## Место в общей картине
 
-`grill-with-docs` is the head of the main build chain:
+`grill-with-docs` стоит в начале основной цепочки разработки:
 
 ```txt
 grill-with-docs → to-spec → to-tickets → implement → code-review → retro
 ```
 
-It comes before anything is written down as a spec. It produces the shared understanding and settled vocabulary that [to-spec](https://aihero.dev/skills-to-spec) then synthesises without interviewing you again. Its close neighbours are [grill-me](https://aihero.dev/skills-grill-me), the same interview with no repo and no files, and [domain-modeling](https://aihero.dev/skills-domain-modeling), the glossary-and-ADR discipline it drives; both use the [grilling](https://aihero.dev/skills-grilling) primitive for the interview. Upstream of it, [wayfinder](https://aihero.dev/skills-wayfinder) charts efforts too large for one session and can hand parts of the map back down to it. When you're unsure which skill or flow fits, [ask-matt](https://aihero.dev/skills-ask-matt) routes you.
+Он идёт до того, как что-либо записано в виде спецификации. Он даёт общее понимание и устоявшийся словарь, которые [to-spec](https://aihero.dev/skills-to-spec) затем сводит воедино, не расспрашивая тебя снова. Его близкие соседи: [grill-me](https://aihero.dev/skills-grill-me), то же интервью без репозитория и без файлов, и [domain-modeling](https://aihero.dev/skills-domain-modeling), дисциплина глоссария и ADR, которую он ведёт; оба используют для интервью примитив [grilling](https://aihero.dev/skills-grilling). Выше по течению [wayfinder](https://aihero.dev/skills-wayfinder) размечает работу, слишком большую для одной сессии, и может передавать ему части карты. Если не уверен, какой скилл или поток подходит, [ask-matt](https://aihero.dev/skills-ask-matt) подскажет маршрут.

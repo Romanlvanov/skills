@@ -1,76 +1,76 @@
-## What it does
+## Что делает
 
-`grill-me` takes a **loose idea** and interviews you until you can commit to it. You do not need a worked-out plan to start, because the [session](https://www.aihero.dev/ai-coding-dictionary/session) exists to produce one. It asks in **rounds**. Each round is the whole **frontier**, which is every question whose prerequisites you have already settled. So it never asks you something that depends on an answer it hasn't heard yet.
+`grill-me` берёт **сырую идею** и расспрашивает тебя, пока ты не сможешь за неё взяться. Продуманный план для старта не нужен: [сессия](https://www.aihero.dev/ai-coding-dictionary/session) для того и существует, чтобы его получить. Вопросы идут **раундами**. Каждый раунд охватывает весь **фронт** (frontier), то есть все вопросы, предпосылки которых ты уже закрыл. Поэтому он никогда не спрашивает то, что зависит от ответа, которого он ещё не слышал.
 
-It is **[stateless](https://www.aihero.dev/ai-coding-dictionary/stateless)**. It writes no files and leaves no workspace behind. The only result is a clearer version of the idea, in your own head.
+Он **[без состояния](https://www.aihero.dev/ai-coding-dictionary/stateless)** (stateless). Он не пишет файлов и не оставляет рабочего пространства. Единственный результат: более ясная версия идеи у тебя в голове.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke this by typing `/grill-me`; the [agent](https://www.aihero.dev/ai-coding-dictionary/agent) won't reach for it on its own. Start it in a **fresh conversation**, not on top of a plan you already had an agent write.
+Ты вызываешь его, набрав `/grill-me`; [агент](https://www.aihero.dev/ai-coding-dictionary/agent) сам к нему не потянется. Начинай в **новом разговоре**, а не поверх плана, который агент тебе уже написал.
 
-Reach for it as soon as you have an idea worth taking seriously (a feature, a product direction, a business call, a piece of writing), and long before you have worked out what it involves. Vagueness is not a reason to wait, because the session exists to remove it. If you can already specify the thing precisely, you don't need to grill it.
+Обращайся к нему, как только у тебя появилась идея, которую стоит принять всерьёз (фича, направление продукта, бизнес-решение, текст), и задолго до того, как ты понял, что она подразумевает. Расплывчатость не повод ждать: сессия для того и нужна, чтобы её убрать. Если ты уже можешь точно описать задуманное, допрашивать (grill) его не нужно.
 
-Which of the three grilling skills you want depends on what is in front of you:
+Какой из трёх скиллов допроса тебе нужен, зависит от того, что перед тобой:
 
-- **Anything, anywhere.** Use `grill-me`. It needs no repo and writes no files, and the subject doesn't have to be code.
-- **A codebase to align against.** Use [grill-with-docs](https://aihero.dev/skills-grill-with-docs). It is the same interview, but [stateful](https://www.aihero.dev/ai-coding-dictionary/stateful): it reads your code and keeps what it learns in `GLOSSARY.md` and ADRs.
-- **Too big for one session.** Use [wayfinder](https://aihero.dev/skills-wayfinder). It charts the effort as a map and runs grilling sessions inside it.
+- **Что угодно и где угодно.** Используй `grill-me`. Ему не нужен репозиторий, он не пишет файлов, и тема не обязана быть кодом.
+- **Есть кодовая база, с которой нужно согласоваться.** Используй [grill-with-docs](https://aihero.dev/skills-grill-with-docs). Это то же интервью, но [с состоянием](https://www.aihero.dev/ai-coding-dictionary/stateful): он читает твой код и сохраняет узнанное в `GLOSSARY.md` и ADR.
+- **Слишком большое для одной сессии.** Используй [wayfinder](https://aihero.dev/skills-wayfinder). Он размечает работу как карту и проводит сессии допроса внутри неё.
 
-Leave [plan mode](https://www.aihero.dev/ai-coding-dictionary/agent-mode) off. Plan mode makes the agent hurry to produce a plan, when you want it to keep asking questions.
+Не включай [режим планирования](https://www.aihero.dev/ai-coding-dictionary/agent-mode) (plan mode). Он заставляет агента спешить с планом, а тебе нужно, чтобы он продолжал задавать вопросы.
 
-## It's a conversation, not an interview
+## Это разговор, а не анкета
 
-The skill asks the questions, but **you** own the scope. People often miss this. It is the difference between a session that turns an idea into decisions and one that produces confident nonsense.
+Вопросы задаёт скилл, но границы задачи определяешь **ты**. Это часто упускают. Именно в этом разница между сессией, которая превращает идею в решения, и сессией, которая выдаёт уверенную чепуху.
 
-The failure mode is **passivity**: answering "agreed, agreed, agreed" for forty questions and coming out with a plan the agent wrote and you nodded at. It feels productive because it was long. But you decided nothing, and the result looks more certain than it is.
+Типичный сбой: **пассивность**. Сорок раз ответить «согласен, согласен, согласен» и выйти с планом, который написал агент, а ты только кивал. Это кажется продуктивным, потому что было долго. Но ты ничего не решил, а результат выглядит увереннее, чем есть на самом деле.
 
-Being active means steering. Push back on a question that is less detailed than you need. Say when the scope is drifting. Answer "I don't know" and mean it. This skill helps an engineer and does not replace one. The quality of the result depends on the quality of your answers, not on the number of questions.
+Быть активным значит рулить. Возражай, если вопрос менее детальный, чем тебе нужно. Говори, когда границы задачи уплывают. Отвечай «не знаю» и имей это в виду. Этот скилл помогает инженеру, а не заменяет его. Качество результата зависит от качества твоих ответов, а не от числа вопросов.
 
-The opposite error is real but rarer: staying in the interview so long you never reach code.
+Обратная ошибка реальна, но реже: так долго сидеть в интервью, что до кода дело так и не доходит.
 
-## Grillable and ungrillable
+## Решаемое допросом и нерешаемое
 
-Some questions can be answered by talking. Others can't, and no amount of grilling will get you there.
+На одни вопросы можно ответить разговором. На другие нельзя, и никакой допрос туда не доведёт.
 
-"One long form or three pages?" and "how should this interaction feel?" are **ungrillable**. You need something to react to before you can answer them. When you hit one, stop grilling. Build the throwaway version with [prototype](https://aihero.dev/skills-prototype), look at it, then come back and answer in one line.
+«Одна длинная форма или три страницы?» и «каким должно ощущаться это взаимодействие?» **не решаются допросом**. Чтобы на них ответить, нужно на что-то посмотреть и отреагировать. Наткнувшись на такой вопрос, прекрати допрос. Собери одноразовую версию с помощью [prototype](https://aihero.dev/skills-prototype), посмотри на неё, затем вернись и ответь одной строкой.
 
-Sessions grow too long when you try to talk through an ungrillable question. The agent keeps rephrasing, you keep guessing, and the scope grows with the uncertainty.
+Сессии затягиваются, когда пытаешься обсудить словами вопрос, не решаемый допросом. Агент снова и снова переформулирует, ты снова и снова гадаешь, и границы задачи растут вместе с неопределённостью.
 
-## It's working if
+## Работает, если
 
-- You disagree with something. A session with no pushback from you is a session you didn't need.
-- Questions arrive in a few rounds, not one at a time for a long time, and later rounds clearly build on what you said earlier.
-- You end up somewhere you didn't expect, because a question showed you a decision you had been making without noticing.
-- At the end you could defend each choice to someone who wasn't there.
+- Ты с чем-то не соглашаешься. Сессия, в которой ты ни разу не возразил, была тебе не нужна.
+- Вопросы приходят несколькими раундами, а не по одному долгое время, и поздние раунды явно опираются на сказанное тобой раньше.
+- Ты приходишь туда, куда не ожидал, потому что вопрос показал тебе решение, которое ты принимал, не замечая.
+- В конце ты можешь защитить каждый выбор перед человеком, которого не было на сессии.
 
-## Common questions
+## Частые вопросы
 
-**How many questions should I expect, and how do I know when it ends?**
-Count rounds, not questions. Forty-six questions across four rounds is an ordinary session. It ends when the frontier is empty: it has visited every branch, and nothing is left as an unstated assumption.
+**Сколько вопросов ждать и как понять, что всё закончилось?**
+Считай раунды, а не вопросы. Сорок шесть вопросов в четырёх раундах: обычная сессия. Она заканчивается, когда фронт пуст: пройдена каждая ветвь, и не осталось ничего в виде невысказанного допущения.
 
-**It asked me two hundred questions. What went wrong?**
-Usually the scope was too large. Ask the agent to break the work into smaller pieces first, then grill each one. Very long sessions also drift into the **[dumb zone](https://www.aihero.dev/ai-coding-dictionary/smart-zone)**, where the [context window](https://www.aihero.dev/ai-coding-dictionary/context-window) is full enough that the questions get worse.
+**Он задал мне двести вопросов. Что пошло не так?**
+Обычно слишком велики были границы задачи. Сначала попроси агента разбить работу на части поменьше, затем допроси каждую. Очень длинные сессии к тому же сползают в **[глупую зону](https://www.aihero.dev/ai-coding-dictionary/smart-zone)** (dumb zone), где [контекстное окно](https://www.aihero.dev/ai-coding-dictionary/context-window) настолько заполнено, что вопросы становятся хуже.
 
-**Can I go back to one question at a time?**
-Yes. Add this to your global `CLAUDE.md`:
+**Можно вернуться к вопросам по одному?**
+Да. Добавь это в свой глобальный `CLAUDE.md`:
 
 ```
 When grilling, ask one question at a time.
 ```
 
-**What if I genuinely don't know the answer?**
-Say so. "I don't know" is a real answer, and a question you can't answer is usually a sign to prototype rather than to guess.
+**А если я правда не знаю ответа?**
+Так и скажи. «Не знаю» вполне полноценный ответ, а вопрос, на который ты не можешь ответить, обычно сигнал сделать прототип, а не гадать.
 
-**Do I start a fresh session before writing the spec?**
-No. The value of the session is the [context](https://www.aihero.dev/ai-coding-dictionary/context) you just built. Hand the same conversation straight to [to-spec](https://aihero.dev/skills-to-spec).
+**Начинать ли новую сессию перед написанием спецификации?**
+Нет. Ценность сессии в [контексте](https://www.aihero.dev/ai-coding-dictionary/context), который ты только что построил. Передай тот же разговор прямо в [to-spec](https://aihero.dev/skills-to-spec).
 
-**Does the model matter?**
-More than for most skills. Grilling depends on the [model](https://www.aihero.dev/ai-coding-dictionary/model)'s own knowledge of how systems break, so use your best one. Implementation mostly follows context, so a cheaper model is fine there.
+**Важна ли модель?**
+Больше, чем для большинства скиллов. Допрос опирается на собственные знания [модели](https://www.aihero.dev/ai-coding-dictionary/model) о том, как ломаются системы, поэтому используй лучшую. Реализация в основном следует контексту, так что там подойдёт модель подешевле.
 
-## Where it fits
+## Место в общей картине
 
-`grill-me` is a **standalone you can run anywhere, on anything**. Because it is stateless, it is portable. It needs no repo, workspace, or setup, and does not assume the idea is about software. People use it for business decisions, for writing, and for what to do next: anything they cannot think through clearly on their own.
+`grill-me`: **самостоятельный инструмент, который можно запустить где угодно и о чём угодно**. Раз он без состояния, он переносим. Ему не нужны репозиторий, рабочее пространство или настройка, и он не предполагает, что идея касается софта. Им пользуются для бизнес-решений, для текстов и для выбора следующего шага: для всего, что не получается ясно продумать в одиночку.
 
-Portability is the only difference from [grill-with-docs](https://aihero.dev/skills-grill-with-docs). That skill runs the same interview, but reads a codebase to align against and records what it learns as `GLOSSARY.md` and ADRs. Both use the [grilling](https://aihero.dev/skills-grilling) skill underneath. `grill-me` is the user-invoked entry point that keeps no state.
+Переносимость составляет единственное отличие от [grill-with-docs](https://aihero.dev/skills-grill-with-docs). Тот скилл проводит то же интервью, но читает кодовую базу для согласования и записывает узнанное в `GLOSSARY.md` и ADR. Оба используют под капотом скилл [grilling](https://aihero.dev/skills-grilling). `grill-me` служит точкой входа, вызываемой пользователем, и не хранит состояния.
 
-If what you grilled does turn out to be software, you can hand the same conversation to [to-spec](https://aihero.dev/skills-to-spec) and carry on into the build flow (an option, not the point of the skill). When you're unsure which flow fits, [ask-matt](https://aihero.dev/skills-ask-matt) routes you.
+Если то, что ты допрашивал, окажется софтом, можно передать тот же разговор в [to-spec](https://aihero.dev/skills-to-spec) и перейти к процессу разработки (это возможность, а не цель скилла). Если не уверен, какой поток (flow) подходит, [ask-matt](https://aihero.dev/skills-ask-matt) подскажет маршрут.

@@ -1,113 +1,113 @@
-## What it does
+## Что делает
 
-`improve-codebase-architecture` surveys a codebase for **deepening opportunities**. These are places where a shallow module (an interface nearly as complex as the thing it hides) could become a deep one. It writes them up as a self-contained HTML report, and then [grills](https://www.aihero.dev/ai-coding-dictionary/grilling) you through the one you pick.
+`improve-codebase-architecture` обследует кодовую базу в поисках **возможностей для углубления**. Это места, где мелкий модуль (интерфейс почти так же сложен, как то, что он скрывает) мог бы стать глубоким. Он оформляет их в самодостаточный HTML-отчёт, а затем [допрашивает](https://www.aihero.dev/ai-coding-dictionary/grilling) тебя по тому кандидату, который ты выберешь.
 
-It never changes the code. The whole run produces a conversation and one HTML file in your OS temp directory. You do the refactor later, in a separate [session](https://www.aihero.dev/ai-coding-dictionary/session), through the normal build flow. This makes it a survey, not a refactoring tool, so you can run it on a codebase you are not ready to touch yet.
+Код он никогда не меняет. Весь прогон даёт разговор и один HTML-файл во временном каталоге ОС. Рефакторинг ты делаешь потом, в отдельной [сессии](https://www.aihero.dev/ai-coding-dictionary/session), через обычный процесс разработки. Поэтому это обследование, а не инструмент рефакторинга, и его можно запускать на кодовой базе, которую ты пока не готов трогать.
 
-Two filters stop the report from becoming generic cleanup advice. First, every candidate must pass the **deletion test**: if you removed this module, would its complexity move behind a smaller interface, or spread across the callers? Only the first case gets a card. Second, unless you point it at a specific area, it reads recent commit history first and focuses the scan on paths that change often. A deepening in code that nobody touches is a refactor that never pays back.
+Два фильтра не дают отчёту превратиться в общие советы по уборке. Во-первых, каждый кандидат должен пройти **тест удаления**: если убрать этот модуль, переместится ли его сложность за меньший интерфейс или расползётся по вызывающим? Карточку получает только первый случай. Во-вторых, если ты не указал конкретную область, он сначала читает недавнюю историю коммитов и сосредотачивает сканирование на часто меняющихся путях. Углубление в коде, который никто не трогает, означает рефакторинг, который никогда не окупится.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke this by typing `/improve-codebase-architecture`; the [agent](https://www.aihero.dev/ai-coding-dictionary/agent) will not reach for it on its own.
+Ты вызываешь его, набрав `/improve-codebase-architecture`; [агент](https://www.aihero.dev/ai-coding-dictionary/agent) сам к нему не потянется.
 
-It is not a step in the main build loop. You run it periodically to queue up more work that improves the codebase. People use it in four situations:
+Это не шаг основного цикла разработки. Ты запускаешь его периодически, чтобы поставить в очередь ещё работу по улучшению кодовой базы. Его используют в четырёх ситуациях:
 
-| Situation | How it is used |
+| Ситуация | Как используется |
 | --- | --- |
-| Routine upkeep | Run it every few days, or when you have a spare moment, so the structure does not decay between features. |
-| Before a big build | Point it at the [spec](https://www.aihero.dev/ai-coding-dictionary/spec) and ask "how can we make this change easy?" This is the most effective prompt for it. |
-| Brownfield audit | Run it on a large, unstructured or [vibe-coded](https://www.aihero.dev/ai-coding-dictionary/vibe-coding) repo to find out what shape it is in. |
-| Legacy test work | Use it to find the missing seams before you write tests against untestable code. |
+| Плановое поддержание | Запускай раз в несколько дней или когда есть свободная минута, чтобы структура не деградировала между фичами. |
+| Перед большой разработкой | Направь его на [спецификацию](https://www.aihero.dev/ai-coding-dictionary/spec) и спроси «как сделать это изменение лёгким?». Это самый действенный промпт для него. |
+| Аудит унаследованного кода | Запусти на большом, неструктурированном или написанном [вайб-кодингом](https://www.aihero.dev/ai-coding-dictionary/vibe-coding) репозитории, чтобы понять, в какой он форме. |
+| Тесты для легаси | Используй, чтобы найти недостающие швы, прежде чем писать тесты к нетестируемому коду. |
 
-Where it is confusable with siblings:
+Где его можно спутать с соседями:
 
-- To design one module you have already chosen, use [codebase-design](https://aihero.dev/skills-codebase-design). This skill finds the module to work on, and `codebase-design` is where you design it.
-- For a whole effort too big to hold in one session, use [wayfinder](https://aihero.dev/skills-wayfinder).
-- For "this specific thing is broken," use [diagnosing-bugs](https://aihero.dev/skills-diagnosing-bugs). It sends you back here when the real finding is that there is no good seam to lock the bug down.
+- Чтобы спроектировать один уже выбранный модуль, используй [codebase-design](https://aihero.dev/skills-codebase-design). Этот скилл находит модуль для работы, а в `codebase-design` ты его проектируешь.
+- Для целой работы, слишком большой для одной сессии, используй [wayfinder](https://aihero.dev/skills-wayfinder).
+- Для «сломалась вот эта конкретная вещь» используй [diagnosing-bugs](https://aihero.dev/skills-diagnosing-bugs). Он отправляет тебя сюда, когда настоящая находка в том, что нет хорошего шва, чтобы зафиксировать баг.
 
-## Prerequisites
+## Предварительные условия
 
-None to run it. If `GLOSSARY.md` or ADRs in `docs/adr/` exist, it reads them and uses your domain's own nouns. A candidate then reads as "deepen the Order intake module," not "refactor the FooBarHandler."
+Для запуска ничего не нужно. Если существуют `GLOSSARY.md` или ADR в `docs/adr/`, он их читает и использует собственные существительные твоей предметной области. Тогда кандидат звучит как «углубить модуль приёма заказов (Order intake)», а не «отрефакторить FooBarHandler».
 
-It writes in two places. The report goes to `<tmpdir>/architecture-review-<timestamp>.html`, outside the repo. During the grilling loop it adds or sharpens terms in `GLOSSARY.md`, and creates that file if it does not exist. It also offers to record a rejected candidate as an ADR, so a future run does not suggest it again.
+Он пишет в два места. Отчёт идёт в `<tmpdir>/architecture-review-<timestamp>.html`, вне репозитория. Во время цикла допроса он добавляет или уточняет термины в `GLOSSARY.md` и создаёт этот файл, если его нет. Кроме того, он предлагает записать отвергнутого кандидата как ADR, чтобы будущий прогон не предлагал его снова.
 
-## Depth, and the report that hunts for it
+## Глубина и отчёт, который её ищет
 
-The skill rests on one idea: **depth**. A deep module puts a lot of behaviour behind a small, stable interface. A shallow module exposes its implementation through an interface nearly as wide as the code beneath it. The report looks for three forms of shallowness:
+Скилл держится на одной идее: **глубина**. Глубокий модуль прячет много поведения за маленьким стабильным интерфейсом. Мелкий модуль выставляет свою реализацию через интерфейс почти такой же ширины, как код под ним. Отчёт ищет три формы мелкости:
 
-- Pure functions extracted only for testability, while the real bugs are in how callers use them (no **locality**).
-- Modules that leak across their **seams**.
-- A concept you cannot understand without opening five files.
+- Чистые функции, выделенные только ради тестируемости, тогда как настоящие баги в том, как их используют вызывающие (нет **локальности**).
+- Модули, протекающие через свои **швы**.
+- Понятие, которое невозможно понять, не открыв пять файлов.
 
-For each one, it proposes the deepening that fixes it.
+Для каждой он предлагает углубление, которое её исправляет.
 
-Each candidate is a card with the files involved, the friction, a plain-English solution, the benefit in terms of **locality** and **leverage**, a before/after diagram, and a strength badge.
+Каждый кандидат оформлен карточкой с задействованными файлами, трением, решением простыми словами, выгодой в терминах **локальности** и **рычага**, диаграммой «до/после» и бейджем силы.
 
-| Badge | What it means for you |
+| Бейдж | Что это значит для тебя |
 | --- | --- |
-| `Strong` | The deletion test passes clearly and the friction is real. Take these seriously. |
-| `Worth exploring` | Plausible deepening, but the payoff depends on where the code is going next. |
-| `Speculative` | Included for completeness. You can ignore most of these. |
+| `Strong` | Тест удаления явно проходит, и трение реально. К ним относись серьёзно. |
+| `Worth exploring` | Правдоподобное углубление, но отдача зависит от того, куда код будет развиваться дальше. |
+| `Speculative` | Включено для полноты. Большинство из них можно игнорировать. |
 
-The report ends with a **Top recommendation**, the candidate it would do first. Then the skill stops and asks which candidate you want to explore. At that point you have decided nothing, and no code has changed.
+Отчёт заканчивается **главной рекомендацией**: кандидатом, с которого он начал бы. Затем скилл останавливается и спрашивает, какого кандидата ты хочешь исследовать. На этот момент ты ничего не решил, и ни строчки кода не изменилось.
 
-## What happens after you pick one
+## Что происходит после выбора
 
-When you pick a candidate, a [grilling](https://aihero.dev/skills-grilling) session starts on it. It covers the constraints, what goes behind the seam, which tests survive, and what the deepened interface should look like. The output of that session is a decision, not a diff. From there the normal flow applies: take the decision into [to-spec](https://aihero.dev/skills-to-spec), then [to-tickets](https://aihero.dev/skills-to-tickets), then [implement](https://aihero.dev/skills-implement).
+Когда ты выбираешь кандидата, по нему начинается сессия [допроса](https://aihero.dev/skills-grilling). Она охватывает ограничения, что пойдёт за шов, какие тесты выживут и как должен выглядеть углублённый интерфейс. Результатом сессии будет решение, а не дифф. Дальше действует обычный процесс: отнеси решение в [to-spec](https://aihero.dev/skills-to-spec), затем в [to-tickets](https://aihero.dev/skills-to-tickets), затем в [implement](https://aihero.dev/skills-implement).
 
-## Common questions
+## Частые вопросы
 
-**It grilled me for an hour about one idea instead of showing me options. Can I turn that off?**
+**Он час допрашивал меня об одной идее вместо того, чтобы показать варианты. Это можно отключить?**
 
-Yes. Say so when you invoke it ("don't grill me, just show the report"). This is the most common complaint about the skill. One user liked it as "a convenient way to get a thorough analysis of improvements," but after the grilling loop was added, found it "borderline unusable." In their sessions it proposed a single solution and then asked "10's or 100's of questions." The design intent is that the report comes first, and the grilling starts only on a candidate you chose. But weaker [models](https://www.aihero.dev/ai-coding-dictionary/model) skip straight to an interview about the first idea they had. Results in that thread vary a lot by model. It is an open issue, and the skill does not yet have a documented no-grill mode.
+Да. Скажи об этом при вызове («не допрашивай меня, просто покажи отчёт»). Это самая частая жалоба на скилл. Одному пользователю он нравился как «удобный способ получить тщательный анализ улучшений» ("a convenient way to get a thorough analysis of improvements"), но после добавления цикла допроса он счёл его «почти непригодным» ("borderline unusable"). В его сессиях скилл предлагал единственное решение, а затем задавал «десятки или сотни вопросов» ("10's or 100's of questions"). По замыслу сначала идёт отчёт, а допрос начинается только по выбранному тобой кандидату. Но более слабые [модели](https://www.aihero.dev/ai-coding-dictionary/model) сразу переходят к интервью о первой пришедшей им идее. Результаты в том обсуждении сильно зависят от модели. Задача открыта, и задокументированного режима без допроса у скилла пока нет.
 
-**The report opened as unstyled raw HTML with no diagrams. What happened?**
+**Отчёт открылся как голый HTML без стилей и диаграмм. Что случилось?**
 
-The report loads Tailwind and Mermaid from CDNs, so it needs network access when you open it. If something blocks those scripts, the page breaks with no error. In the reported case, a security hook required SRI hashes. The agent added them, but the CDN served different bytes to the browser than to the `curl` that computed the hash, so the browser blocked the script. Offline and locked-down environments have the same problem. The agent cannot see it, because it never renders the page. As a workaround, ask for inline CSS and hand-built SVG diagrams instead of the CDN setup. This is an open issue.
+Отчёт загружает Tailwind и Mermaid с CDN, поэтому при открытии ему нужен доступ к сети. Если что-то блокирует эти скрипты, страница ломается без ошибки. В описанном случае хук безопасности требовал SRI-хеши. Агент их добавил, но CDN отдавал браузеру другие байты, чем `curl`, вычислявшему хеш, и браузер заблокировал скрипт. У офлайновых и закрытых окружений та же проблема. Агент её не видит, потому что никогда не отрисовывает страницу. В качестве обходного пути попроси встроенный CSS и SVG-диаграммы, сделанные вручную, вместо CDN. Задача открыта.
 
-**It gave me twelve candidates. Do I work through them in the same session or start a new one?**
+**Он дал мне двенадцать кандидатов. Разбирать их в той же сессии или начинать новую?**
 
-Use one candidate per session. If you work through several in one conversation, the [context window](https://www.aihero.dev/ai-coding-dictionary/context-window) fills with the report, the grilling, the domain-model edits and the code changes all at once. The report is only a temp file, so carry the candidate forward, not the file. Pick one, grill it, and take the decision into `/to-spec`. Turn the rest into [tickets](https://www.aihero.dev/ai-coding-dictionary/ticket) that you can pick up separately later. Put the chosen improvement into a spec instead of going straight to implementation. People ask this often, and the skill itself documents no workflow for it.
+Один кандидат на сессию. Если разбирать несколько в одном разговоре, [контекстное окно](https://www.aihero.dev/ai-coding-dictionary/context-window) заполнится отчётом, допросом, правками модели предметной области и изменениями кода сразу. Отчёт всего лишь лежит во временном файле, так что неси дальше кандидата, а не файл. Выбери одного, допроси, отнеси решение в `/to-spec`. Остальных преврати в [тикеты](https://www.aihero.dev/ai-coding-dictionary/ticket), которые можно будет взять отдельно позже. Выбранное улучшение оформляй в спецификацию, а не иди сразу в реализацию. Об этом спрашивают часто, а сам скилл никакого процесса для этого не документирует.
 
-**How should I prompt it?**
+**Каким промптом его запускать?**
 
-Prompt it with the next thing you are building. If a big build is coming up, point it at the spec and ask "how can we make this change easy?" A run with no prompt looks for hot spots on its own. That is fine for routine upkeep, but a direction makes the report actionable.
+Следующей вещью, которую ты строишь. Если впереди большая разработка, направь его на спецификацию и спроси «как сделать это изменение лёгким?». Прогон без промпта сам ищет горячие точки. Для планового поддержания это нормально, но направление делает отчёт пригодным для действий.
 
-**Does it work on a large legacy codebase?**
+**Работает ли он на большой унаследованной кодовой базе?**
 
-Partly. It works well on big existing codebases that lack consistent structure, and it is the recommended upkeep tool after any one-time structural setup. But users with out-of-control projects report it "helped a little but still doesn't seem to cut it." One developer with an eight-year-old legacy codebase reported that the model went in circles, though the same skill produces a clean graph on a tidy repo. There is no dedicated `/refactor` skill for that case yet. If the codebase has no shared vocabulary, run [grill-with-docs](https://aihero.dev/skills-grill-with-docs) first to create one. That usually makes this skill's output much better.
+Отчасти. Он хорошо работает на больших существующих кодовых базах без единообразной структуры и рекомендуется как инструмент поддержания после любой разовой структурной настройки. Но пользователи с вышедшими из-под контроля проектами сообщают, что он «немного помог, но всё равно не справляется» ("helped a little but still doesn't seem to cut it"). Один разработчик с восьмилетней унаследованной кодовой базой сообщил, что модель ходила по кругу, хотя тот же скилл даёт чистый граф на аккуратном репозитории. Отдельного скилла `/refactor` для такого случая пока нет. Если у кодовой базы нет общего словаря, сначала запусти [grill-with-docs](https://aihero.dev/skills-grill-with-docs), чтобы его создать. Обычно это заметно улучшает результат этого скилла.
 
-**How is this different from `/codebase-design`?**
+**Чем он отличается от `/codebase-design`?**
 
-`/codebase-design` is a reference, not a session driver. It supplies the vocabulary (module, interface, depth, seam, adapter, leverage, locality), and this skill uses it. If you give a fresh agent `/codebase-design` as the task, it fails in a known way. It has no process of its own to follow, so the agent invents one, explores the code again, and runs for a very long time before it asks you anything. Run this skill, and let it use that one.
+`/codebase-design` служит справочником, а не ведущим сессию скиллом. Он даёт словарь (модуль, интерфейс, глубина, шов, адаптер, рычаг, локальность), а этот скилл им пользуется. Если дать свежему агенту `/codebase-design` в качестве задачи, он сломается известным образом. Собственного процесса у него нет, так что агент придумывает процесс, заново исследует код и очень долго работает, прежде чем что-нибудь спросить. Запускай этот скилл, и пусть он пользуется тем.
 
-**Will it ever tell me the codebase is fine?**
+**Скажет ли он когда-нибудь, что с кодовой базой всё в порядке?**
 
-Rarely, so know that before you start. The skill exists to output findings, so it tends to produce candidates instead of concluding that nothing is wrong. Use the strength badges to correct for this. If every candidate in a report is `Speculative`, the skill found nothing.
+Редко, так что знай это заранее. Скилл существует, чтобы выдавать находки, поэтому склонен выдавать кандидатов, а не заключать, что всё хорошо. Делай поправку с помощью бейджей силы. Если все кандидаты в отчёте `Speculative`, скилл ничего не нашёл.
 
-**Does it work in Codex or another harness?**
+**Работает ли он в Codex или другом харнессе (harness)?**
 
-Partly. The exploration step names Claude Code's `Agent` tool with `subagent_type=Explore` directly. A [harness](https://www.aihero.dev/ai-coding-dictionary/harness) without that tool may skip the parallel exploration instead of using its own equivalent. The skill still runs, but the scan is less thorough. Someone has proposed a harness-neutral rewrite, but it is not merged.
+Отчасти. Шаг исследования прямо называет инструмент Claude Code `Agent` с `subagent_type=Explore`. [Харнесс](https://www.aihero.dev/ai-coding-dictionary/harness) без этого инструмента может пропустить параллельное исследование вместо использования своего аналога. Скилл всё равно работает, но сканирование менее тщательное. Кто-то предложил переписать его нейтрально к харнессу, но это не смержено.
 
-**How do I actually implement deep modules in TypeScript?**
+**Как на самом деле реализовать глубокие модули на TypeScript?**
 
-The skill does not ship a good answer. People often ask for a `TYPESCRIPT.md` with concrete file and module layouts for the principles, and it does not exist. The skill tells you where a deepening belongs and what goes behind the seam. You must turn that into a package or directory structure yourself.
+Хорошего ответа скилл не поставляет. Часто просят `TYPESCRIPT.md` с конкретной раскладкой файлов и модулей под эти принципы, но его нет. Скилл говорит, где место углублению и что пойдёт за шов. Превратить это в структуру пакетов или каталогов тебе придётся самому.
 
-## It's working if
+## Работает, если
 
-- The candidates name your domain's concepts, not invented class names: "the Order intake module," not "the FooBarHandler."
-- The candidates are in files you edited recently, not in parts of the repo nobody touches.
-- No code changed during the run. The only new file is the HTML report in your temp directory.
-- It stops after the report and asks which candidate you want. It does not continue on its own.
-- Each card explains the payoff as locality or leverage, and says which tests get simpler, not just "this is cleaner."
-- When you reject a candidate for a lasting reason, it offers to record an ADR, so the next run does not suggest it again.
+- Кандидаты называют понятия твоей предметной области, а не выдуманные имена классов: «модуль приёма заказов», а не «FooBarHandler».
+- Кандидаты находятся в файлах, которые ты недавно правил, а не в частях репозитория, которых никто не трогает.
+- Во время прогона код не изменился. Единственный новый файл: HTML-отчёт во временном каталоге.
+- После отчёта он останавливается и спрашивает, какой кандидат тебе нужен. Сам он не продолжает.
+- Каждая карточка объясняет выгоду через локальность или рычаг и говорит, какие тесты станут проще, а не просто «так чище».
+- Когда ты отвергаешь кандидата по устойчивой причине, он предлагает записать ADR, чтобы следующий прогон не предлагал его снова.
 
-## Where it fits
+## Место в общей картине
 
-`improve-codebase-architecture` is **periodic maintenance**. You run it every few days, outside any chain, to queue up work, not to do it. Its neighbours:
+`improve-codebase-architecture` служит **периодическим обслуживанием**. Ты запускаешь его раз в несколько дней, вне любой цепочки, чтобы поставить работу в очередь, а не чтобы её делать. Его соседи:
 
-- [codebase-design](https://aihero.dev/skills-codebase-design) owns the depth-and-seam vocabulary that every candidate uses.
-- [grilling](https://aihero.dev/skills-grilling) walks the decision tree after you choose a candidate.
-- [domain-modeling](https://aihero.dev/skills-domain-modeling) keeps `GLOSSARY.md` and the ADRs current as you make the decision.
+- [codebase-design](https://aihero.dev/skills-codebase-design) владеет словарём глубины и швов, которым пользуется каждый кандидат.
+- [grilling](https://aihero.dev/skills-grilling) проходит по дереву решений после того, как ты выбрал кандидата.
+- [domain-modeling](https://aihero.dev/skills-domain-modeling) поддерживает `GLOSSARY.md` и ADR в актуальном состоянии, пока ты принимаешь решение.
 
-Its output is an idea, which goes back into the main build flow at [grill-with-docs](https://aihero.dev/skills-grill-with-docs) or [to-spec](https://aihero.dev/skills-to-spec). Its counterpart at the end of the main flow is [retro](https://aihero.dev/skills-retro). This skill improves the code the agent works in, and `retro` improves the environment around it (checks, standards, steering files) after a build. For which skill fits a situation, [ask-matt](https://aihero.dev/skills-ask-matt) is the router over the whole set.
+Его результатом становится идея, которая возвращается в основной процесс разработки через [grill-with-docs](https://aihero.dev/skills-grill-with-docs) или [to-spec](https://aihero.dev/skills-to-spec). Его аналог в конце основного потока (flow): [retro](https://aihero.dev/skills-retro). Этот скилл улучшает код, в котором работает агент, а `retro` после разработки улучшает окружение вокруг него (проверки, стандарты, управляющие файлы). Чтобы понять, какой скилл подходит к ситуации, используй [ask-matt](https://aihero.dev/skills-ask-matt), маршрутизатор по всему набору.

@@ -1,109 +1,109 @@
-## What it does
+## Что делает
 
-`triage` works through the issues on your project's tracker. It moves each one through a small state machine of **triage roles** (a category role and a state role). Each issue ends as an agent-ready brief, a specific question for the reporter, or a closed issue with a recorded reason.
+`triage` прорабатывает задачи (issues) в трекере твоего проекта. Он проводит каждую через небольшой конечный автомат **ролей триажа** (роль категории и роль состояния). Каждая задача заканчивается брифом для агента, готовым к работе, конкретным вопросом к автору задачи или закрытием с записанной причиной.
 
-It is only for issues **you didn't create**. That means raw bug reports, incoming feature requests, or an external pull request that arrived unannounced: work that came into the tracker from outside, in whatever shape the reporter left it. [Tickets](https://www.aihero.dev/ai-coding-dictionary/ticket) from [to-tickets](https://aihero.dev/skills-to-tickets) are already agent-ready, so if you run `triage` over them, you waste the work. The rule is simple: `/triage` is only for incoming issues, not for issues you created yourself.
+Он предназначен только для задач, **которые создал не ты**. Это сырые баг-репорты, входящие запросы на фичи или внешний pull request, пришедший без предупреждения: работа, попавшая в трекер извне в том виде, в каком её оставил автор. [Тикеты](https://www.aihero.dev/ai-coding-dictionary/ticket) из [to-tickets](https://aihero.dev/skills-to-tickets) уже готовы для агента, так что прогон `triage` по ним сводит на нет проделанную работу. Правило простое: `/triage` только для входящих задач, а не для задач, которые ты создал сам.
 
-It also differs from labelling by hand because it recommends and then waits. It gives you its category and state call with reasoning, plus what it found in the codebase, and applies nothing until you tell it to.
+От ручной расстановки меток он отличается ещё и тем, что рекомендует, а затем ждёт. Он даёт тебе свою оценку категории и состояния с обоснованием плюс то, что нашёл в кодовой базе, и ничего не применяет, пока ты не скажешь.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke this by typing `/triage` and then describing what you want in plain language. The [agent](https://www.aihero.dev/ai-coding-dictionary/agent) won't reach for it on its own. Examples: "Show me anything that needs my attention", "let's look at #42", "move #42 to ready-for-agent".
+Ты вызываешь его, набрав `/triage` и описав простыми словами, чего хочешь. [Агент](https://www.aihero.dev/ai-coding-dictionary/agent) сам к нему не потянется. Примеры: «Покажи всё, что требует моего внимания», «давай посмотрим #42», «переведи #42 в ready-for-agent».
 
-| What you have | Where to go |
+| Что у тебя есть | Куда идти |
 | --- | --- |
-| A tracker full of raw reports from other people | `/triage` |
-| A rough idea of your own, nothing written down | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
-| A settled conversation to turn into a [spec](https://www.aihero.dev/ai-coding-dictionary/spec) | [to-spec](https://aihero.dev/skills-to-spec) |
-| A spec to split into agent-ready tickets | [to-tickets](https://aihero.dev/skills-to-tickets) |
-| A confirmed bug that needs a root cause, not a label | [diagnosing-bugs](https://aihero.dev/skills-diagnosing-bugs) |
+| Трекер, полный сырых отчётов от других людей | `/triage` |
+| Собственная черновая идея, ничего не записано | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
+| Устоявшийся разговор, который нужно превратить в [спецификацию](https://www.aihero.dev/ai-coding-dictionary/spec) | [to-spec](https://aihero.dev/skills-to-spec) |
+| Спецификация, которую нужно разбить на тикеты, готовые для агента | [to-tickets](https://aihero.dev/skills-to-tickets) |
+| Подтверждённый баг, которому нужна первопричина, а не метка | [diagnosing-bugs](https://aihero.dev/skills-diagnosing-bugs) |
 
-## Prerequisites
+## Предварительные условия
 
-`triage` reads and writes your issue tracker, so [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) must first configure that tracker and its label vocabulary. The role names below are **canonical**. The label strings in your tracker may differ, and setup provides the mapping. If your tracker already uses the canonical names exactly, you have nothing to map and nothing to set up.
+`triage` читает твой трекер задач и пишет в него, поэтому [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) должен сначала настроить трекер и его словарь меток. Имена ролей ниже **канонические**. Строки меток в твоём трекере могут отличаться, и сопоставление даёт настройка. Если твой трекер уже использует ровно канонические имена, сопоставлять и настраивать нечего.
 
-The tracker config also decides whether external pull requests count as a request surface, and who counts as external. That flag is off by default, and setup no longer asks about it. To bring PRs into scope, turn it on in `docs/agents/issue-tracker.md`.
+Конфигурация трекера также решает, считаются ли внешние pull request источником запросов и кто считается внешним. По умолчанию этот флаг выключен, и настройка больше о нём не спрашивает. Чтобы включить PR в рассмотрение, включи его в `docs/agents/issue-tracker.md`.
 
-## The state machine
+## Конечный автомат
 
-Every triaged item ends with exactly one category role and one state role. There are two categories: `bug` (something is broken) and `enhancement` (new feature or improvement). There are five states:
+Каждый прошедший триаж элемент заканчивается ровно одной ролью категории и одной ролью состояния. Категорий две: `bug` (что-то сломано) и `enhancement` (новая фича или улучшение). Состояний пять:
 
-| State | Means |
+| Состояние | Означает |
 | --- | --- |
-| `needs-triage` | You need to evaluate it. An unlabelled issue normally lands here first. |
-| `needs-info` | Waiting on the reporter. Returns to `needs-triage` when they reply. |
-| `ready-for-agent` | Fully specified, with an agent brief attached. An [AFK](https://www.aihero.dev/ai-coding-dictionary/afk) agent can take it. |
-| `ready-for-human` | The same brief, plus why an agent can't do it: judgment, external access, manual testing. |
-| `wontfix` | Closed, with the reason recorded. |
+| `needs-triage` | Тебе нужно её оценить. Задача без меток обычно сначала попадает сюда. |
+| `needs-info` | Ждём автора задачи. Возвращается в `needs-triage`, когда он ответит. |
+| `ready-for-agent` | Полностью описана, с приложенным брифом для агента. Её может взять [AFK](https://www.aihero.dev/ai-coding-dictionary/afk)-агент. |
+| `ready-for-human` | Тот же бриф плюс причина, почему агент не может её сделать: нужно суждение, внешний доступ, ручное тестирование. |
+| `wontfix` | Закрыта, причина записана. |
 
-That is the whole vocabulary. The rule of exactly one state role per item keeps the queries simple. The states are also the most-requested area of the [skill](https://www.aihero.dev/ai-coding-dictionary/skill). Users have asked for a state for work that is specified but blocked on another issue, a `deferred` state for work that waits on a future trigger, and a terminal `implemented` state. None of those has shipped. See the questions below.
+Это весь словарь. Правило «ровно одна роль состояния на элемент» сохраняет запросы простыми. Состояния ещё и самая запрашиваемая область [скилла](https://www.aihero.dev/ai-coding-dictionary/skill). Пользователи просили состояние для работы, которая описана, но заблокирована другой задачей, состояние `deferred` для работы, ждущей будущего триггера, и конечное состояние `implemented`. Ничто из этого не выпущено. См. вопросы ниже.
 
-`wontfix` has three cases. The difference matters because only one of them writes to the knowledge base:
+У `wontfix` три случая. Разница важна, потому что только один из них пишет в базу знаний:
 
-| Why you're closing it | What happens |
+| Почему закрываешь | Что происходит |
 | --- | --- |
-| Already implemented | A comment that points to where the feature already lives. Nothing goes into `.out-of-scope/`, because it's a built feature, not a rejected one, and a file there would break the dedup checks. |
-| Rejected bug | Polite explanation, then close. |
-| Rejected enhancement | A file in `.out-of-scope/`, linked from the closing comment, then close. |
+| Уже реализовано | Комментарий, указывающий, где фича уже живёт. В `.out-of-scope/` ничего не идёт, потому что это построенная фича, а не отвергнутая, и файл там сломал бы проверки на дубликаты. |
+| Отвергнутый баг | Вежливое объяснение, затем закрытие. |
+| Отвергнутое улучшение | Файл в `.out-of-scope/`, на который ссылается закрывающий комментарий, затем закрытие. |
 
-`.out-of-scope/` holds one markdown file per rejected **concept**, not per issue. Each file is a short design document, not a database row. It says what was rejected, why, and lists every issue that asked for it. `triage` reads the whole directory before it evaluates anything. It matches by concept, not keyword, so "night theme" matches `dark-mode.md`. When it finds a match, it shows you the old decision and asks if you still agree with it, instead of arguing the request again from the start.
+`.out-of-scope/` хранит по одному markdown-файлу на отвергнутое **понятие**, а не на задачу. Каждый файл: короткий документ о дизайне, а не строка базы данных. В нём сказано, что отвергнуто, почему, и перечислены все задачи, которые об этом просили. `triage` читает весь каталог, прежде чем что-либо оценивать. Он сопоставляет по понятию, а не по ключевому слову, так что «ночная тема» совпадает с `dark-mode.md`. Найдя совпадение, он показывает тебе старое решение и спрашивает, согласен ли ты с ним по-прежнему, вместо того чтобы заново обсуждать запрос с нуля.
 
-## Verify before you brief
+## Проверь, прежде чем писать бриф
 
-Before any [grilling](https://www.aihero.dev/ai-coding-dictionary/grilling), `triage` checks that the claim holds. For a bug, it reproduces it from the reporter's steps. For a PR, it checks out the branch and runs the relevant tests. Then it reports one of three results:
+Прежде любого [допроса](https://www.aihero.dev/ai-coding-dictionary/grilling) (grilling) `triage` проверяет, что утверждение верно. Для бага он воспроизводит его по шагам автора задачи. Для PR он делает checkout ветки и запускает соответствующие тесты. Затем он сообщает один из трёх результатов:
 
-- Confirmed, with the code path.
-- Failed to reproduce.
-- Not enough detail to try. This is the strongest `needs-info` signal there is.
+- Подтверждено, с путём в коде.
+- Воспроизвести не удалось.
+- Недостаточно деталей, чтобы попробовать. Это самый сильный сигнал для `needs-info`.
 
-In the same pass, it runs two more checks against the codebase. The **redundancy** check asks if the feature is already implemented, and searches by domain concept, not by the reporter's wording. The **prior rejection** check asks if `.out-of-scope/` already says no. Both checks are cheap, and a hit on either produces a `wontfix`.
+В том же проходе он запускает ещё две проверки по кодовой базе. Проверка на **избыточность** выясняет, не реализована ли фича уже, и ищет по понятию предметной области, а не по формулировке автора. Проверка на **прежний отказ** выясняет, не сказано ли уже «нет» в `.out-of-scope/`. Обе проверки дешёвые, и попадание в любую из них даёт `wontfix`.
 
-All of this work makes one artifact good: the **agent brief**. This is the structured comment that `triage` posts when an issue moves to `ready-for-agent`. After `triage` posts it, the brief is the contract and the original report is only context. Briefs are **durable** rather than precise, because an issue can sit in `ready-for-agent` for weeks while the code changes. So a brief names types, signatures and behavioural contracts, and never file paths or line numbers. A confirmed reproduction makes a much stronger brief than a guess.
+Вся эта работа делает хорошим один артефакт: **бриф для агента**. Это структурированный комментарий, который `triage` публикует, когда задача переходит в `ready-for-agent`. После того как `triage` опубликовал бриф, тот становится контрактом, а исходный отчёт лишь контекстом. Брифы пишутся **долговечными**, а не точечными, потому что задача может неделями лежать в `ready-for-agent`, пока код меняется. Поэтому бриф называет типы, сигнатуры и поведенческие контракты и никогда не называет пути к файлам или номера строк. Подтверждённое воспроизведение даёт гораздо более сильный бриф, чем догадка.
 
-## A PR is an issue with attached code
+## PR как задача с приложенным кодом
 
-If the tracker treats external pull requests as a request surface, they go through the same machine, with the same categories, states and transitions. The states apply to the diff. `ready-for-agent` means a brief is attached and an agent should take the next step on the code. `ready-for-human` means a person can merge it. A brief on a PR describes what is left to do to the existing diff, not how to build the thing from nothing.
+Если трекер считает внешние pull request источником запросов, они проходят через тот же автомат, с теми же категориями, состояниями и переходами. Состояния относятся к диффу. `ready-for-agent` означает, что приложен бриф и агент должен сделать следующий шаг по коду. `ready-for-human` означает, что человек может его смержить. Бриф на PR описывает, что осталось сделать с существующим диффом, а не как построить всё с нуля.
 
-Discovery shows only *external* PRs, because a collaborator's in-progress branch is not triage work. That filter applies only to discovery. If you name a PR explicitly, `triage` handles it, whoever wrote it.
+Обзор показывает только *внешние* PR, потому что незавершённая ветка коллеги не относится к работе для триажа. Этот фильтр действует только при обзоре. Если ты явно назовёшь PR, `triage` его обработает, кто бы его ни написал.
 
-## Common questions
+## Частые вопросы
 
-**I ran `/to-spec` and `/to-tickets`, and now those tickets are sitting there untriaged. Do I run `/triage` over them?**
-No. They are already agent-ready. `to-tickets` applies the `ready-for-agent` label when it publishes them, so an AFK runner picks them up without another pass. The user who hit this had run the spec flow and seen `needs-triage` on the output, and their AFK runner ignored everything. `triage` is the on-ramp for work that arrives from outside. The spec flow is the lane for work you start yourself. The two meet at `ready-for-agent`, not before.
+**Я запустил `/to-spec` и `/to-tickets`, и теперь эти тикеты лежат без триажа. Прогонять по ним `/triage`?**
+Нет. Они уже готовы для агента. `to-tickets` ставит метку `ready-for-agent` при публикации, так что AFK-исполнитель забирает их без дополнительного прохода. Пользователь, столкнувшийся с этим, прогнал поток (flow) спецификации и увидел на результате `needs-triage`, а его AFK-исполнитель всё игнорировал. `triage` служит въездом для работы, приходящей извне. Сценарий спецификации служит полосой для работы, которую начинаешь ты сам. Они встречаются на `ready-for-agent`, не раньше.
 
-**Is `triage` still relevant now that there's a `to-spec` → `to-tickets` → `implement` flow?**
-Only if you have inbound work. `triage` is older than that flow and does a different job: it handles reports other people filed. If everything in your tracker came from your own planning, you will rarely use it. If you maintain anything public, or your team files bugs to you, it is where that work starts. The main use is open-source repos that take issues from external contributors.
+**Актуален ли ещё `triage`, когда есть поток `to-spec` → `to-tickets` → `implement`?**
+Только если у тебя есть входящая работа. `triage` старше этого потока и делает другую работу: обрабатывает отчёты, заведённые другими людьми. Если всё в твоём трекере пришло из твоего же планирования, пользоваться им ты будешь редко. Если ты поддерживаешь что-то публичное или твоя команда заводит на тебя баги, именно с него эта работа начинается. Основное применение: open-source-репозитории, принимающие задачи от внешних участников.
 
-**The agent tried to apply `ready-for-agent` and `gh` said the label doesn't exist.**
-This is a known open bug ([#616](https://github.com/mattpocock/skills/issues/616)). `setup-matt-pocock-skills` writes the label vocabulary into `docs/agents/triage-labels.md`, but does not create the labels in your tracker. Create the five state labels and two category labels yourself, once, with `gh label create` or the tracker's UI, and the error stops. The issue links to a community fix branch that has not been merged.
+**Агент попытался поставить `ready-for-agent`, а `gh` сказал, что такой метки нет.**
+Это известный открытый баг ([#616](https://github.com/mattpocock/skills/issues/616)). `setup-matt-pocock-skills` записывает словарь меток в `docs/agents/triage-labels.md`, но не создаёт метки в твоём трекере. Создай пять меток состояний и две метки категорий сам, один раз, через `gh label create` или UI трекера, и ошибка прекратится. Задача ссылается на ветку с исправлением от сообщества, которая не смержена.
 
-**Five states aren't enough. What about blocked, or deferred, or implemented?**
-This is the most-filed gap on the skill. It comes in three forms:
+**Пяти состояний мало. А как же blocked, deferred или implemented?**
+Это самый часто заводимый пробел в скилле. Он бывает в трёх формах:
 
-- An issue that is fully specified but waits on another issue to close ([#139](https://github.com/mattpocock/skills/issues/139)). The reporter said `ready-for-agent` is "technically true" there but misleading, so an agent picks it up and gets stuck.
-- Future work that is intended but waits on a trigger, so it is not actionable yet ([#297](https://github.com/mattpocock/skills/issues/297)).
-- A terminal state for "implemented, awaiting verification". Without it, an AFK runner can queue finished tickets again.
+- Задача полностью описана, но ждёт закрытия другой задачи ([#139](https://github.com/mattpocock/skills/issues/139)). Автор сказал, что `ready-for-agent` там «технически верно», но вводит в заблуждение, так что агент её берёт и застревает.
+- Будущая работа, которая задумана, но ждёт триггера, поэтому пока не выполнима ([#297](https://github.com/mattpocock/skills/issues/297)).
+- Конечное состояние «реализовано, ожидает проверки». Без него AFK-исполнитель может снова поставить законченные тикеты в очередь.
 
-The blocked case is accepted as real, but the name is undecided (`blocked` versus `paused`). None of it has shipped. As a workaround, people add a repo-local extra label next to the category. The state slot then holds an accurate value, but the skill does not know about the extra label. One community fork goes further and adds `needs-slicing`, `tracking` and effort labels. That works, but it belongs to that fork, not to the skill.
+Случай с блокировкой признан реальным, но имя не выбрано (`blocked` или `paused`). Ничто из этого не выпущено. В качестве обходного пути люди добавляют локальную для репозитория дополнительную метку рядом с категорией. Тогда в слоте состояния точное значение, но скилл о дополнительной метке не знает. Один форк сообщества идёт дальше и добавляет `needs-slicing`, `tracking` и метки трудоёмкости. Это работает, но относится к тому форку, а не к скиллу.
 
-**How is this different from `/diagnosing-bugs`?**
-The verification step here is shallow on purpose. It answers "is this real, and roughly where does it live", and does not look for a root cause. If a bug does not reproduce from the reporter's steps in a few minutes, use `needs-info`, or use [diagnosing-bugs](https://aihero.dev/skills-diagnosing-bugs) if you want to investigate it now. Neither skill's text mentions the other yet. A user reported that gap, and it is still open.
+**Чем это отличается от `/diagnosing-bugs`?**
+Шаг проверки здесь намеренно поверхностный. Он отвечает на «реально ли это и где это примерно живёт» и не ищет первопричину. Если баг не воспроизводится по шагам автора за несколько минут, используй `needs-info` или [diagnosing-bugs](https://aihero.dev/skills-diagnosing-bugs), если хочешь расследовать его сейчас. Текст ни одного из скиллов пока не упоминает другой. Пользователь сообщил об этом пробеле, и он всё ещё открыт.
 
-**Can I point it at my whole backlog and let it run?**
-You can ask, but watch what it reads. The "show what needs attention" pass is a cheap listing for *selection*. You pick one issue, and then `triage` gathers full [context](https://www.aihero.dev/ai-coding-dictionary/context) on that issue. If you run it across twenty issues at once, the agent can use that cheap listing as its only evidence without telling you. The listing returns issue bodies but not comments. One user hit exactly this. Three issues already had a comment that said "already fixed, recommend closing", and all three got new agent briefs instead. For a bulk pass, say explicitly that it must read the comments on each issue.
+**Можно ли направить его на весь бэклог и пусть работает?**
+Попросить можно, но следи за тем, что он читает. Проход «покажи, что требует внимания» даёт лишь дешёвый список для *выбора*. Ты выбираешь одну задачу, и затем `triage` собирает полный [контекст](https://www.aihero.dev/ai-coding-dictionary/context) по ней. Если запустить его на двадцать задач сразу, агент может использовать этот дешёвый список как единственное свидетельство, не сказав тебе. Список возвращает тела задач, но не комментарии. Один пользователь столкнулся ровно с этим. В трёх задачах уже был комментарий «уже исправлено, рекомендую закрыть», а все три получили новые брифы для агента. Для массового прохода явно скажи, что он должен читать комментарии к каждой задаче.
 
-**Does it work with Linear, or anything other than GitHub Issues?**
-Yes. The tracker is config, not a hard-coded assumption. People run it against Linear (through the `linear` CLI), GitLab, and plain markdown files under `.scratch/`. A common split is Linear for issues and planning, and GitHub for code and PRs. Skills that say "issue tracker" then map to Linear, and skills that say "PR" map to GitHub. The local-markdown tracker has an open template bug: the generated file can contain the acceptance criteria twice, once at the top level and once inside the agent brief ([#200](https://github.com/mattpocock/skills/issues/200)).
+**Работает ли он с Linear или чем-то кроме GitHub Issues?**
+Да. Трекер задаётся конфигурацией, а не зашит в виде допущения. Его запускают с Linear (через CLI `linear`), GitLab и простыми markdown-файлами в `.scratch/`. Типичное разделение: Linear для задач и планирования, GitHub для кода и PR. Тогда скиллы, говорящие «трекер задач», сопоставляются с Linear, а говорящие «PR» с GitHub. У трекера на локальном markdown есть открытый баг шаблона: сгенерированный файл может содержать критерии приёмки дважды, один раз на верхнем уровне и один раз внутри брифа для агента ([#200](https://github.com/mattpocock/skills/issues/200)).
 
-## It's working if
+## Работает, если
 
-- Every item it touches ends with exactly one category role and one state role, never zero, and never two conflicting states.
-- It gives you a recommendation with reasoning and stops. It does not relabel the issue and move on.
-- It reproduced the bug, or checked out and ran the PR, before anything reached `ready-for-agent`.
-- The briefs it writes name types and behaviours, and contain no file paths and no line numbers.
-- When a request you rejected six months ago comes back, it tells you and quotes the old reason instead of triaging it again.
-- Every comment it posts starts with `> *This was generated by AI during triage.*`
+- Каждый элемент, которого он касается, заканчивается ровно одной ролью категории и одной ролью состояния, никогда не нулём и никогда двумя конфликтующими состояниями.
+- Он даёт тебе рекомендацию с обоснованием и останавливается. Он не переставляет метки и не идёт дальше.
+- Он воспроизвёл баг или сделал checkout и запустил PR до того, как что-либо дошло до `ready-for-agent`.
+- Брифы, которые он пишет, называют типы и поведение и не содержат ни путей к файлам, ни номеров строк.
+- Когда запрос, отвергнутый тобой полгода назад, возвращается, он говорит тебе об этом и цитирует старую причину, а не проводит триаж заново.
+- Каждый публикуемый им комментарий начинается с `> *This was generated by AI during triage.*`
 
-## Where it fits
+## Место в общей картине
 
-`triage` is an **on-ramp**, not a step in the main chain. The main flow starts from an idea you had (grill, spec, tickets, implement, review). `triage` is the parallel lane for work that came from someone else. Both lanes end at the same place: an issue labelled `ready-for-agent` with a brief on it. [implement](https://aihero.dev/skills-implement) picks that up the same way it picks up a ticket from [to-tickets](https://aihero.dev/skills-to-tickets). When a request needs more detail before `triage` can brief it, `triage` runs [grilling](https://aihero.dev/skills-grilling) and [domain-modeling](https://aihero.dev/skills-domain-modeling) together, one round of questions at a time, so it records decisions in `GLOSSARY.md` and the ADRs as you make them. When you're not sure which lane you are in, [ask-matt](https://aihero.dev/skills-ask-matt) routes you.
+`triage` служит **въездом** (on-ramp), а не шагом основной цепочки. Основной поток начинается с твоей идеи (допрос, спецификация, тикеты, реализация, ревью). `triage` служит параллельной полосой для работы, пришедшей от кого-то другого. Обе полосы заканчиваются в одном месте: задача с меткой `ready-for-agent` и брифом. [implement](https://aihero.dev/skills-implement) забирает её так же, как тикет из [to-tickets](https://aihero.dev/skills-to-tickets). Когда запросу нужно больше деталей, прежде чем `triage` сможет написать бриф, `triage` запускает [grilling](https://aihero.dev/skills-grilling) и [domain-modeling](https://aihero.dev/skills-domain-modeling) вместе, по одному раунду вопросов, чтобы записывать решения в `GLOSSARY.md` и ADR по мере их принятия. Если не уверен, в какой ты полосе, [ask-matt](https://aihero.dev/skills-ask-matt) подскажет маршрут.

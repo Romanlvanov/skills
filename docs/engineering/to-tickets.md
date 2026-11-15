@@ -1,99 +1,99 @@
-## What it does
+## Что делает
 
-`to-tickets` takes a plan, a [spec](https://www.aihero.dev/ai-coding-dictionary/spec), or the conversation you are in, and breaks it into a set of **[tickets](https://www.aihero.dev/ai-coding-dictionary/ticket)** on your issue tracker. Each ticket declares its **blocking edges**: the other tickets that have to finish before it can start.
+`to-tickets` берёт план, [спецификацию](https://www.aihero.dev/ai-coding-dictionary/spec) или текущий разговор и разбивает его на набор **[тикетов](https://www.aihero.dev/ai-coding-dictionary/ticket)** в твоём трекере задач. Каждый тикет объявляет свои **блокирующие связи**: другие тикеты, которые должны быть завершены, прежде чем он сможет начаться.
 
-Every ticket is a **tracer bullet**: a narrow but complete path through every layer of the change (schema, API, UI, tests) that you can demo on its own as soon as it lands. This is what makes the skill different from the obvious way to split work, which is to cut one layer at a time and integrate at the end. It also sizes each ticket to fit in a single fresh [context window](https://www.aihero.dev/ai-coding-dictionary/context-window), because a [session](https://www.aihero.dev/ai-coding-dictionary/session) that has never seen your spec will pick the ticket up.
+Каждый тикет служит **трассирующей пулей** (tracer bullet): узким, но полным путём через все слои изменения (схема, API, UI, тесты), который можно показать сам по себе, как только он влит. Этим скилл и отличается от очевидного способа делить работу: резать по одному слою и интегрировать в конце. Кроме того, он подбирает размер каждого тикета так, чтобы тот помещался в одно свежее [контекстное окно](https://www.aihero.dev/ai-coding-dictionary/context-window), потому что тикет подхватит [сессия](https://www.aihero.dev/ai-coding-dictionary/session), никогда не видевшая твою спецификацию.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke this by typing `/to-tickets`. The [agent](https://www.aihero.dev/ai-coding-dictionary/agent) won't reach for it on its own.
+Ты вызываешь его, набрав `/to-tickets`. [Агент](https://www.aihero.dev/ai-coding-dictionary/agent) сам к нему не потянется.
 
-| Where you are | What to run |
+| Где ты находишься | Что запускать |
 | --- | --- |
-| You have a spec issue and the build spans several sessions | `/to-tickets`, or `/to-tickets #<spec_issue>` |
-| The plan is only in the conversation, never written up | `/to-tickets` reads the thread directly, no spec needed |
-| The whole change fits in one context window | [implement](https://aihero.dev/skills-implement), skip the tickets |
-| Nothing is decided yet | [grill-with-docs](https://aihero.dev/skills-grill-with-docs), then [to-spec](https://aihero.dev/skills-to-spec) |
-| A [wayfinder](https://aihero.dev/skills-wayfinder) map has cleared | [to-spec](https://aihero.dev/skills-to-spec) first, to collapse the map, then `/to-tickets` |
+| У тебя есть задача со спецификацией, и разработка займёт несколько сессий | `/to-tickets` или `/to-tickets #<spec_issue>` |
+| План есть только в разговоре и нигде не записан | `/to-tickets` читает ветку разговора напрямую, спецификация не нужна |
+| Всё изменение помещается в одно контекстное окно | [implement](https://aihero.dev/skills-implement), тикеты пропусти |
+| Ещё ничего не решено | [grill-with-docs](https://aihero.dev/skills-grill-with-docs), затем [to-spec](https://aihero.dev/skills-to-spec) |
+| Карта [wayfinder](https://aihero.dev/skills-wayfinder) прояснилась | Сначала [to-spec](https://aihero.dev/skills-to-spec), чтобы свернуть карту, затем `/to-tickets` |
 
-Tickets that `to-tickets` produced are agent-ready by construction. Don't run [triage](https://aihero.dev/skills-triage) over them. Triage is for work that arrived from someone else.
+Тикеты, произведённые `to-tickets`, готовы для агента по построению. Не прогоняй по ним [triage](https://aihero.dev/skills-triage). Триаж предназначен для работы, пришедшей от других людей.
 
-## Prerequisites
+## Предварительные условия
 
-`to-tickets` publishes into a tracker, so [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) must have configured one for this repo, along with the triage-label vocabulary. Either kind works: a real tracker like GitHub or Linear, or local markdown files under `.scratch/`, which work with no extra setup.
+`to-tickets` публикует в трекер, поэтому [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) должен был настроить его для этого репозитория вместе со словарём меток триажа. Подходит любой вид: настоящий трекер вроде GitHub или Linear или локальные markdown-файлы в `.scratch/`, которые работают без дополнительной настройки.
 
-## Tracer bullets, not layers
+## Трассирующие пули, а не слои
 
-A **horizontal** slice ships one layer of the change. Nothing works until every layer has landed, and each ticket's acceptance criteria have to reach into work that another ticket owns. A **vertical** slice (the tracer bullet) ships one thin path through all the layers at once, so it is verifiable alone and owns everything it grades.
+**Горизонтальный** срез выпускает один слой изменения. Ничего не работает, пока не влиты все слои, и критерии приёмки каждого тикета вынуждены залезать в работу, которая принадлежит другому тикету. **Вертикальный** срез (трассирующая пуля) выпускает один тонкий путь сразу через все слои, поэтому его можно проверить отдельно, и он владеет всем, что оценивает.
 
-This is the rule people break most often. One team ran a 26-ticket stack sliced by layer (corpus, producer, aggregator, selector) and got roughly twenty agent runs per closed ticket, about three quarters of them rework. Their own post-mortem traced every failure class back to the horizontal slicing rather than to the implementations.
+Это правило нарушают чаще всего. Одна команда прогнала стек из 26 тикетов, нарезанный по слоям (корпус, производитель, агрегатор, селектор), и получила примерно двадцать прогонов агента на каждый закрытый тикет, около трёх четвертей из них переделки. Их собственный разбор после инцидента проследил каждый класс сбоев до горизонтальной нарезки, а не до реализаций.
 
-Two things happen before anything is published. `to-tickets` looks for prefactoring (the principle "make the change easy, then make the easy change") and orders that work first. Then it presents the breakdown as a numbered list and quizzes you on it: is the granularity right, are the blocking edges real, should anything merge or split. Nothing reaches the tracker until you approve, and that quiz is the place to push back.
+До публикации происходят две вещи. `to-tickets` ищет префакторинг (принцип «сделай изменение лёгким, затем сделай лёгкое изменение») и ставит эту работу первой. Затем он показывает разбиение нумерованным списком и устраивает тебе опрос по нему: правильная ли гранулярность, реальны ли блокирующие связи, нужно ли что-то слить или разделить. В трекер ничего не попадает, пока ты не одобришь, и именно на этом опросе стоит возражать.
 
-## Blocking edges
+## Блокирующие связи
 
-The edges are the point of the artifact. They work in two ways, depending on the tracker:
+Связи составляют суть артефакта. В зависимости от трекера они работают двумя способами:
 
-| Tracker | Where the edges live | How you work them |
+| Трекер | Где живут связи | Как с ними работать |
 | --- | --- | --- |
-| Local markdown | Text in one file per ticket under `.scratch/<feature>/issues/<NN>-<slug>.md`, numbered blockers-first | Top to bottom, by hand |
-| A real tracker (GitHub, Linear) | Native blocking links, or sub-issues where the tracker has them | Any ticket whose blockers are done is on the **frontier** and can be grabbed |
+| Локальный markdown | Текст в отдельном файле на каждый тикет в `.scratch/<feature>/issues/<NN>-<slug>.md`, нумерация блокеров первыми | Сверху вниз, вручную |
+| Настоящий трекер (GitHub, Linear) | Нативные блокирующие ссылки или подзадачи там, где трекер их поддерживает | Любой тикет, блокеры которого готовы, находится на **фронте** (frontier), и его можно забрать |
 
-The edges live in the ticket either way. The tracker only decides whether anything can act on them in parallel. `to-tickets` produces the artifact; running it (one session at a time, or a fleet) is your job, not the skill's.
+В любом случае связи живут в тикете. Трекер решает лишь, может ли что-то обрабатывать их параллельно. `to-tickets` производит артефакт; запускать его (по одной сессии или целым флотом) твоя работа, а не скилла.
 
-## The wide-refactor exception
+## Исключение для широкого рефакторинга
 
-One shape breaks the tracer-bullet rule. A **wide refactor** is a single mechanical change (rename a column, retype a shared symbol) whose **blast radius** covers the whole codebase. One edit breaks thousands of call sites, so no vertical slice can land green.
+Одна форма ломает правило трассирующих пуль. **Широкий рефакторинг** сводится к одному механическому изменению (переименовать столбец, сменить тип общего символа), **радиус поражения** которого покрывает всю кодовую базу. Одна правка ломает тысячи мест вызова, так что ни один вертикальный срез не может влиться зелёным.
 
-`to-tickets` sequences that as **expand–contract** instead:
+Вместо этого `to-tickets` выстраивает его как **expand–contract** (расширить, затем сузить):
 
-- **Expand**: add the new form beside the old, so nothing breaks.
-- **Migrate**: move call sites over in batches sized by blast radius (per package, per directory), one ticket per batch, each blocked by the expand. CI stays green because the old form still exists.
-- **Contract**: delete the old form once no caller remains, in a ticket blocked by every migrate batch.
+- **Expand** (расширить): добавь новую форму рядом со старой, чтобы ничего не сломалось.
+- **Migrate** (перевести): переноси места вызова пачками, размер которых определяется радиусом поражения (по пакету, по каталогу), по одному тикету на пачку, каждый заблокирован шагом expand. CI остаётся зелёным, потому что старая форма ещё существует.
+- **Contract** (сузить): удали старую форму, когда вызывающих не осталось, в тикете, заблокированном всеми пачками migrate.
 
-Where even the batches can't stay green alone, they share an integration branch and all block a final integrate-and-verify ticket. CI only has to be green at that ticket.
+Где даже пачки не могут оставаться зелёными по отдельности, они делят интеграционную ветку и все блокируют финальный тикет на интеграцию и проверку. CI должен быть зелёным только на этом тикете.
 
-## Common questions
+## Частые вопросы
 
-**It produced twelve tickets for a three-line change.**
-Over-decomposition is the most reported problem with this skill, and many users see it. The [model](https://www.aihero.dev/ai-coding-dictionary/model) defaults to atomic units and loses the grouping that would make them meaningful. The quiz step is where you fix this. Ask it to merge tickets, and it will. There is also a lower limit. If the whole change fits in one context window, you don't need this skill at all. Go straight to [implement](https://aihero.dev/skills-implement).
+**Он выдал двенадцать тикетов на изменение в три строки.**
+Чрезмерная декомпозиция: самая частая жалоба на этот скилл, и её видят многие пользователи. [Модель](https://www.aihero.dev/ai-coding-dictionary/model) по умолчанию тяготеет к атомарным единицам и теряет группировку, которая придала бы им смысл. Исправлять это нужно на шаге опроса. Попроси слить тикеты, и он сольёт. Есть и нижний предел. Если всё изменение помещается в одно контекстное окно, этот скилл тебе вообще не нужен. Иди прямо в [implement](https://aihero.dev/skills-implement).
 
-**The tickets came out one per layer: all the schema in one, all the API in another.**
-This is the failure the vertical-slice rule is written against, and the skill still produces it sometimes. Catch it at the quiz step by asking one question per ticket: what can I demo when this is done? A ticket with no answer is a horizontal slice. Some people add a "demo path" line to each ticket for this reason, and report that it pushes the model toward vertical slices.
+**Тикеты получились по одному на слой: вся схема в одном, весь API в другом.**
+Именно против этого сбоя написано правило вертикальных срезов, и скилл всё равно иногда его допускает. Лови это на шаге опроса, задав по каждому тикету один вопрос: что я смогу показать, когда это будет готово? Тикет без ответа и есть горизонтальный срез. Поэтому некоторые добавляют в каждый тикет строку «путь демонстрации» и сообщают, что это подталкивает модель к вертикальным срезам.
 
-**On GitHub the tickets weren't created as sub-issues of the spec issue.**
-This was reported across a dozen runs and several models, [most fully in issue #554](https://github.com/mattpocock/skills/issues/554). Fixed: `to-tickets` now makes each ticket a sub-issue of its source issue, and the GitHub tracker template gives the command (`gh issue create --parent <n>`, `gh` 2.94+). Re-run [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) to refresh an older `docs/agents/issue-tracker.md`.
+**На GitHub тикеты не были созданы как подзадачи задачи со спецификацией.**
+Об этом сообщали по десятку прогонов на нескольких моделях, [полнее всего в задаче #554](https://github.com/mattpocock/skills/issues/554). Исправлено: теперь `to-tickets` делает каждый тикет подзадачей исходной задачи, а шаблон трекера GitHub даёт команду (`gh issue create --parent <n>`, `gh` 2.94+). Перезапусти [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills), чтобы обновить старый `docs/agents/issue-tracker.md`.
 
-**"Blocked by" was written into the issue body instead of a real blocking link.**
-This is the same kind of problem, [reported in issue #513](https://github.com/mattpocock/skills/issues/513), where the agent even stated that GitHub has no native blocking relationship at all. It does: `gh issue create --blocked-by 12,15`. Because the skill publishes blockers first, their numbers are always available at creation time. The body text is meant to be the fallback for trackers with no native edge, not the default. The ticket template now omits `## Blocked by` when the edges are native.
+**«Blocked by» было записано в тело задачи вместо настоящей блокирующей ссылки.**
+Проблема того же рода, [описанная в задаче #513](https://github.com/mattpocock/skills/issues/513), где агент даже заявил, что у GitHub вообще нет нативной связи блокировки. Она есть: `gh issue create --blocked-by 12,15`. Поскольку скилл публикует блокеры первыми, их номера всегда доступны в момент создания. Текст в теле задуман как запасной вариант для трекеров без нативной связи, а не по умолчанию. Теперь шаблон тикета опускает `## Blocked by`, когда связи нативные.
 
-**Where do the local tickets go? The v1.1 notes said a root-level `tickets.md`.**
-They did, and that was a bug. A single shared file also caused race conditions when parallel agents wrote to it. Local mode now writes one file per ticket under `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, in dependency order, matching the layout the local tracker template already described. The `NN` prefix is a real ticket ID, so `/implement 03` works instead of retyping a long title.
+**Куда идут локальные тикеты? В заметках к v1.1 говорилось о `tickets.md` в корне.**
+Говорилось, и это был баг. Один общий файл к тому же вызывал гонки, когда в него писали параллельные агенты. Теперь локальный режим пишет по файлу на тикет в `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, в порядке зависимостей, в соответствии с раскладкой, которую уже описывал шаблон локального трекера. Префикс `NN` служит настоящим ID тикета, так что работает `/implement 03`, без перепечатывания длинного заголовка.
 
-**It kept truncating when it tried to read my spec.**
-A very large spec can outgrow what a tracker issue serves back cleanly. There is no local copy to fall back on, so the agent spends [tool calls](https://www.aihero.dev/ai-coding-dictionary/tool-call) fetching chunks again and never reaches the end. Don't [clear](https://www.aihero.dev/ai-coding-dictionary/clearing) or [compact](https://www.aihero.dev/ai-coding-dictionary/compaction) between `/to-spec` and `/to-tickets`. Run them in the same context window and the agent never has to fetch the spec back.
+**При попытке прочитать мою спецификацию она всё время обрезалась.**
+Очень большая спецификация может превысить то, что задача в трекере чисто отдаёт обратно. Локальной копии для запасного варианта нет, так что агент тратит [вызовы инструментов](https://www.aihero.dev/ai-coding-dictionary/tool-call) на повторное получение кусков и так и не доходит до конца. Не [очищай](https://www.aihero.dev/ai-coding-dictionary/clearing) и не [сжимай](https://www.aihero.dev/ai-coding-dictionary/compaction) контекст между `/to-spec` и `/to-tickets`. Запускай их в одном контекстном окне, и агенту никогда не придётся получать спецификацию обратно.
 
-**The acceptance criteria graded nothing: some passed before any work was done.**
-The template asks for criteria and says nothing about whether they can fail, so this happens. Three shapes recur: a criterion already true at the base commit, a criterion that only work in another ticket can satisfy, and one that restates the request rather than deriving from the artifact. Vertical slicing prevents most of it, because a slice that delivers new behaviour fails at the base commit by construction. The check is still worth doing by hand. For each criterion, name the observation that would show it false, and confirm it fails at the commit the implementer starts from.
+**Критерии приёмки ничего не оценивали: некоторые выполнялись ещё до начала работы.**
+Шаблон просит критерии и ничего не говорит о том, могут ли они провалиться, поэтому такое случается. Повторяются три формы: критерий, уже верный на базовом коммите; критерий, который может выполнить только работа в другом тикете; и критерий, пересказывающий запрос, а не выведенный из артефакта. Вертикальная нарезка предотвращает большую часть этого, потому что срез, дающий новое поведение, по построению проваливается на базовом коммите. Проверку всё равно стоит делать вручную. Для каждого критерия назови наблюдение, которое показало бы его ложность, и убедись, что он проваливается на коммите, с которого начинает исполнитель.
 
-**The tickets are published. How do I actually run them?**
-The skill stops at the artifact, and there is no auto-dispatch mode. Dispatch is manual: look at the board, count the tickets with no open blockers, and open that many agent sessions. Give each ticket a fresh context, and clear between them. [implement](https://aihero.dev/skills-implement) does not reliably close or check off the ticket when it finishes, on GitHub or in local markdown, so you update the ticket's state yourself.
+**Тикеты опубликованы. Как их на самом деле запускать?**
+Скилл останавливается на артефакте, режима автоматической раздачи нет. Раздача ручная: посмотри на доску, посчитай тикеты без открытых блокеров и открой столько же сессий агента. Давай каждому тикету свежий контекст и очищай между ними. [implement](https://aihero.dev/skills-implement) по завершении ненадёжно закрывает тикет или отмечает его выполненным, и на GitHub, и в локальном markdown, так что состояние тикета обновляй сам.
 
-## It's working if
+## Работает, если
 
-- Every ticket has an answer to "what can I demo when this is done?", and the answer is behaviour, not a layer.
-- The list comes back to you numbered, with a "Blocked by" line on each, before anything is published.
-- The ticket at the top has no blockers and can be started immediately.
-- Nothing in a ticket body is a file path or a line number, except a snippet a prototype produced.
-- Each ticket reads like something a fresh session could finish without you in the room.
-- Prefactoring, where it found any, is at the front of the order rather than mixed into feature tickets.
+- У каждого тикета есть ответ на «что я смогу показать, когда это будет готово?», и ответ описывает поведение, а не слой.
+- Список возвращается к тебе пронумерованным, со строкой «Blocked by» у каждого, до какой-либо публикации.
+- Верхний тикет не имеет блокеров и может быть начат немедленно.
+- В теле тикета нет путей к файлам и номеров строк, кроме фрагмента, произведённого прототипом.
+- Каждый тикет читается как то, что свежая сессия может закончить без тебя в комнате.
+- Префакторинг, если он найден, стоит в начале порядка, а не перемешан с тикетами фич.
 
-## Where it fits
+## Место в общей картине
 
-`to-tickets` is a step in the main build chain:
+`to-tickets` служит шагом основной цепочки разработки:
 
 ```txt
 grill-with-docs → to-spec → to-tickets → implement → code-review → retro
 ```
 
-Upstream is [to-spec](https://aihero.dev/skills-to-spec), which hands it a settled spec to slice against. Keep both in one context window, with no clear between them. Downstream is [implement](https://aihero.dev/skills-implement), which builds one ticket per fresh session, driving [tdd](https://aihero.dev/skills-tdd) for the tests and closing with [code-review](https://aihero.dev/skills-code-review). [implement-spec](https://aihero.dev/skills-implement-spec) is the other way down. It reads the same blocking edges as a task graph and builds every ready ticket in parallel on one integration branch. When you're unsure which skill or flow fits, [ask-matt](https://aihero.dev/skills-ask-matt) routes you.
+Выше по течению стоит [to-spec](https://aihero.dev/skills-to-spec), который передаёт ему утверждённую спецификацию для нарезки. Держи оба в одном контекстном окне, без очистки между ними. Ниже по течению стоит [implement](https://aihero.dev/skills-implement), который строит по одному тикету на свежую сессию, ведя [tdd](https://aihero.dev/skills-tdd) для тестов и завершая [code-review](https://aihero.dev/skills-code-review). Другой путь вниз: [implement-spec](https://aihero.dev/skills-implement-spec). Он читает те же блокирующие связи как граф задач и строит все готовые тикеты параллельно на одной интеграционной ветке. Если не уверен, какой скилл или поток (flow) подходит, [ask-matt](https://aihero.dev/skills-ask-matt) подскажет маршрут.

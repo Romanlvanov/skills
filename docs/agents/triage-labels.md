@@ -1,15 +1,15 @@
-# Triage Labels
+# Метки триажа
 
-The skills speak in terms of five canonical triage roles. This file maps those roles to the actual label strings used in this repo's issue tracker.
+Скиллы оперируют пятью каноническими ролями триажа. Этот файл сопоставляет эти роли с реальными строками меток в трекере задач этого репозитория.
 
-| Label in mattpocock/skills | Label in our tracker | Meaning                                  |
-| -------------------------- | -------------------- | ---------------------------------------- |
-| `needs-triage`             | `needs-triage`       | Maintainer needs to evaluate this issue  |
-| `needs-info`               | `needs-info`         | Waiting on reporter for more information |
-| `ready-for-agent`          | `ready-for-agent`    | Fully specified, ready for an AFK agent  |
-| `ready-for-human`          | `ready-for-human`    | Requires human implementation            |
-| `wontfix`                  | `wontfix`            | Will not be actioned                     |
+| Label in mattpocock/skills | Label in our tracker | Значение                                       |
+| -------------------------- | -------------------- | ---------------------------------------------- |
+| `needs-triage`             | `needs-triage`       | Мейнтейнеру нужно оценить эту задачу           |
+| `needs-info`               | `needs-info`         | Ждём от автора задачи дополнительных сведений  |
+| `ready-for-agent`          | `ready-for-agent`    | Полностью описана, готова для AFK-агента       |
+| `ready-for-human`          | `ready-for-human`    | Требует реализации человеком                   |
+| `wontfix`                  | `wontfix`            | Делаться не будет                              |
 
-When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
+Когда скилл упоминает роль (например, «поставь метку триажа для AFK» ("apply the AFK-ready triage label")), используй соответствующую строку метки из этой таблицы.
 
-Judge every issue against [`SCOPE.md`](../../SCOPE.md) before picking a state. Rejections close as "not planned".
+Прежде чем выбрать состояние, оценивай каждую задачу по [`SCOPE.md`](../../SCOPE.md). Отклонённые задачи закрываются как "not planned".

@@ -1,91 +1,91 @@
-## What it does
+## Что делает
 
-`ask-matt` is the router over the skills in this repo. You describe the situation you are in (an idea you cannot start, a pile of incoming bug reports, a [session](https://www.aihero.dev/ai-coding-dictionary/session) that has run long), and it names the skill or the sequence of skills that fits, plus where the human decisions in that sequence sit.
+`ask-matt` служит маршрутизатором по скиллам этого репозитория. Ты описываешь ситуацию, в которой находишься (идея, за которую не знаешь как взяться, куча входящих баг-репортов, [сессия](https://www.aihero.dev/ai-coding-dictionary/session), которая слишком затянулась), и он называет подходящий скилл или последовательность скиллов, а также места, где в этой последовательности решения принимает человек.
 
-It recommends and stops. It does not grill, write a [spec](https://www.aihero.dev/ai-coding-dictionary/spec), open a file or fire the skill it just named; what you get back is the next thing to type, and you type it. It is also a hand-written map of the skills in this repo rather than a scan of what you have installed, so it will not route you over your own skills or another author's.
+Он рекомендует и останавливается. Он не допрашивает, не пишет [спецификацию](https://www.aihero.dev/ai-coding-dictionary/spec), не открывает файлы и не запускает только что названный скилл; ты получаешь следующую команду, и набираешь её сам. Кроме того, это написанная вручную карта скиллов этого репозитория, а не сканирование того, что у тебя установлено, поэтому по твоим собственным скиллам или скиллам другого автора он маршрут не проложит.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke this by typing `/ask-matt`; the agent won't reach for it on its own.
+Ты вызываешь его, набрав `/ask-matt`; агент сам к нему не потянется.
 
-| Your situation | What the router gives back |
+| Твоя ситуация | Что возвращает маршрутизатор |
 | --- | --- |
-| An idea, and no idea where to start | The head of the main flow, and whether the build is small enough to skip the spec |
-| Bugs and requests arriving from other people | The [triage](https://aihero.dev/skills-triage) on-ramp, and why [tickets](https://www.aihero.dev/ai-coding-dictionary/ticket) you generated yourself don't belong on it |
-| Two skills that look interchangeable | The line between them, and it is usually one concrete test rather than a matter of taste. [grill-me](https://aihero.dev/skills-grill-me) or [grill-with-docs](https://aihero.dev/skills-grill-with-docs) turns on whether you are in a working directory; [grill-with-docs](https://aihero.dev/skills-grill-with-docs) or [wayfinder](https://aihero.dev/skills-wayfinder) turns on whether the effort fits one session |
-| A long session and a decision about the [context](https://www.aihero.dev/ai-coding-dictionary/context) | The ordered tree over the five options at a phase boundary |
-| A skill you have already picked | Nothing useful. Invoke that skill directly. |
+| Есть идея, но непонятно, с чего начать | Начало основного потока (flow) и ответ, достаточно ли мала разработка, чтобы пропустить спецификацию |
+| Баги и запросы приходят от других людей | Въезд через [triage](https://aihero.dev/skills-triage) и объяснение, почему [тикетам](https://www.aihero.dev/ai-coding-dictionary/ticket), созданным тобой самим, там не место |
+| Два скилла, которые выглядят взаимозаменяемыми | Границу между ними, и обычно это одна конкретная проверка, а не дело вкуса. Выбор между [grill-me](https://aihero.dev/skills-grill-me) и [grill-with-docs](https://aihero.dev/skills-grill-with-docs) зависит от того, работаешь ли ты в рабочем каталоге; между [grill-with-docs](https://aihero.dev/skills-grill-with-docs) и [wayfinder](https://aihero.dev/skills-wayfinder) от того, укладывается ли работа в одну сессию |
+| Длинная сессия и решение о [контексте](https://www.aihero.dev/ai-coding-dictionary/context) | Упорядоченное дерево по пяти вариантам на границе фаз |
+| Скилл, который ты уже выбрал | Ничего полезного. Вызывай этот скилл напрямую. |
 
-## Prerequisites
+## Предварительные условия
 
-The router names skills; it does not install them. Everything it points at has to be installed for the recommendation to be actionable, and it only knows the promoted skills in this repo.
+Маршрутизатор называет скиллы, но не устанавливает их. Чтобы рекомендацию можно было выполнить, всё, на что он указывает, должно быть установлено, и он знает только продвигаемые скиллы этого репозитория.
 
-The tracker-dependent routes (triage, `to-spec`, `to-tickets`, `implement`) assume [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) has already configured an issue tracker in the repo. The router recommends them even before that has happened.
+Маршруты, зависящие от трекера (triage, `to-spec`, `to-tickets`, `implement`), предполагают, что [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) уже настроил трекер задач в репозитории. Маршрутизатор рекомендует их и до того, как это сделано.
 
-## Flows, not skills
+## Потоки, а не скиллы
 
-The skill's leading word is **flow**, a path *through* the skills rather than a single skill. When you name your situation, the router places you at a step on a flow. That is a different answer from "here is the skill that matches your keywords". There are five kinds of route, and the skill itself describes them in full:
+Опорное слово скилла: **поток** (flow), путь *через* скиллы, а не отдельный скилл. Когда ты называешь свою ситуацию, маршрутизатор ставит тебя на шаг потока. Это другой ответ, чем «вот скилл, совпадающий с твоими ключевыми словами». Есть пять видов маршрутов, и сам скилл описывает их полностью:
 
-- **The main flow**, idea to ship. Grill, spec, tickets, implement (one ticket at a time, or the whole task graph in parallel with [implement-spec](https://aihero.dev/skills-implement-spec)), review, then [retro](https://aihero.dev/skills-retro), which feeds what the build taught back into the agent's environment. It has two branches. One is a prototype detour, for when a question needs runnable code to settle it. The other is the spec-and-tickets split, which is only worth its cost when the build spans more than one session.
-- **On-ramps**, for a situation that generates work and then merges onto the main flow: incoming bug reports, something broken, or an effort too foggy and too large to hold in one session.
-- **Codebase health**, upkeep rather than feature work. [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) surveys the code for deepening opportunities, and each one it finds re-enters the main flow as an idea.
-- **Standalones**, which sit off every flow and which you use on their own: the prototype, the questionnaire, the research run.
-- **A vocabulary layer underneath**, the two references the other skills pull in when the words rather than the process are the problem.
+- **Основной поток**, от идеи до выпуска. Допрос, спецификация, тикеты, реализация (по одному тикету или весь граф задач параллельно с [implement-spec](https://aihero.dev/skills-implement-spec)), ревью, затем [retro](https://aihero.dev/skills-retro), который возвращает уроки разработки в окружение агента. У него две ветки. Одна ведёт в обход через прототип, когда для ответа на вопрос нужен работающий код. Другая: разделение на спецификацию и тикеты, которое окупается, только когда разработка занимает больше одной сессии.
+- **Въезды** (on-ramps) для ситуаций, которые порождают работу и затем вливаются в основной поток: входящие баг-репорты, что-то сломалось, или работа слишком туманная и большая, чтобы уместиться в одну сессию.
+- **Здоровье кодовой базы**: поддержание, а не работа над фичами. [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) обследует код в поисках возможностей для углубления, и каждая найденная возвращается в основной поток как идея.
+- **Самостоятельные инструменты**, стоящие в стороне от всех потоков и используемые сами по себе: прототип, опросник, исследование.
+- **Словарный слой внизу**: два справочника, которые подтягивают другие скиллы, когда проблема в словах, а не в процессе.
 
-## The phase boundary
+## Граница фаз
 
-The skill's other key idea is the **phase boundary**. A phase is a chunk of work inside a session (the [grilling](https://www.aihero.dev/ai-coding-dictionary/grilling), the implementation, the QA), and the boundary between two of them is the only place the question "what do I do with this context?" belongs. Mid-phase there is nothing to decide: continue, or split what is left into [subagents](https://www.aihero.dev/ai-coding-dictionary/subagent).
+Вторая ключевая идея скилла: **граница фаз**. Фаза: кусок работы внутри сессии ([допрос](https://www.aihero.dev/ai-coding-dictionary/grilling), реализация, QA), и граница между двумя фазами служит единственным местом, где уместен вопрос «что делать с этим контекстом?». Посреди фазы решать нечего: продолжай или разбей оставшееся на [субагентов](https://www.aihero.dev/ai-coding-dictionary/subagent).
 
-| Option | Take it when |
+| Вариант | Когда выбирать |
 | --- | --- |
-| **Continue** | The next phase wants this one verbatim, or you have [smart zone](https://www.aihero.dev/ai-coding-dictionary/smart-zone) left. It is the only move that keeps the session as a [primary source](https://www.aihero.dev/ai-coding-dictionary/primary-source), so rule it out first |
-| **`/clear`** | Everything behind you is disposable. The cheapest option, and you cannot undo it if you were wrong |
-| **[handoff](https://aihero.dev/skills-handoff)** | Something has to travel: a new [harness](https://www.aihero.dev/ai-coding-dictionary/harness), a new directory, a colleague, a side task forked mid-phase |
-| **Subagent** | The task is scoped tightly enough to run with you [away from the keyboard](https://www.aihero.dev/ai-coding-dictionary/afk) |
-| **`/compact`** | None of the above. It is the default, and the tree often ends here |
+| **Продолжить** | Следующей фазе нужна эта фаза дословно, или у тебя осталась [умная зона](https://www.aihero.dev/ai-coding-dictionary/smart-zone) (smart zone). Это единственный ход, сохраняющий сессию как [первоисточник](https://www.aihero.dev/ai-coding-dictionary/primary-source), поэтому исключай его первым |
+| **`/clear`** | Всё позади одноразовое. Самый дешёвый вариант, и его не отменить, если ты ошибся |
+| **[handoff](https://aihero.dev/skills-handoff)** | Чему-то нужно переехать: новый [харнесс](https://www.aihero.dev/ai-coding-dictionary/harness) (harness), новый каталог, коллега, побочная задача, отщеплённая посреди фазы |
+| **Субагент** | Задача очерчена достаточно плотно, чтобы выполняться, пока ты [отошёл от клавиатуры](https://www.aihero.dev/ai-coding-dictionary/afk) |
+| **`/compact`** | Ничего из перечисленного. Это вариант по умолчанию, и дерево часто здесь и заканчивается |
 
-People often get two of these wrong, which is why the router gives the order and not only the list. `/handoff` looks like the general way to move between context windows, but it is not. All it gives you is portability. `/compact` is the last option in the tree, not the first, because each of the four options above it is cheaper or more precise.
+В двух из них часто ошибаются, поэтому маршрутизатор даёт порядок, а не только список. `/handoff` выглядит как общий способ переходить между контекстными окнами, но это не так. Всё, что он даёт: переносимость. `/compact` стоит в дереве последним, а не первым, потому что каждый из четырёх вариантов над ним дешевле или точнее.
 
-## Common questions
+## Частые вопросы
 
-**Isn't there just a list of the skills in the right order?**
+**Разве нет просто списка скиллов в правильном порядке?**
 
-People keep asking for one in the README. This skill is that list. A static table would say `wayfinder → to-spec → to-tickets → implement → code-review → retro` and be wrong for most situations. The important parts are the branches: is there a codebase, does the build span sessions, can talking settle this question. The cost is that the router is maintained by hand, so it lags behind the repo. `/grilling` shipped long before the router named it.
+Его постоянно просят добавить в README. Этот скилл и есть такой список. Статичная таблица сказала бы `wayfinder → to-spec → to-tickets → implement → code-review → retro` и была бы неверной для большинства ситуаций. Важны ветвления: есть ли кодовая база, занимает ли разработка несколько сессий, можно ли решить вопрос разговором. Цена в том, что маршрутизатор поддерживается вручную и поэтому отстаёт от репозитория. `/grilling` появился задолго до того, как маршрутизатор начал его называть.
 
-**It told me half the skills aren't installed.**
+**Он сказал, что половина скиллов не установлена.**
 
-This is a known bug, and it is not fixed. Most of the skills the router routes you through set `disable-model-invocation: true`, which means the harness leaves them out of the skill list it injects into the agent's context. The agent reads that list as exhaustive and reports them missing. In one reported session, it declared the whole spec-and-tickets flow absent and rerouted to bare `/grilling` and `/tdd`. Sixteen of the plugin's twenty-seven skills carry the flag, so this is the common case rather than an edge. They are installed. Type the slash command anyway, or check `.claude-plugin/plugin.json`, which is the authority on what is present.
+Это известный баг, и он не исправлен. Большинство скиллов, по которым ведёт маршрутизатор, имеют `disable-model-invocation: true`, а значит, харнесс не включает их в список скиллов, который подставляет в контекст агента. Агент считает этот список исчерпывающим и сообщает, что их нет. В одной описанной сессии он объявил отсутствующим весь поток спецификации и тикетов и перенаправил на голые `/grilling` и `/tdd`. Флаг стоит у шестнадцати из двадцати семи скиллов плагина, так что это обычный случай, а не крайний. Они установлены. Всё равно набери slash-команду или проверь `.claude-plugin/plugin.json`: именно он служит источником истины о том, что есть.
 
-**It described a skill's behaviour, and the skill doesn't do that.**
+**Он описал поведение скилла, а скилл так не делает.**
 
-This is also a real bug, and also not fixed. The router answers from its own one-line summary of each skill rather than from the skill. One detailed report tracked three instances in a single session, including a recommendation to skip [to-spec](https://aihero.dev/skills-to-spec) based only on the summary "turn the thread into a spec". The router never opened `to-spec/SKILL.md`. In every case it verified only after the user pushed back, and never on its own initiative. Skipping `to-spec` there cost a real seam check, and the tickets that came out undercounted the work. When the router states something about another skill that you will act on, ask it to open that `SKILL.md` first. The same applies to questions the map does not cover at all, such as whether to use [plan mode](https://www.aihero.dev/ai-coding-dictionary/agent-mode): that answer is the [model](https://www.aihero.dev/ai-coding-dictionary/model)'s inference, not something written down here.
+Это тоже настоящий баг, и тоже не исправленный. Маршрутизатор отвечает по своей однострочной сводке каждого скилла, а не по самому скиллу. В одном подробном отчёте зафиксированы три случая за одну сессию, включая рекомендацию пропустить [to-spec](https://aihero.dev/skills-to-spec) только на основании сводки «превратить ветку разговора в спецификацию» ("turn the thread into a spec"). Маршрутизатор так и не открыл `to-spec/SKILL.md`. В каждом случае он проверял только после возражения пользователя и ни разу по своей инициативе. Пропуск `to-spec` стоил реальной проверки швов, и получившиеся тикеты недооценили объём работы. Когда маршрутизатор утверждает что-то о другом скилле и ты собираешься на это опираться, попроси его сначала открыть этот `SKILL.md`. То же касается вопросов, которых карта вообще не касается, например, использовать ли [режим планирования](https://www.aihero.dev/ai-coding-dictionary/agent-mode) (plan mode): такой ответ выводит сама [модель](https://www.aihero.dev/ai-coding-dictionary/model), а не чем-то, что здесь записано.
 
-**Why is it prose instead of a numbered checklist?**
+**Почему это проза, а не нумерованный чек-лист?**
 
-It is a fair complaint. An open issue argues that most of the routing is deterministic and that the narrative makes it hard to scan. Nothing stops you asking for the compressed form: "just give me the sequence" gets you the sequence. The prose carries the conditional part: the branches, where a human decision is expected, and where to clear or compact between steps. A flat checklist drops exactly that.
+Претензия справедливая. В открытой задаче утверждается, что большая часть маршрутизации детерминирована, а повествование мешает быстро просматривать. Ничто не мешает попросить сжатую форму: на «просто дай мне последовательность» ты получишь последовательность. Проза несёт условную часть: ветвления, места, где ожидается решение человека, и где между шагами очищать или сжимать контекст. Плоский чек-лист теряет именно это.
 
-**Can it route over my own skills, or another author's?**
+**Может ли он прокладывать маршрут по моим скиллам или скиллам другого автора?**
 
-No. Three separate proposals have asked for a router that reads your local `skills/` directory and recommends from whatever is installed. `ask-matt` is not that. It is a map of one set, maintained by hand, and it knows nothing about skills you wrote or installed from elsewhere.
+Нет. Три отдельных предложения просили маршрутизатор, который читает твой локальный каталог `skills/` и рекомендует из того, что установлено. `ask-matt` не такой. Это карта одного набора, поддерживаемая вручную, и о скиллах, которые ты написал или установил из других мест, он ничего не знает.
 
-**It told me to edit a SKILL.md.**
+**Он сказал мне отредактировать SKILL.md.**
 
-That advice is often correct, but the edit rarely lasts. Someone asked it how to make [implement](https://aihero.dev/skills-implement) close tickets, was told to add a line to the skill, and saw the problem at once. `npx skills update` overwrites the file, and the plugin install is read-only. Put standing behaviour in your own `CLAUDE.md` or `AGENTS.md`, or say it in the invocation. Changes you make in the prompt survive updates. People point the flow at Linear instead of GitHub this way, or ask it which open tickets could run in parallel.
+Совет часто верный, но правка редко держится. Кто-то спросил, как заставить [implement](https://aihero.dev/skills-implement) закрывать тикеты, получил совет добавить строку в скилл и сразу увидел проблему. `npx skills update` перезаписывает файл, а установка через плагин доступна только для чтения. Постоянное поведение клади в свой `CLAUDE.md` или `AGENTS.md` либо говори его при вызове. Изменения, сделанные в промпте, переживают обновления. Так люди направляют поток на Linear вместо GitHub или спрашивают, какие открытые тикеты можно выполнять параллельно.
 
-**It named a skill I don't have, or missed one I do.**
+**Он назвал скилл, которого у меня нет, или пропустил тот, что есть.**
 
-Check the changelog for a rename before assuming it is gone. `writing-great-skills` became [writing-for-agents](https://aihero.dev/skills-writing-for-agents) with no alias, `to-prd` became [to-spec](https://aihero.dev/skills-to-spec), and `pathfinder` became [wayfinder](https://aihero.dev/skills-wayfinder). Four skills were retired outright into the skills that absorbed them: `ubiquitous-language`, `design-an-interface`, `qa` and `request-refactor-plan`. If it misses a skill you have, that is the router's own lag, described above.
+Прежде чем решить, что скилл исчез, поищи переименование в changelog. `writing-great-skills` стал [writing-for-agents](https://aihero.dev/skills-writing-for-agents) без псевдонима, `to-prd` стал [to-spec](https://aihero.dev/skills-to-spec), а `pathfinder` стал [wayfinder](https://aihero.dev/skills-wayfinder). Четыре скилла были выведены из употребления и вошли в поглотившие их скиллы: `ubiquitous-language`, `design-an-interface`, `qa` и `request-refactor-plan`. Если он пропускает скилл, который у тебя есть, это собственное отставание маршрутизатора, описанное выше.
 
-## It's working if
+## Работает, если
 
-- It ends by naming what to type and stops there, instead of starting the work itself.
-- The route it gives back mentions where to clear or compact context and where you are expected to review, not just a list of skill names.
-- Where two skills are close, it says which one and why the other is wrong for you.
-- Any claim it makes about another skill's behaviour shows up in the trace as it reading that skill's `SKILL.md`.
-- You recognise your own situation in what it hands back, rather than the nearest generic scenario.
+- Он заканчивает тем, что называет, что набрать, и останавливается, а не начинает работу сам.
+- Возвращённый маршрут указывает, где очищать или сжимать контекст и где от тебя ожидается ревью, а не просто перечисляет имена скиллов.
+- Там, где два скилла близки, он говорит, какой выбрать и почему другой тебе не подходит.
+- Любое его утверждение о поведении другого скилла видно в трассе как чтение `SKILL.md` этого скилла.
+- В том, что он возвращает, ты узнаёшь свою ситуацию, а не ближайший общий сценарий.
 
-## Where it fits
+## Место в общей картине
 
-`ask-matt` is a **standalone router** that sits over the whole set. It is never a step in a chain. It points into every chain, and the other docs pages link back to it so none of them has to redraw the graph. From here you most often land on [grill-with-docs](https://aihero.dev/skills-grill-with-docs), the head of the main flow, or [triage](https://aihero.dev/skills-triage), the on-ramp for work that arrived rather than work you started.
+`ask-matt` служит **самостоятельным маршрутизатором** над всем набором. Шагом в цепочке он никогда не бывает. Он указывает в каждую цепочку, а остальные страницы документации ссылаются на него, чтобы ни одной не приходилось перерисовывать граф. Отсюда чаще всего попадают в [grill-with-docs](https://aihero.dev/skills-grill-with-docs), начало основного потока, или в [triage](https://aihero.dev/skills-triage), въезд для работы, которая пришла извне, а не была начата тобой.
 
-It is a [secondary source](https://www.aihero.dev/ai-coding-dictionary/secondary-source) over the skills it describes. Where the router and a `SKILL.md` disagree, the `SKILL.md` is right.
+Он служит [вторичным источником](https://www.aihero.dev/ai-coding-dictionary/secondary-source) по отношению к описываемым скиллам. Где маршрутизатор и `SKILL.md` расходятся, прав `SKILL.md`.
