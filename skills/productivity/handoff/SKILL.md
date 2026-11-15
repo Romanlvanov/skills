@@ -1,16 +1,16 @@
 ---
 name: handoff
-description: Compact the current conversation into a handoff document for another agent to pick up.
-argument-hint: "What will the next session be used for?"
+description: Сжимает текущий разговор в документ передачи (handoff), с которого другой агент продолжит работу.
+argument-hint: "Для чего будет использоваться следующая сессия?"
 disable-model-invocation: true
 ---
 
-Write a handoff document summarising the current conversation so a fresh agent can continue the work. Save to the temporary directory of the user's OS (`$TMPDIR`, else `/tmp`; `%TEMP%` on Windows) - not the current workspace.
+Напиши документ передачи (handoff), который резюмирует текущий разговор, чтобы новый агент мог продолжить работу. Сохрани его во временный каталог ОС пользователя (`$TMPDIR`, иначе `/tmp`; `%TEMP%` в Windows) - не в текущее рабочее пространство.
 
-Include a "suggested skills" section in the document, naming which skills the next agent should call the Skill tool for.
+Включи в документ раздел «рекомендуемые скиллы» (suggested skills), где перечислены скиллы, которые следующий агент должен вызвать через инструмент Skill.
 
-Do not duplicate content already captured in other artifacts (specs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
+Не дублируй то, что уже зафиксировано в других артефактах (спецификации, планы, ADR, задачи, коммиты, диффы). Вместо этого ссылайся на них по пути или URL.
 
-Redact any sensitive information, such as API keys, passwords, or personally identifiable information.
+Вычисти любую чувствительную информацию: API-ключи, пароли, персональные данные.
 
-If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.
+Если пользователь передал аргументы, считай их описанием того, на чём сосредоточится следующая сессия, и подстрой документ под это.
