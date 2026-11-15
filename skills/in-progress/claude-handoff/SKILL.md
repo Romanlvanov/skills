@@ -1,18 +1,18 @@
 ---
 name: claude-handoff
-description: Hand the current conversation off to a fresh background agent that picks up the work immediately.
-argument-hint: "What will the next session be used for?"
+description: Передать текущий разговор новому фоновому агенту, который сразу продолжит работу.
+argument-hint: "Для чего будет использоваться следующая сессия?"
 disable-model-invocation: true
 ---
 
-Write a handoff summary of the current conversation so a fresh agent can continue the work. Save it to the temporary directory of the user's OS, then launch a background agent seeded with it as its prompt: `claude --bg --name "<descriptive name>" -- "$(cat <summary file>)"`. Passing the file keeps the shell from running backticks or expanding `$` in the summary. It starts in the current working directory and returns immediately; the user manages it with `claude agents`.
+Напиши сводку передачи (handoff) текущего разговора, чтобы новый агент мог продолжить работу. Сохрани её во временный каталог ОС пользователя, затем запусти фонового агента, передав сводку ему как промпт: `claude --bg --name "<descriptive name>" -- "$(cat <summary file>)"`. Передача через файл не даёт shell выполнить обратные кавычки или раскрыть `$` в сводке. Агент стартует в текущем рабочем каталоге, а команда сразу возвращает управление; пользователь управляет агентом через `claude agents`.
 
-Always pass `-n`/`--name` with a descriptive name (e.g. `--name "Fix login bug"`); it sets the display name shown in the job list, session picker, and terminal title.
+Всегда передавай `-n`/`--name` с описательным именем (например, `--name "Fix login bug"`): оно задаёт отображаемое имя в списке фоновых заданий, в выборе сессий и в заголовке терминала.
 
-Include a "suggested skills" section in the summary, naming which skills the next agent should call the Skill tool for.
+Добавь в сводку раздел «рекомендуемые скиллы» с перечнем скиллов, которые следующий агент должен вызвать через инструмент Skill.
 
-Do not duplicate content already captured in other artifacts (specs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
+Не дублируй содержимое, уже зафиксированное в других артефактах (спецификации, планы, ADR, задачи, коммиты, диффы). Вместо этого ссылайся на них по пути или URL.
 
-Redact any sensitive information, such as API keys, passwords, or personally identifiable information, since the summary becomes the agent's prompt.
+Убери любую чувствительную информацию, например API-ключи, пароли или персональные данные: сводка становится промптом агента.
 
-If the user passed arguments, treat them as a description of what the next session will focus on and tailor the summary accordingly.
+Если пользователь передал аргументы, считай их описанием того, на чём сосредоточится следующая сессия, и подстрой сводку под это.
