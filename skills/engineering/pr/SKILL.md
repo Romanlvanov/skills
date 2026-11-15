@@ -1,6 +1,6 @@
 ---
 name: pr
-description: "Use when writing a PR body."
+description: "Используй, когда пишешь описание PR (writing a PR body)."
 metadata:
   credits:
     skill: show-me
@@ -9,7 +9,7 @@ metadata:
     url: "https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md"
 ---
 
-Use this template for writing the PR body:
+Используй этот шаблон для описания PR:
 
 ```markdown
 ## Summary
@@ -32,15 +32,15 @@ Use this template for writing the PR body:
 <optional: potential ramifications of merge>
 ```
 
-## Sections
+## Разделы
 
-Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
+Пропускай любые вступления, пиши прозу кратко. Используй язык предметной области пользователя из `GLOSSARY.md`.
 
 ### Summary
 
-Pick the smallest view that makes the key point clear.
+Выбери минимальное представление, которое делает главную мысль ясной.
 
-- Show logic or an algorithm as pseudocode:
+- Показывай логику или алгоритм псевдокодом:
 
 ```text
 on(save)
@@ -50,7 +50,7 @@ on(save)
   return fresh result
 ```
 
-- Show runtime control flow as a call tree:
+- Показывай поток управления во время выполнения деревом вызовов:
 
 ```text
 submitForm
@@ -60,7 +60,7 @@ submitForm
   navigateToSession
 ```
 
-- Show UI structure as a component tree, including state and module boundaries that matter:
+- Показывай структуру UI деревом компонентов, включая состояние и важные границы модулей:
 
 ```text
 <SessionPage> (apps/example/src/routes/session.tsx)
@@ -69,7 +69,7 @@ submitForm
     <RunSkillButton> (packages/ui)
 ```
 
-- Show file responsibility or a broad refactor as a shallow file tree:
+- Показывай ответственность файлов или широкий рефакторинг неглубоким деревом файлов:
 
 ```text
 src/
@@ -78,7 +78,7 @@ src/
 └── transport/      # sends API requests
 ```
 
-- Show component interaction, control flow, or data flow with Mermaid:
+- Показывай взаимодействие компонентов, поток управления или поток данных через Mermaid:
 
 ```mermaid
 sequenceDiagram
@@ -90,9 +90,9 @@ sequenceDiagram
     Daemon-->>UI: stream result
 ```
 
-- Use `diff` when the point is what changes and the surrounding shape already exists. Match the diff shape to the topic.
+- Используй `diff`, когда суть в том, что меняется, а окружающая форма уже существует. Подбирай форму диффа под тему.
 
-For a component change:
+Для изменения компонента:
 
 ```diff
  <SessionPage>
@@ -103,7 +103,7 @@ For a component change:
 +    <SkillResultCard />
 ```
 
-For a file-layout change:
+Для изменения раскладки файлов:
 
 ```diff
  src/
@@ -116,7 +116,7 @@ For a file-layout change:
 +    └── stream.ts
 ```
 
-For a call-tree or call-stack change:
+Для изменения дерева вызовов или стека вызовов:
 
 ```diff
  submitForm
@@ -129,7 +129,7 @@ For a call-tree or call-stack change:
 +    subscribeToEvents
 ```
 
-For a state or control-flow change:
+Для изменения состояния или потока управления:
 
 ```diff
  on(save)
@@ -140,7 +140,7 @@ For a state or control-flow change:
 +  invalidate cache
 ```
 
-- Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
+- Показывай блок целиком, когда большая его часть новая, когда опущенный контекст скрыл бы принадлежность или порядок, или когда пользователю нужна целевая форма, которую можно скопировать:
 
 ```ts
 function expandSkill(command: string): string {
@@ -149,22 +149,22 @@ function expandSkill(command: string): string {
 }
 ```
 
-#### Guidance
+#### Рекомендации
 
-Place each visual next to the short text it supports. Keep only the calls, files, props, states, and boundaries needed to answer the user's current question or the options to resolve the current discussion point.
+Размещай каждый визуальный элемент рядом с коротким текстом, который он поддерживает. Оставляй только те вызовы, файлы, props, состояния и границы, которые нужны, чтобы ответить на текущий вопрос пользователя, или варианты для решения текущего пункта обсуждения.
 
-You may use one of these, you may use several, it is unlikely you will use all of them. Use your judgement and don't overwhelm the user.
+Можно использовать один из этих вариантов, можно несколько; маловероятно, что понадобятся все. Полагайся на своё суждение и не перегружай пользователя.
 
 ### Evidence
 
-Concrete evidence that the change works. Show a before and after.
+Конкретные доказательства того, что изменение работает. Покажи «до» и «после».
 
-Screenshots are S-tier - when the environment is set up for it and the change is visual.
+Скриншоты относятся к уровню S (S-tier) - когда окружение для этого настроено и изменение визуальное.
 
-Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
+Доказательства на основе запуска относятся к уровню A (A-tier). Результаты тестов, вывод консоли. Покажи псевдокодом конкретный тест, который раньше падал, а теперь проходит.
 
 ### Merge Danger
 
-Describe whether it's a one-way or two-way door. You can walk back through two-way doors, but not one-way doors. A PR that is cheap to roll back is lower risk. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors.
+Опиши, это односторонняя или двусторонняя дверь. Через двустороннюю дверь можно вернуться обратно, через одностороннюю нельзя. PR, который дёшево откатить, менее рискован. Изменения с разрушительными действиями или трудно обратимыми решениями являются односторонними дверями.
 
-The blast radius is the potential impact or scope of the changes introduced by this PR. Consider all possibilities. Examples are layout shift, breakages for consumers, mobile responsiveness, etc.
+Радиус поражения (blast radius): потенциальное влияние или охват изменений, вносимых этим PR. Учитывай все возможности. Примеры: сдвиг вёрстки, поломки у потребителей, адаптивность на мобильных и т.п.
