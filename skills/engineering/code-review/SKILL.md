@@ -1,89 +1,89 @@
 ---
 name: code-review
-description: "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match what the originating issue/spec asked for?). Runs both reviews in parallel sub-agents and reports them side by side. Use when the user wants to review a branch, a PR, work-in-progress changes, or asks to \"review since X\"."
+description: "Ревью изменений с фиксированной точки (коммит, ветка, тег или merge-base) по двум осям: Standards (следует ли код задокументированным стандартам кодирования этого репозитория?) и Spec (соответствует ли код тому, что просили в исходной задаче/спецификации?). Запускает оба ревью в параллельных субагентах и показывает их рядом. Используй, когда пользователь хочет отревьюить ветку, PR или незавершённые изменения, либо просит «сделай ревью с X» (\"review since X\")."
 ---
 
-Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
+Ревью по двум осям для диффа между `HEAD` и фиксированной точкой, которую задаёт пользователь:
 
-- **Standards**: does the code conform to this repo's documented coding standards?
-- **Spec**: does the code faithfully implement the originating issue / spec?
+- **Standards**: соответствует ли код задокументированным стандартам кодирования этого репозитория?
+- **Spec**: точно ли код реализует исходную задачу / спецификацию?
 
-Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings. Start every sub-agent with a fresh context window.
+Обе оси выполняются как **параллельные субагенты**, чтобы не засорять контекст друг друга, а затем этот скилл сводит их находки. Запускай каждого субагента с чистым контекстным окном.
 
-The issue tracker should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`.
+Трекер задач (issue tracker) тебе должны были указать. Если нет, попроси пользователя запустить `/setup-matt-pocock-skills`.
 
-## Process
+## Процесс
 
-### 1. Pin the fixed point
+### 1. Зафиксируй точку отсчёта
 
-Whatever the user said is the fixed point (a commit SHA, branch name, tag, `main`, `HEAD~5`, etc.). If they didn't specify one, ask for it.
+Фиксированная точка: то, что назвал пользователь (SHA коммита, имя ветки, тег, `main`, `HEAD~5` и т.п.). Если он её не указал, спроси.
 
-Capture the diff command once: `git diff <fixed-point>...HEAD` (three-dot, so the comparison is against the merge-base). Also note the list of commits via `git log <fixed-point>..HEAD --oneline`.
+Один раз зафиксируй команду диффа: `git diff <fixed-point>...HEAD` (три точки, чтобы сравнение шло с merge-base). Также запиши список коммитов через `git log <fixed-point>..HEAD --oneline`.
 
-Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`) and the diff is non-empty. A bad ref or empty diff should fail here, not inside two parallel sub-agents.
+Прежде чем идти дальше, убедись, что фиксированная точка разрешается (`git rev-parse <fixed-point>`) и дифф не пуст. Неверная ссылка или пустой дифф должны упасть здесь, а не внутри двух параллельных субагентов.
 
-### 2. Identify the spec source
+### 2. Найди источник спецификации
 
-Look for the originating spec, in this order:
+Ищи исходную спецификацию в таком порядке:
 
-1. Issue references in the commit messages (`#123`, `Closes #45`, GitLab `!67`, etc.), fetched via the workflow in the tracker doc.
-2. A path the user passed as an argument.
-3. A spec file under `docs/`, `specs/`, or `.scratch/` matching the branch name or feature.
-4. If nothing is found, ask the user where the spec is. If they say there isn't one, the **Spec** sub-agent will skip and report "no spec available".
+1. Ссылки на задачи в сообщениях коммитов (`#123`, `Closes #45`, GitLab `!67` и т.п.), полученные по процессу из документа трекера.
+2. Путь, который пользователь передал аргументом.
+3. Файл спецификации в `docs/`, `specs/` или `.scratch/`, соответствующий имени ветки или фиче.
+4. Если ничего не нашлось, спроси пользователя, где спецификация. Если он говорит, что её нет, субагент **Spec** пропускается и сообщает «спецификация недоступна».
 
-### 3. Identify the standards sources
+### 3. Найди источники стандартов
 
-Search the repo for every file that documents how code should be written. When `CODING_STANDARDS.md` or `CONTRIBUTING.md` exists, it must be on the list.
+Найди в репозитории все файлы, где описано, как надо писать код. Если существует `CODING_STANDARDS.md` или `CONTRIBUTING.md`, он обязан быть в списке.
 
-On top of whatever the repo documents, the Standards axis always carries the **smell baseline** below: a fixed set of Fowler code smells (_Refactoring_, ch.3) that applies even when a repo documents nothing. Two rules bind it:
+Помимо того, что задокументировано в репозитории, ось Standards всегда несёт **базовый набор запахов** ниже: фиксированный набор запахов кода по Фаулеру (_Рефакторинг_, гл. 3), который применяется, даже если в репозитории ничего не задокументировано. Его связывают два правила:
 
-- **The repo overrides.** A documented repo standard always wins; where it endorses something the baseline would flag, suppress the smell.
-- **Always a judgement call.** Each smell is a labelled heuristic ("possible Feature Envy"), never a hard violation. Like any standard here, skip anything tooling already enforces.
+- **Репозиторий важнее.** Задокументированный стандарт репозитория всегда побеждает; если он одобряет то, что базовый набор пометил бы, подави этот запах.
+- **Всегда вопрос суждения.** Каждый запах это помеченная эвристика («возможно, Завистливая функция»), а не жёсткое нарушение. Как и с любым стандартом здесь, пропускай всё, что уже проверяют инструменты.
 
-Each smell reads *what it is* → *how to fix*; match it against the diff:
+Каждый запах читается как *что это* → *как исправить*; сопоставляй его с диффом:
 
-- **Mysterious Name**: a function, variable, or type whose name doesn't reveal what it does or holds. → rename it; if no honest name comes, the design's murky.
-- **Duplicated Code**: the same logic shape appears in more than one hunk or file in the change. → extract the shared shape, call it from both.
-- **Feature Envy**: a method that reaches into another object's data more than its own. → move the method onto the data it envies.
-- **Data Clumps**: the same few fields or params keep travelling together (a type wanting to be born). → bundle them into one type, pass that.
-- **Primitive Obsession**: a primitive or string standing in for a domain concept that deserves its own type. → give the concept its own small type.
-- **Repeated Switches**: the same `switch`/`if`-cascade on the same type recurs across the change. → replace with polymorphism, or one map both sites share.
-- **Shotgun Surgery**: one logical change forces scattered edits across many files in the diff. → gather what changes together into one module.
-- **Divergent Change**: one file or module is edited for several unrelated reasons. → split so each module changes for one reason.
-- **Speculative Generality**: abstraction, parameters, or hooks added for needs the spec doesn't have. → delete it; inline back until a real need shows.
-- **Message Chains**: long `a.b().c().d()` navigation the caller shouldn't depend on. → hide the walk behind one method on the first object.
-- **Middle Man**: a class or function that mostly just delegates onward. → cut it, call the real target direct.
-- **Refused Bequest**: a subclass or implementer that ignores or overrides most of what it inherits. → drop the inheritance, use composition.
+- **Загадочное имя (Mysterious Name)**: функция, переменная или тип, чьё имя не раскрывает, что она делает или хранит. → переименуй; если честное имя не находится, дизайн мутный.
+- **Дублирование кода (Duplicated Code)**: одна и та же форма логики встречается в изменении более чем в одном ханке или файле. → вынеси общую форму и вызывай её из обоих мест.
+- **Завистливая функция (Feature Envy)**: метод, который лезет в данные другого объекта больше, чем в свои. → перенеси метод к данным, которым он завидует.
+- **Группы данных (Data Clumps)**: одни и те же несколько полей или параметров постоянно путешествуют вместе (тип, который хочет родиться). → объедини их в один тип и передавай его.
+- **Одержимость примитивами (Primitive Obsession)**: примитив или строка заменяет понятие предметной области, которое заслуживает своего типа. → дай понятию свой маленький тип.
+- **Повторяющиеся switch (Repeated Switches)**: один и тот же каскад `switch`/`if` по одному и тому же типу повторяется в изменении. → замени полиморфизмом или одной таблицей, общей для обоих мест.
+- **Стрельба дробью (Shotgun Surgery)**: одно логическое изменение вынуждает разбросанные правки во многих файлах диффа. → собери то, что меняется вместе, в один модуль.
+- **Расходящиеся изменения (Divergent Change)**: один файл или модуль правится по нескольким не связанным причинам. → раздели, чтобы каждый модуль менялся по одной причине.
+- **Спекулятивная общность (Speculative Generality)**: абстракции, параметры или хуки, добавленные под потребности, которых нет в спецификации. → удали; встраивай обратно, пока не появится реальная потребность.
+- **Цепочки сообщений (Message Chains)**: длинная навигация `a.b().c().d()`, от которой вызывающий не должен зависеть. → спрячь обход за одним методом первого объекта.
+- **Посредник (Middle Man)**: класс или функция, которая в основном просто делегирует дальше. → убери её и вызывай настоящую цель напрямую.
+- **Отказ от наследства (Refused Bequest)**: подкласс или реализация, которая игнорирует или переопределяет большую часть унаследованного. → откажись от наследования, используй композицию.
 
-### 4. Spawn both sub-agents in parallel
+### 4. Запусти обоих субагентов параллельно
 
-Issue both sub-agent calls together, in the foreground, and aggregate the reports they return.
+Сделай оба вызова субагентов вместе, на переднем плане, и сведи отчёты, которые они вернут.
 
-**Standards sub-agent prompt** should include:
+**Промпт субагента Standards** должен включать:
 
-- The full diff command and commit list.
-- The list of standards-source files you found in step 3, **plus the smell baseline from step 3** pasted in full (the sub-agent has no other access to it).
-- The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. Under 400 words."
+- Полную команду диффа и список коммитов.
+- Список файлов-источников стандартов, найденных на шаге 3, **плюс базовый набор запахов из шага 3**, вставленный целиком (у субагента нет другого доступа к нему).
+- Бриф: «Сообщи, по файлам/ханкам где уместно, (а) каждое место, где дифф нарушает задокументированный стандарт: процитируй стандарт (файл + правило); и (б) любой замеченный запах из базового набора: назови его и процитируй ханк. Отличай жёсткие нарушения от вопросов суждения: нарушения задокументированного стандарта могут быть жёсткими, но запахи из базового набора всегда вопрос суждения, а задокументированный стандарт репозитория важнее базового набора. Пропускай всё, что проверяют инструменты. Не более 400 слов.»
 
-**Spec sub-agent prompt** should include:
+**Промпт субагента Spec** должен включать:
 
-- The diff command and commit list.
-- The path or fetched contents of the spec.
-- The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep); (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Under 400 words."
+- Команду диффа и список коммитов.
+- Путь к спецификации или её полученное содержимое.
+- Бриф: «Сообщи: (а) требования из спецификации, которые отсутствуют или реализованы частично; (б) поведение в диффе, о котором не просили (расползание объёма); (в) требования, которые выглядят реализованными, но реализация выглядит неверной. Для каждой находки процитируй строку спецификации. Не более 400 слов.»
 
-If the spec is missing, skip the Spec sub-agent and note this in the final report.
+Если спецификации нет, пропусти субагента Spec и отметь это в итоговом отчёте.
 
-### 5. Aggregate
+### 5. Сведи результаты
 
-Present the two reports under `## Standards` and `## Spec` headings, verbatim or lightly cleaned. Do **not** merge or rerank findings, because the two axes are deliberately separate (see _Why two axes_).
+Покажи два отчёта под заголовками `## Standards` и `## Spec`, дословно или слегка подчищенными. **Не** объединяй и не переранжируй находки, потому что две оси намеренно разделены (см. _Почему две оси_).
 
-End with a one-line summary: total findings per axis, and the worst issue _within each axis_ (if any). Don't pick a single winner across axes: that's the reranking the separation exists to prevent.
+Закончи сводкой в одну строку: общее число находок по каждой оси и самая серьёзная проблема _внутри каждой оси_ (если есть). Не выбирай одного победителя по обеим осям: это и есть то переранжирование, от которого защищает разделение.
 
-## Why two axes
+## Почему две оси
 
-A change can pass one axis and fail the other:
+Изменение может пройти одну ось и провалить другую:
 
-- Code that follows every standard but implements the wrong thing → **Standards pass, Spec fail.**
-- Code that does exactly what the issue asked but breaks the project's conventions → **Spec pass, Standards fail.**
+- Код, который следует всем стандартам, но реализует не то → **Standards пройдена, Spec провалена.**
+- Код, который делает ровно то, что просили в задаче, но нарушает соглашения проекта → **Spec пройдена, Standards провалена.**
 
-Reporting them separately stops one axis from masking the other.
+Раздельный отчёт не даёт одной оси замаскировать другую.
