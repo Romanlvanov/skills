@@ -1,54 +1,54 @@
 ---
 name: to-questionnaire
-description: Turn a decision you can't fully answer into a questionnaire for someone else to fill in.
+description: Превращает решение, на которое ты не можешь ответить сам, в опросник для заполнения другим человеком.
 disable-model-invocation: true
 ---
 
-Turn something the user can't answer alone into a **questionnaire**: a Markdown document they hand to one person to fill in async, or fill out together over a meeting. The recipient holds knowledge the user lacks; the questionnaire pulls it out of them.
+Преврати то, на что пользователь не может ответить в одиночку, в **опросник**: Markdown-документ, который он отдаёт одному человеку для асинхронного заполнения или заполняет вместе с ним на встрече. У адресата есть знания, которых не хватает пользователю; опросник их из него извлекает.
 
-**Grill the send, not the subject.** Interview the user only about the _send_, which they can always answer: who it goes to, and what they need back. The questions in the document then target the **gap** between what the recipient knows and what the user needs.
+**Допрашивай об отправке, а не о предмете.** Опрашивай пользователя только об _отправке_, на что он всегда может ответить: кому она адресована и что ему нужно получить в ответ. Вопросы в документе затем нацелены на **разрыв** между тем, что знает адресат, и тем, что нужно пользователю.
 
 
-1. **Who is it going to?** Ask, in one exchange, the recipient's role, expertise, and relationship to the user. This fixes the questionnaire's tone and how much context it must carry. Done when you know who the recipient is and what they know that the user doesn't.
+1. **Кому он адресован?** За один обмен репликами спроси о роли адресата, его экспертизе и отношении к пользователю. Это задаёт тон опросника и то, сколько контекста он должен нести. Готово, когда ты знаешь, кто адресат и что он знает такого, чего не знает пользователь.
 
-2. **What do you need back?** Ask, in one exchange, the specific decisions or facts the user can't resolve alone and needs from this person. Done when you have a concrete list of what the user must walk away able to do or decide.
+2. **Что тебе нужно получить в ответ?** За один обмен репликами спроси о конкретных решениях или фактах, которые пользователь не может определить сам и которые ему нужны от этого человека. Готово, когда у тебя есть конкретный список того, что пользователь должен уметь сделать или решить по итогам.
 
-3. **Write the questionnaire.** Draft questions aimed at the gap from steps 1–2, following the Document structure below. Write it to `to-questionnaire-<slug>.md` in the current directory (slug from the topic) and report the path. Done when the file exists and every item the user named in step 2 is covered by a question.
+3. **Напиши опросник.** Составь вопросы, нацеленные на разрыв из шагов 1–2, по разделу «Структура документа» ниже. Запиши его в `to-questionnaire-<slug>.md` в текущем каталоге (slug из темы) и сообщи путь. Готово, когда файл существует и каждый пункт, названный пользователем на шаге 2, покрыт вопросом.
 
-## Document structure
+## Структура документа
 
-Frame the document as a **discovery questionnaire**: the user lacks context, the recipient holds it. Order questions most-important-first, since async means you may only get one pass, and group them under `##` headings by theme once there are more than a handful. Write it using the template below.
+Оформи документ как **ознакомительный опросник** (discovery questionnaire): у пользователя нет контекста, у адресата он есть. Упорядочь вопросы от самого важного, ведь при асинхронной работе у тебя может быть только одна попытка, и сгруппируй их под заголовками `##` по темам, как только их больше нескольких. Напиши его по шаблону ниже.
 
 <questionnaire-template>
 
-# <Questionnaire title>
+# <название опросника>
 
-**Purpose:** why this questionnaire exists and the decision riding on it.
+**Цель:** зачем существует этот опросник и какое решение от него зависит.
 
-**From:** <the user>, **To:** <the recipient>, **How your answers will be used:** <where they go>
+**От:** <пользователь>, **Кому:** <адресат>, **Как будут использованы ваши ответы:** <куда они пойдут>
 
-## Context
+## Контекст
 
-One paragraph orienting a recipient who wasn't in the user's head. Enough to answer well, not a page.
+Один абзац, вводящий в курс адресата, который не был в голове у пользователя. Достаточно, чтобы ответить хорошо, но не на страницу.
 
-## How to answer
+## Как отвечать
 
-Deadline and rough effort. Partial answers and "I don't know" are useful: flag anything you're unsure of rather than skipping it.
+Срок и примерный объём работы. Частичные ответы и «не знаю» полезны: отметьте то, в чём не уверены, а не пропускайте.
 
-## <Theme heading>
+## <заголовок темы>
 
-One `##` section per theme. Under each, its questions, most-important-first. Every question is one idea, never compound, with an answer stub directly beneath, and a one-line _why this matters_ only where the question could be misread or invite a throwaway answer.
+Один раздел `##` на тему. Под каждым его вопросы, от самого важного. Каждый вопрос: одна мысль, без составных формулировок; прямо под ним заготовка для ответа, а однострочное _почему это важно_ добавляй только там, где вопрос можно понять неверно или где он располагает к отписке.
 
 <question-example>
-### What load is the system expected to handle at launch?
+### Какую нагрузку система должна выдерживать на старте?
 
-_Why this matters: it decides whether we provision for burst traffic now or defer it._
+_Почему это важно: от этого зависит, закладываем ли мы ресурсы под пиковый трафик сейчас или откладываем._
 
 >
 </question-example>
 
-## Anything else?
+## Что-нибудь ещё?
 
-A closing catch-all: anything we didn't ask that we should know?
+Заключительный вопрос на всё остальное: есть ли что-то, о чём мы не спросили, но что нам стоит знать?
 
 </questionnaire-template>
