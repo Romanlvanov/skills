@@ -1,3 +1,3 @@
 # Deprecated
 
-Skills I no longer use. This bucket is currently empty: a retired skill is deleted, and the changeset that removes it names whatever replaced it.
+Скиллы, которыми я больше не пользуюсь. Сейчас этот раздел пуст: выведенный из употребления скилл удаляется, а в changeset, который его удаляет, указано, что пришло ему на замену.
