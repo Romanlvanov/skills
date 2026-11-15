@@ -1,13 +1,13 @@
 ---
 name: grilling
-description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
+description: "Беспощадно допрашивает пользователя о плане, решении или идее. Используй, когда пользователь хочет проверить своё мышление на прочность (stress-test their thinking) или произносит любую фразу-триггер с 'grill': «погоняй меня вопросами», «устрой допрос», «допроси меня» (grill me)."
 ---
 
-Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
+Беспощадно допрашивай (grilling) пользователя, пока не придёшь с ним к общему пониманию. Представь это как **дерево решений**: каждое решение ветвится на решения, которые от него зависят.
 
-Work the tree in **rounds**. The **frontier** is every decision whose prerequisites are already settled: the questions you can ask _now_ without guessing at answers you haven't heard yet. Ask the whole frontier in one round: number each question and give your recommended answer. Then wait for the user's answers before the next round.
+Проходи дерево **раундами**. **Фронт** (frontier): все решения, предпосылки которых уже определены: вопросы, которые можно задать _сейчас_, не гадая об ответах, которых ты ещё не слышал. Задавай весь фронт за один раунд: пронумеруй каждый вопрос и дай свой рекомендуемый ответ. Затем дождись ответов пользователя и только после этого переходи к следующему раунду.
 
-Format a round like so:
+Оформляй раунд так:
 
 ```
 ❓ **Q1** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
@@ -21,10 +21,10 @@ Format a round like so:
 ➡️ <your recommended answer>
 ```
 
-Word each question so "yes" accepts your recommended answer.
+Формулируй каждый вопрос так, чтобы «да» означало согласие с твоим рекомендуемым ответом.
 
-Each round the user answers reshapes the tree: settled decisions push the frontier outward and unblock questions that depended on them. Recompute the frontier and ask the next round. A question whose answer depends on another question still open in this round belongs to a _later_ round, not this one.
+Каждый раунд ответов пользователя перестраивает дерево: определённые решения сдвигают фронт дальше и разблокируют вопросы, которые от них зависели. Пересчитай фронт и задай следующий раунд. Вопрос, ответ на который зависит от другого вопроса, ещё открытого в этом раунде, относится к _более позднему_ раунду, а не к этому.
 
-Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (filesystem, tools, etc.), dispatch a sub-agent with a fresh context window to find it; don't ask the user for anything you could look up yourself. Don't block on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait for the sub-agent to report; ask the rest of the frontier now. The _decisions_ are the user's: put each to them and wait.
+Искать _факты_ должен ты, и никогда не пользователь. Когда вопросу из фронта нужен факт из окружения (файловая система, инструменты и т.п.), отправь субагента с чистым контекстным окном, чтобы он его нашёл; не спрашивай у пользователя то, что можешь выяснить сам. Не блокируйся на этом: идущее исследование считается неопределённой предпосылкой, поэтому ответа субагента ждут только вопросы, зависящие от него; остальную часть фронта задай сейчас. _Решения_ принимает пользователь: выноси каждое на его суд и жди.
 
-The session is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.
+Сессия завершена, когда фронт пуст: каждая ветвь дерева решений пройдена, ничего не принято молча по умолчанию. Не действуй на основе результата, пока пользователь не подтвердит, что вы пришли к общему пониманию.
