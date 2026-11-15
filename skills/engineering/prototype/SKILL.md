@@ -1,26 +1,26 @@
 ---
 name: prototype
-description: Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like.
+description: "Собери одноразовый прототип, чтобы ответить на вопрос о дизайне. Используй, когда пользователь хочет проверить на здравый смысл, правильно ли ощущается модель состояний или логика (sanity-check whether a state model or logic feels right), или прикинуть, как должен выглядеть UI (explore what a UI should look like)."
 ---
 
-# Prototype
+# Прототип
 
-A prototype is **throwaway code that answers a question**. The question decides the shape.
+Прототип это **одноразовый код, который отвечает на вопрос**. Форму прототипа определяет вопрос.
 
-## Pick a branch
+## Выбери ветку
 
-Identify which question is being answered, using the user's prompt, the surrounding code, or by asking if the user is around:
+Определи, на какой вопрос нужно ответить: по запросу пользователя, по окружающему коду или спросив пользователя, если он рядом:
 
-- **"Does this logic / state model feel right?"** → [LOGIC.md](LOGIC.md). Build a single shareable HTML file (free-play buttons plus tabbed guided walkthroughs) that pushes the state machine through cases that are hard to reason about on paper, and that a non-developer can drive.
-- **"What should this look like?"** → [UI.md](UI.md). Generate several radically different UI variations on a single route, switchable via a URL search param and a floating bottom bar.
+- **«Правильно ли ощущается эта логика / модель состояний?»** → [LOGIC.md](LOGIC.md). Собери один HTML-файл, которым можно поделиться (кнопки для свободной игры плюс пошаговые сценарии во вкладках). Он прогоняет конечный автомат через случаи, о которых трудно рассуждать на бумаге, и им может управлять не-разработчик.
+- **«Как это должно выглядеть?»** → [UI.md](UI.md). Сгенерируй несколько радикально разных вариантов UI на одном маршруте, переключаемых через параметр поиска в URL и плавающую нижнюю панель.
 
-The two branches produce very different artifacts, so getting this wrong wastes the whole prototype. If the question is genuinely ambiguous and the user isn't reachable, default to whichever branch better matches the surrounding code (a backend module → logic; a page or component → UI) and state the assumption at the top of the prototype.
+Две ветки дают совершенно разные артефакты, поэтому ошибка здесь обесценивает весь прототип. Если вопрос действительно неоднозначен, а пользователь недоступен, по умолчанию выбери ветку, которая лучше соответствует окружающему коду (backend-модуль → логика; страница или компонент → UI), и явно укажи это допущение в начале прототипа.
 
-## Rules that apply to both
+## Правила для обеих веток
 
-1. **Throwaway from day one, and clearly marked as such.** Locate the prototype code close to where it will actually be used (next to the module or page it's prototyping for) so context is obvious, but name it so a casual reader can see it's a prototype, not production. For throwaway UI routes, obey whatever routing convention the project already uses; don't invent a new top-level structure.
-2. **Trivial to run.** A UI prototype starts from one command in the project's task runner: `pnpm <name>`, `python <path>`, `bun <path>`, etc. A logic demo is a single HTML file the user double-clicks. Either way, no thinking required to start it.
-3. **No persistence by default.** State lives in memory. Persistence is the thing the prototype is _checking_, not something it should depend on. If the question explicitly involves a database, hit a scratch DB or a local file with a clear "PROTOTYPE, wipe me" name.
-4. **Skip the polish.** No tests, no error handling beyond what makes the prototype _runnable_, no abstractions. The point is to learn something fast.
-5. **Surface the state.** After every action (logic) or on every variant switch (UI), print or render the full relevant state so the user can see what changed.
-6. **Capture it when done.** Fold any validated decision into the real code, then capture the prototype itself as a **primary source**: commit it to a throwaway branch, out of main, and leave a context pointer to that branch on the implementation issue. Capture the answer too (the verdict and the question it settled) in the issue or a commit. The main branch keeps only the validated decision.
+1. **Одноразовый с первого дня и явно помечен как таковой.** Размести код прототипа рядом с местом, где он реально будет использоваться (возле модуля или страницы, для которой делается прототип), чтобы контекст был очевиден, но назови его так, чтобы случайный читатель видел: это прототип, а не продакшен. Для одноразовых UI-маршрутов следуй тому соглашению о маршрутизации, которое уже есть в проекте; не придумывай новую структуру верхнего уровня.
+2. **Запуск без усилий.** UI-прототип запускается одной командой из таск-раннера проекта: `pnpm <name>`, `python <path>`, `bun <path>` и т.п. Демо логики это один HTML-файл, который пользователь открывает двойным щелчком. В любом случае запуск не должен требовать раздумий.
+3. **По умолчанию без хранения данных.** Состояние живёт в памяти. Хранение данных это то, что прототип _проверяет_, а не то, от чего он должен зависеть. Если вопрос явно касается базы данных, используй временную БД или локальный файл с понятным именем вроде «PROTOTYPE, wipe me».
+4. **Без полировки.** Никаких тестов, никакой обработки ошибок сверх того, что делает прототип _запускаемым_, никаких абстракций. Смысл в том, чтобы быстро что-то узнать.
+5. **Показывай состояние.** После каждого действия (логика) или при каждом переключении варианта (UI) выводи или отрисовывай всё релевантное состояние, чтобы пользователь видел, что изменилось.
+6. **Сохрани результат, когда закончишь.** Перенеси каждое подтверждённое решение в реальный код, а сам прототип сохрани как **первоисточник**: закоммить его в одноразовую ветку вне main и оставь в задаче (issue) на реализацию контекстный указатель на эту ветку. Сохрани и ответ (вердикт и вопрос, который он закрыл) в задаче или в коммите. Ветка main хранит только подтверждённое решение.
