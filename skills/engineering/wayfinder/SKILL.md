@@ -1,32 +1,32 @@
 ---
 name: wayfinder
-description: Plan a huge chunk of work (more than one agent session can hold) as a shared map of decision tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear.
+description: Планирует огромный объём работы (больше, чем вмещает одна сессия агента) как общую карту тикетов-решений в трекере задач и решает их по одному, пока путь к пункту назначения не станет ясен.
 disable-model-invocation: true
 ---
 
-A loose idea has arrived, too big for one agent session, and wrapped in fog: the way from here to the **destination** isn't visible yet. Wayfinding is about finding that way, not charging at the destination. This skill charts the way as a **shared map** on the repo's issue tracker, then works its **decision tickets** (questions whose resolution is a decision, not slices of a build to execute) one at a time until the route is clear.
+Пришла расплывчатая идея, слишком большая для одной сессии агента и окутанная туманом: путь отсюда к **пункту назначения** (destination) пока не виден. Прокладка маршрута (wayfinding) это поиск этого пути, а не штурм пункта назначения в лоб. Этот скилл прокладывает путь в виде **общей карты** в трекере задач репозитория, а затем прорабатывает её **тикеты-решения** (вопросы, ответом на которые является решение, а не куски сборки для исполнения) по одному, пока маршрут не станет ясен.
 
-The destination varies per effort, and naming it is the first act of charting: it shapes every ticket. It might be a spec to hand off and iterate on, a decision to lock before planning starts, or a change made in place like a data-structure migration. The map is domain-agnostic: engineering work, course content, whatever fits the shape.
+Пункт назначения у каждой работы свой, и назвать его это первый шаг в составлении карты: он определяет каждый тикет. Это может быть спецификация, которую передадут дальше и будут дорабатывать, решение, которое надо зафиксировать до начала планирования, или изменение на месте, например миграция структуры данных. Карта не привязана к предметной области: инженерная работа, учебный контент, что угодно подходящей формы.
 
-## Plan, don't do
+## Планируй, а не делай
 
-Wayfinder is **planning** by default: each ticket resolves a decision, and the map is done when the way is clear, with nothing left to decide before someone goes and does the thing. The pull to just do the work is usually the signal you've reached the edge of the map and it's time to hand off. An effort can override this in its **Notes**, carrying execution into the map itself, but absent that, produce decisions, not deliverables.
+Wayfinder по умолчанию занимается **планированием**: каждый тикет закрывает решение, а карта готова, когда путь ясен и решать больше нечего, прежде чем кто-то пойдёт и сделает дело. Тяга просто сделать работу обычно сигнализирует, что ты дошёл до края карты и пора передавать дальше (handoff). Конкретная работа может переопределить это в своих **Notes**, перенеся исполнение в саму карту, но если этого нет, выдавай решения, а не результаты.
 
-## Refer by name
+## Называй по имени
 
-Every map and ticket is an issue, so it has a **name**: its title. In everything the human reads (narration, the map's Decisions-so-far), refer to it by that name, never by a bare id, number, or slug. A wall of `#42, #43, #44` is illegible; names read at a glance. The id and URL don't vanish; a name wraps its link, but they ride _inside_ the name, never stand in for it.
+Каждая карта и каждый тикет являются задачей (issue), поэтому у них есть **имя**: заголовок. Во всём, что читает человек (пояснения, Decisions-so-far карты), называй их по этому имени, никогда голым id, номером или slug. Стена из `#42, #43, #44` нечитаема; имена читаются с одного взгляда. Id и URL не исчезают: имя оборачивает свою ссылку, но они едут _внутри_ имени и никогда его не заменяют.
 
-## The Map
+## Карта
 
-The map is a single issue on this repo's issue tracker, labelled `wayfinder:map`, the canonical artifact. Its tickets are child issues of the map.
+Карта это одна задача в трекере задач этого репозитория с меткой `wayfinder:map`, канонический артефакт. Её тикеты являются дочерними задачами карты.
 
-The map is an **index**, not a store. It lists the decisions made and points at the tickets that hold their detail; a decision lives in exactly one place, its ticket, so the map never restates it, only gists it and links.
+Карта это **указатель**, а не хранилище. Она перечисляет принятые решения и указывает на тикеты, в которых хранятся детали; решение живёт ровно в одном месте, в своём тикете, поэтому карта никогда его не пересказывает, а только даёт суть и ссылку.
 
-**Where the map, its child tickets, blocking, and frontier queries physically live is tracker-specific.** The issue tracker should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`. Consult the tracker doc's "Wayfinding operations" section for how _this_ repo expresses them. If no tracker has been provided, default to the local-markdown tracker.
+**Где физически живут карта, её дочерние тикеты, блокировки и запросы фронта, зависит от трекера.** Трекер задач тебе должны были предоставить. Если нет, скажи пользователю запустить `/setup-matt-pocock-skills`. Как _этот_ репозиторий их выражает, смотри в секции "Wayfinding operations" документа трекера. Если трекер не предоставлен, по умолчанию используй трекер на локальном markdown.
 
-### The map body
+### Тело карты
 
-The whole map at low resolution, loaded once per session. Open tickets are **not** listed: they are open child issues, found by query.
+Вся карта в низком разрешении, загружается один раз за сессию. Открытые тикеты в ней **не** перечисляются: это открытые дочерние задачи, их находят запросом.
 
 ```markdown
 ## Destination
@@ -52,9 +52,9 @@ The whole map at low resolution, loaded once per session. Open tickets are **not
 <!-- see "Out of scope": work ruled beyond the destination; closed, never graduates -->
 ```
 
-### Tickets
+### Тикеты
 
-Each ticket is a **child issue** of the map; the tracker's issue id is its identity. Its body is the question, sized to one 100K token agent session:
+Каждый тикет является **дочерней задачей** карты; id задачи в трекере служит его идентификатором. Его тело это вопрос, рассчитанный на одну сессию агента в 100K токенов:
 
 ```markdown
 ## Question
@@ -62,67 +62,67 @@ Each ticket is a **child issue** of the map; the tracker's issue id is its ident
 <the decision or investigation this ticket resolves>
 ```
 
-Each ticket carries a `wayfinder:<type>` label, one of `research`, `prototype`, `grilling`, `task` (see [Ticket Types](#ticket-types)). `wayfinder:` labels are the only labels a map and its tickets carry, never a triage label like `ready-for-agent`: they are decisions, not implementation work.
+Каждый тикет несёт метку `wayfinder:<type>`, одну из `research`, `prototype`, `grilling`, `task` (см. [Типы тикетов](#типы-тикетов)). Метки `wayfinder:` единственные, которые несут карта и её тикеты, никогда не метка триажа вроде `ready-for-agent`: это решения, а не работа по реализации.
 
-A session **claims** a ticket by assigning it to the dev driving the map, **first**, before any work, so concurrent sessions skip it. That assignee _is_ the claim: an open, unassigned ticket is unclaimed.
+Сессия **забирает** (claim) тикет, назначая его на разработчика, ведущего карту, **первым делом**, до любой работы, чтобы параллельные сессии его пропускали. Этот исполнитель _и есть_ отметка о том, что тикет забран: открытый тикет без исполнителя никем не забран.
 
-Blocking uses the tracker's **native** dependency relationship: essential because it renders the frontier _visually_ in the tracker's own UI, so the human sees what's takeable without opening the map. Only a tracker that lacks native blocking falls back to a body convention. A ticket is **unblocked** when every ticket blocking it is closed; the **frontier** is the open, unblocked, unclaimed children, the edge of the known.
+Блокировка использует **нативную** связь зависимостей трекера: это важно, потому что она показывает фронт _наглядно_ в собственном интерфейсе трекера, и человек видит, что можно брать, не открывая карту. Только трекер без нативной блокировки откатывается на соглашение в теле задачи. Тикет **разблокирован**, когда закрыт каждый блокирующий его тикет; **фронт** (frontier) это открытые, незаблокированные и не забранные дочерние задачи, граница известного.
 
-The answer isn't part of the body; it's recorded on resolution (see [Work through the map](#work-through-the-map)). Assets created while resolving a ticket are linked from the issue, not pasted in.
+Ответ не входит в тело; он записывается при решении (см. [Пройди карту](#пройди-карту)). Ресурсы, созданные при решении тикета, прикладываются ссылкой из задачи, а не вставляются в неё.
 
-## Ticket Types
+## Типы тикетов
 
-Every ticket is either **HITL** (human in the loop, worked _with_ a human who speaks for themselves) or **AFK**, driven by the agent alone. A HITL ticket only resolves through that live exchange; the agent never stands in for the human's side of it (a grilling agent that answers its own questions has broken this).
+Каждый тикет либо **HITL** (с человеком в контуре: прорабатывается _вместе_ с человеком, который говорит сам за себя), либо **AFK**, когда агент ведёт его в одиночку. HITL-тикет решается только через этот живой обмен; агент никогда не отвечает за человека (агент на допросе, который сам отвечает на свои вопросы, нарушил это правило).
 
-- **Research** (AFK): Reading documentation, third-party APIs, or local resources like knowledge bases to surface a fact a decision waits on. Resolved by a subagent that calls the Skill tool with "research". Use when knowledge outside the current working directory is required.
-- **Prototype** (HITL): Raise the fidelity of the discussion by making a cheap, rough, concrete artifact to react to (an outline, a rough take, a stub, or UI/logic code) by calling the Skill tool with "prototype". Links the prototype as an asset. Use when "how should it look" or "how should it behave" is the key question.
-- **Grilling** (HITL): Conversation. The default case. Always call the Skill tool twice, for "grilling" and "domain-modeling".
-- **Task** (HITL or AFK): Manual work that must happen before a _decision_ can be made: nothing to decide, prototype, or research, but the discussion is blocked until it's done. Signing up for a service so its API can be judged, provisioning access, moving data so its shape can be seen. This is the one type that _does_ rather than decides, and it earns its place by unblocking a decision, not by delivering the destination. The agent drives it alone where it can (AFK); otherwise it hands the human a precise checklist (HITL). Resolved when the work is done; the answer records what was done and any resulting facts (credentials location, new URLs, row counts) later tickets depend on.
+- **Research** (AFK): чтение документации, сторонних API или локальных ресурсов вроде баз знаний, чтобы найти факт, от которого зависит решение. Решается субагентом, который вызывает инструмент Skill с "research". Используй, когда нужны знания за пределами текущего рабочего каталога.
+- **Prototype** (HITL): подними точность обсуждения, сделав дешёвый, грубый, конкретный артефакт, на который можно реагировать (план, черновой вариант, заглушка или код UI/логики), через вызов инструмента Skill с "prototype". Прототип прикладывается ссылкой как ресурс. Используй, когда ключевой вопрос «как это должно выглядеть» или «как это должно себя вести».
+- **Grilling** (HITL): разговор, допрос (grilling). Случай по умолчанию. Всегда вызывай инструмент Skill дважды, с "grilling" и "domain-modeling".
+- **Task** (HITL или AFK): ручная работа, которая должна произойти до того, как можно принять _решение_: решать, прототипировать или исследовать нечего, но обсуждение заблокировано, пока это не сделано. Зарегистрироваться в сервисе, чтобы оценить его API, выдать доступы, перенести данные, чтобы увидеть их форму. Это единственный тип, который _делает_, а не решает, и он оправдывает себя тем, что разблокирует решение, а не тем, что доставляет пункт назначения. Агент ведёт его сам, где может (AFK); иначе он вручает человеку точный чек-лист (HITL). Решается, когда работа сделана; ответ фиксирует, что было сделано, и все полученные факты (где лежат учётные данные, новые URL, число строк), от которых зависят последующие тикеты.
 
-## Fog of war
+## Туман войны (Fog of war)
 
-The map is _deliberately_ incomplete: don't chart what you can't yet see. Beyond the live tickets lies the **fog of war**: the dim view of decisions and investigations you can tell are coming but can't yet pin down, because they hang on questions still open. Resolving a ticket clears the fog ahead of it, graduating whatever's now specifiable into fresh tickets, one at a time, until the way to the destination is clear and no tickets remain.
+Карта _намеренно_ неполна: не наноси на неё то, чего пока не видишь. За живыми тикетами лежит **туман войны**: смутный вид решений и исследований, которые, как ты понимаешь, предстоят, но которые пока нельзя зафиксировать, потому что они зависят от ещё открытых вопросов. Решение тикета рассеивает туман перед ним, и всё, что теперь можно сформулировать, выходит из тумана в новые тикеты, по одному, пока путь к пункту назначения не станет ясен и тикетов не останется.
 
-The map's **Not yet specified** section is where that dim view is written down: the suspected question, the area to revisit later. It's the undiscovered frontier _toward_ the destination: everything here is in scope, just not sharp enough to ticket. Write as loosely or as fully as the view allows; it doubles as a signpost for collaborators reading where the effort is headed.
+Секция карты **Not yet specified** (ещё не определено) это место, где записан этот смутный вид: предполагаемый вопрос, область, к которой надо вернуться позже. Это неоткрытый фронт _в сторону_ пункта назначения: всё здесь входит в охват, просто ещё недостаточно чётко, чтобы стать тикетом. Пиши настолько свободно или подробно, насколько позволяет обзор; это заодно указатель для соавторов, куда движется работа.
 
-**Fog or ticket?** The test is whether you can state the question precisely now, _not_ whether you can answer it now.
+**Туман или тикет?** Критерий в том, можешь ли ты точно сформулировать вопрос сейчас, а _не_ в том, можешь ли ты сейчас на него ответить.
 
-- **Ticket when** the question is already sharp, even if it's blocked and you can't act on it yet.
-- **Not yet specified when** you can't yet phrase it that sharply. Don't pre-slice the fog into ticket-sized pieces: it's coarser than a ticket, and one patch may graduate into several tickets, or none, once the frontier reaches it.
+- **Тикет, когда** вопрос уже чёткий, даже если он заблокирован и действовать по нему пока нельзя.
+- **Not yet specified, когда** ты пока не можешь сформулировать его так чётко. Не нарезай туман заранее на куски размером с тикет: он крупнее тикета, и один участок может выйти из тумана в несколько тикетов или ни в один, когда фронт до него дойдёт.
 
-**Not yet specified** excludes what's already decided (Decisions so far), what's already a live ticket, and what's out of scope (the next section).
+**Not yet specified** не включает то, что уже решено (Decisions so far), то, что уже является живым тикетом, и то, что вне охвата (следующая секция).
 
-## Out of scope
+## Вне охвата (Out of scope)
 
-Fog only ever gathers _toward_ the destination. The destination fixes the scope, so work beyond it is **out of scope**: it isn't fog, and it doesn't belong in **Not yet specified**. It gets its own **Out of scope** section on the map: work you've consciously ruled out of _this_ effort. Scope, not sharpness, lands it here.
+Туман всегда сгущается только _в сторону_ пункта назначения. Пункт назначения фиксирует охват, поэтому работа за его пределами **вне охвата**: это не туман, и ей не место в **Not yet specified**. Для неё на карте есть своя секция **Out of scope**: работа, которую ты сознательно исключил из _этой_ работы. Сюда её приводит охват, а не чёткость.
 
-Out-of-scope work never graduates (the frontier stops at the destination), so it returns only if the destination is redrawn, and then as a fresh effort, not a resumption.
+Работа вне охвата никогда не выходит из тумана (фронт останавливается у пункта назначения), поэтому она возвращается, только если пункт назначения перерисован, и тогда как новая работа, а не продолжение.
 
-Ruling something out of scope is a scoping act, not a step on the route. When a ticket that already exists turns out to sit past the destination (mis-scoped in while charting, or exposed by a resolution), **close it** (a closed ticket is unambiguously off the frontier) and leave one line in the **Out of scope** section: the gist plus why it's out of scope, linking the closed ticket. It stays out of **Decisions so far**, which records the route actually walked; a scope boundary isn't a step on it.
+Исключение чего-то из охвата это акт определения охвата, а не шаг маршрута. Когда уже существующий тикет оказывается за пунктом назначения (ошибочно включён при составлении карты или выявлен ответом), **закрой его** (закрытый тикет однозначно вне фронта) и оставь одну строку в секции **Out of scope**: суть плюс почему это вне охвата, со ссылкой на закрытый тикет. В **Decisions so far** он не попадает: там записан реально пройденный маршрут, а граница охвата не является шагом на нём.
 
-## Invocation
+## Вызов
 
-Two modes. Either way, **never resolve more than one ticket per session**, with the exception of research tickets.
+Два режима. В любом из них **никогда не решай больше одного тикета за сессию**, за исключением research-тикетов.
 
-### Chart the map
+### Составь карту
 
-User invokes with a loose idea.
+Пользователь вызывает скилл с расплывчатой идеей.
 
-1. **Name the destination.** Call the Skill tool twice, for "grilling" and "domain-modeling", to pin down what this map is finding its way to: the spec, decision, or change. The destination fixes the scope, so it's settled first.
-2. **Map the frontier.** Grill again, **breadth-first** this time: fan out across the whole space rather than deep on any one thread, surfacing the open decisions and the first steps takeable now. **If this surfaces no fog** (the way to the destination is already clear, the whole journey small enough for one session), you don't need a map. Stop and ask the user how they'd like to proceed.
-3. **Create the map** (label `wayfinder:map`): Destination and Notes filled in, Decisions-so-far empty, the fog sketched into **Not yet specified**.
-4. **Create the tickets you can specify now** as child issues of the map, then wire blocking edges in a **second pass** (issues need ids before they can reference each other). Write cross-references in that pass too, with real ids: a placeholder `#<n>` auto-links to an unrelated issue. Wiring sorts them into the frontier and the blocked; everything you can't yet specify stays in the fog: the **Not yet specified** section.
-5. **Fire the research subagents.** For each `research` ticket you just created, spin up a subagent with a fresh context window that calls the Skill tool with "research" to resolve it in parallel, capturing its findings on a throwaway `research/<name>` branch with a context pointer from the ticket. Push the branch but open no PR: it is never merged.
-6. Stop: charting is one session's work; it hand-resolves nothing.
+1. **Назови пункт назначения.** Вызови инструмент Skill дважды, с "grilling" и "domain-modeling", чтобы зафиксировать, к чему ведёт эта карта: спецификация, решение или изменение. Пункт назначения фиксирует охват, поэтому его определяют первым.
+2. **Нанеси фронт.** Снова допрашивай, на этот раз **в ширину**: охвати всё пространство, а не углубляйся в одну нить, выявляя открытые решения и первые шаги, которые можно брать уже сейчас. **Если тумана не обнаружилось** (путь к пункту назначения уже ясен, а вся дорога достаточно мала для одной сессии), карта не нужна. Остановись и спроси пользователя, как он хочет продолжить.
+3. **Создай карту** (метка `wayfinder:map`): Destination и Notes заполнены, Decisions-so-far пуст, туман набросан в **Not yet specified**.
+4. **Создай тикеты, которые можешь сформулировать сейчас**, как дочерние задачи карты, затем проведи связи блокировки **вторым проходом** (задачам нужны id, прежде чем они смогут ссылаться друг на друга). В этом же проходе пиши перекрёстные ссылки, с настоящими id: плейсхолдер `#<n>` автоматически ссылается на постороннюю задачу. Связи распределяют тикеты на фронт и заблокированные; всё, что пока нельзя сформулировать, остаётся в тумане: в секции **Not yet specified**.
+5. **Запусти субагентов для research.** Для каждого только что созданного тикета `research` запусти субагента с чистым контекстным окном, который вызывает инструмент Skill с "research", чтобы решать их параллельно, сохраняя находки в одноразовой ветке `research/<name>` с контекстным указателем из тикета. Запушь ветку, но PR не открывай: она никогда не сливается.
+6. Остановись: составление карты это работа одной сессии; вручную в ней ничего не решается.
 
-### Work through the map
+### Пройди карту
 
-User invokes with a map (URL or number). A ticket is **optional**: without one, you pick the next decision, not the user.
+Пользователь вызывает скилл с картой (URL или номер). Тикет **необязателен**: если его нет, следующее решение выбираешь ты, а не пользователь.
 
-1. Load the **map**: the low-res view, not every ticket body.
-2. Choose the ticket. If the user named one, use it. Otherwise take the first frontier ticket in order. **Claim it**: assign it to yourself before any work.
-3. Resolve it as the type its `wayfinder:<type>` label names (see [Ticket Types](#ticket-types)). Read the label, not just the body: the body never states the type. **Zoom as needed**: fetch the full body of any related or closed ticket on demand; call the Skill tool for whichever skills the `## Notes` block names. If in doubt, call the Skill tool twice, for "grilling" and "domain-modeling".
-4. Record the resolution: post the answer as a **resolution comment**, **close** the issue, and **append a context pointer** to the map's Decisions-so-far.
-5. Add newly-surfaced tickets (create-then-wire); graduate any fog the answer has made specifiable, clearing each graduated patch from **Not yet specified** so it lives only as its new ticket. If the answer reveals that a ticket (this one or another) sits beyond the destination, **rule it out of scope** rather than resolving it on the route. If the decision invalidates other parts of the map, update or delete those tickets.
+1. Загрузи **карту**: вид в низком разрешении, а не тело каждого тикета.
+2. Выбери тикет. Если пользователь назвал тикет, бери его. Иначе бери первый по порядку тикет фронта. **Забери его**: назначь на себя до любой работы.
+3. Реши его как тип, названный в его метке `wayfinder:<type>` (см. [Типы тикетов](#типы-тикетов)). Читай метку, а не только тело: тело никогда не указывает тип. **Приближай по мере надобности**: получай полное тело любого связанного или закрытого тикета по требованию; вызывай инструмент Skill для тех скиллов, которые названы в блоке `## Notes`. Если сомневаешься, вызови инструмент Skill дважды, с "grilling" и "domain-modeling".
+4. Запиши решение: опубликуй ответ как **комментарий с решением**, **закрой** задачу и **допиши контекстный указатель** в Decisions-so-far карты.
+5. Добавь вновь выявленные тикеты (сначала создай, потом свяжи); выведи из тумана всё, что ответ сделал формулируемым, убирая каждый вышедший участок из **Not yet specified**, чтобы он жил только как новый тикет. Если ответ показывает, что тикет (этот или другой) лежит за пунктом назначения, **исключи его из охвата**, а не решай его на маршруте. Если решение делает недействительными другие части карты, обнови или удали эти тикеты.
 
-The user may run unblocked tickets in parallel, so expect other sessions to be editing the tracker concurrently.
+Пользователь может запускать незаблокированные тикеты параллельно, поэтому жди, что другие сессии одновременно правят трекер.
