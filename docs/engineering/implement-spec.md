@@ -1,86 +1,86 @@
-## What it does
+## Что делает
 
-`implement-spec` takes a [spec](https://www.aihero.dev/ai-coding-dictionary/spec) and its [tickets](https://www.aihero.dev/ai-coding-dictionary/ticket) and lands the whole thing in one run. The orchestrating [agent](https://www.aihero.dev/ai-coding-dictionary/agent) hands each ticket to an implementer [subagent](https://www.aihero.dev/ai-coding-dictionary/subagent) working in its own git worktree, merges each finished branch into a single **integration branch**, runs [code-review](https://aihero.dev/skills-code-review) over the result, and resolves the tickets.
+`implement-spec` берёт [спецификацию](https://www.aihero.dev/ai-coding-dictionary/spec) и её [тикеты](https://www.aihero.dev/ai-coding-dictionary/ticket) и доводит всё до конца за один прогон. Оркестрирующий [агент](https://www.aihero.dev/ai-coding-dictionary/agent) отдаёт каждый тикет [субагенту](https://www.aihero.dev/ai-coding-dictionary/subagent)-исполнителю, работающему в собственном git worktree, сливает каждую готовую ветку в одну **интеграционную ветку**, запускает [code-review](https://aihero.dev/skills-code-review) по результату и закрывает тикеты.
 
-It reads the tickets as a **task graph**, not a list. Blocking edges decide what can start, so at any moment there is a **frontier** of tickets whose blockers have all landed, and every ticket on the frontier runs at once. That is the difference from working the tickets one by one. The graph's shape sets the pace, not the tickets' order on the tracker.
+Он читает тикеты как **граф задач**, а не как список. Блокирующие связи решают, что может начаться, поэтому в любой момент есть **фронт** (frontier): тикеты, все блокеры которых уже влиты, и все тикеты фронта выполняются одновременно. В этом отличие от обработки тикетов по одному. Темп задаёт форма графа, а не порядок тикетов в трекере.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke this by typing `/implement-spec`, and the agent won't reach for it on its own.
+Ты вызываешь его, набрав `/implement-spec`, и агент сам к нему не потянется.
 
-| Your situation | Reach for |
+| Твоя ситуация | К чему обратиться |
 | --- | --- |
-| A spec, split into tickets with blocking edges, that you want landed in one run | `/implement-spec` |
-| One ticket at a time, in your own [context window](https://www.aihero.dev/ai-coding-dictionary/context-window), [clearing](https://www.aihero.dev/ai-coding-dictionary/clearing) between tickets | [implement](https://aihero.dev/skills-implement) |
-| A spec that isn't split into tickets yet | [to-tickets](https://aihero.dev/skills-to-tickets) first |
-| A small piece of work with no real graph to it | [implement](https://aihero.dev/skills-implement) directly |
+| Спецификация, разбитая на тикеты с блокирующими связями, которую ты хочешь довести за один прогон | `/implement-spec` |
+| По одному тикету в своём [контекстном окне](https://www.aihero.dev/ai-coding-dictionary/context-window), с [очисткой](https://www.aihero.dev/ai-coding-dictionary/clearing) между тикетами | [implement](https://aihero.dev/skills-implement) |
+| Спецификация, ещё не разбитая на тикеты | Сначала [to-tickets](https://aihero.dev/skills-to-tickets) |
+| Небольшой кусок работы без настоящего графа | Напрямую [implement](https://aihero.dev/skills-implement) |
 
-## Prerequisites
+## Предварительные условия
 
-- **An issue tracker.** The skill reads the tickets from, and resolves them on, the tracker [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) configured. If none has been configured, it stops and tells you to run that first rather than guessing.
-- **Tickets with blocking edges**, as [to-tickets](https://aihero.dev/skills-to-tickets) writes them. Without edges the graph is flat and every ticket starts at once.
-- **A [harness](https://www.aihero.dev/ai-coding-dictionary/harness) that runs subagents in the background and gives each one a git worktree.** The skill exists to run tickets at the same time, so on a harness that runs subagents one at a time, it is only a slower `implement`.
+- **Трекер задач.** Скилл читает тикеты из трекера, который настроил [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills), и закрывает их там же. Если трекер не настроен, он останавливается и велит сначала запустить настройку, а не гадает.
+- **Тикеты с блокирующими связями**, в том виде, как их пишет [to-tickets](https://aihero.dev/skills-to-tickets). Без связей граф плоский, и все тикеты стартуют одновременно.
+- **[Обвязка](https://www.aihero.dev/ai-coding-dictionary/harness) (harness), которая запускает субагентов в фоне и даёт каждому git worktree.** Скилл существует ради одновременного выполнения тикетов, так что на обвязке, запускающей субагентов по одному, он просто более медленный `implement`.
 
-## The integration branch
+## Интеграционная ветка
 
-Everything lands on one branch. Each implementer:
+Всё вливается в одну ветку. Каждый исполнитель:
 
-1. confirms its worktree is based on the integration branch before it starts,
-2. builds its ticket with [tdd](https://aihero.dev/skills-tdd), red-green one slice at a time,
-3. merges the integration branch tip into its own branch before reporting done, so landing it is a fast-forward.
+1. перед началом проверяет, что его worktree основан на интеграционной ветке,
+2. строит свой тикет через [tdd](https://aihero.dev/skills-tdd), red-green по одному срезу за раз,
+3. прежде чем отчитаться о готовности, вливает вершину интеграционной ветки в свою ветку, чтобы её вливание стало fast-forward.
 
-The tracker decides whether a pull request exists at all. If your tracker closes work through PRs, or you ask for one, the skill opens a draft PR after the first merge and marks it ready at the end. Otherwise the run stops on the integration branch with every ticket resolved the way your tracker closes work, which works fully offline against a local markdown tracker.
+Будет ли pull request вообще, решает трекер. Если твой трекер закрывает работу через PR или ты попросил PR, скилл после первого слияния открывает черновой PR и в конце помечает его готовым. Иначе прогон останавливается на интеграционной ветке, а каждый тикет закрыт тем способом, каким твой трекер закрывает работу; это полностью работает офлайн с локальным markdown-трекером.
 
-Implementers talk to the orchestrator through [context pointers](https://www.aihero.dev/ai-coding-dictionary/context-pointer) (the spec, the ticket, shared exploration notes, earlier commits) rather than pasted summaries. This keeps each subagent's prompt small and leaves room in the orchestrator's window for the graph.
+Исполнители общаются с оркестратором через [контекстные указатели](https://www.aihero.dev/ai-coding-dictionary/context-pointer) (спецификация, тикет, общие заметки исследования, предыдущие коммиты), а не через вставленные сводки. Так промпт каждого субагента остаётся маленьким, а в окне оркестратора остаётся место для графа.
 
-## Common questions
+## Частые вопросы
 
-**How is this different from running `/implement` on each ticket myself?**
+**Чем это отличается от того, чтобы самому запускать `/implement` на каждом тикете?**
 
-This is the question the skill exists to answer. Before it shipped, people kept building their own versions, and one user described the need: they wanted "subagents implement the tickets" instead of having "to individually create new session and tell them to implement a ticket one by one, when a spec may contain over 5 tickets." With `implement` you are the dispatcher: one [session](https://www.aihero.dev/ai-coding-dictionary/session) per ticket, clearing in between, and keeping track yourself of which tickets are unblocked. `implement-spec` hands that job to one orchestrating session. The price is that you no longer read each ticket's work as it lands; you review the integration branch at the end. To start a run, clear the context and type `/implement-spec` with a pointer to the spec (an issue number or a file path). For a small change with no real graph, skip it and use `implement` directly.
+Скилл существует ради ответа на этот вопрос. До его выхода люди постоянно строили свои версии, и один пользователь описал потребность: он хотел, чтобы «субагенты реализовывали тикеты», вместо того чтобы «по отдельности создавать новую сессию и велеть ей реализовать тикеты по одному, когда в спецификации может быть больше 5 тикетов». С `implement` диспетчер ты: одна [сессия](https://www.aihero.dev/ai-coding-dictionary/session) на тикет, очистка между ними и самостоятельное отслеживание, какие тикеты разблокированы. `implement-spec` передаёт эту работу одной оркестрирующей сессии. Цена в том, что ты больше не читаешь работу по каждому тикету по мере вливания; ты проверяешь интеграционную ветку в конце. Чтобы начать прогон, очисти контекст и набери `/implement-spec` с указателем на спецификацию (номер задачи или путь к файлу). Для небольшого изменения без настоящего графа пропусти его и используй `implement` напрямую.
 
-**Does it need GitHub? I want it to stop at the branch.**
+**Нужен ли ему GitHub? Я хочу, чтобы он остановился на ветке.**
 
-No, not any more. One user who liked the in-progress version had exactly this complaint: "it creates a PR at the end, which requires an online repository like GitHub. I wish it could do the same work offline and stop at the branch where all the work is merged." The run now ends on the integration branch. A PR opens only when the configured tracker closes work through PRs or you ask for one, so on a local markdown tracker the run ends with every ticket resolved and the work merged on the branch.
+Нет, уже нет. У одного пользователя, которому нравилась версия из in-progress, была ровно такая претензия: «он создаёт PR в конце, а для этого нужен онлайн-репозиторий вроде GitHub. Хотелось бы, чтобы он делал ту же работу офлайн и останавливался на ветке, куда слита вся работа». Теперь прогон заканчивается на интеграционной ветке. PR открывается, только когда настроенный трекер закрывает работу через PR или ты об этом просишь, так что с локальным markdown-трекером прогон заканчивается закрытыми тикетами и работой, слитой в ветку.
 
-**Its review and fix loop ran for hours, or kept "fixing" tickets that hadn't been built yet.**
+**Его цикл ревью и исправлений шёл часами или продолжал «исправлять» тикеты, которые ещё не построены.**
 
-Both happen when `code-review` runs anywhere other than the one point the skill gives it. It compares the code against the whole spec, so it only makes sense once every ticket has landed. If it runs mid-run, every unbuilt ticket reads as a failure. The agent then builds that ticket, and that triggers another review. At the end, the skill runs `code-review` once and sends every finding to one fix subagent, but it doesn't yet say when to stop after that fix. One user reported a five-ticket feature where "the review and fix loop took roughly four hours". If you see a second broad review start, tell it to run focused checks for the fixed findings and stop. Expect that first review to find real problems. The run's output is a draft that the review completes, not something to ship on its own.
+И то и другое бывает, когда `code-review` запускается где-то помимо той единственной точки, которую ему отводит скилл. Он сравнивает код со всей спецификацией, поэтому имеет смысл, только когда все тикеты влиты. Если он запускается посреди прогона, каждый непостроенный тикет выглядит как провал. Агент строит этот тикет, и это запускает следующее ревью. В конце скилл один раз запускает `code-review` и отправляет все находки одному субагенту-исправителю, но пока не говорит, когда остановиться после этого исправления. Один пользователь сообщил о фиче на пять тикетов, где «цикл ревью и исправлений занял примерно четыре часа». Если видишь, что начинается второе широкое ревью, скажи ему выполнить точечные проверки по исправленным находкам и остановиться. Жди, что первое ревью найдёт реальные проблемы. Результат прогона представляет собой черновик, который дорабатывается ревью, а не то, что можно выпускать само по себе.
 
-**Does it drive tdd like implement does?**
+**Ведёт ли он tdd, как implement?**
 
-It does now, though it didn't at first. Users running the in-progress version noticed that "the implementer subagents don't inherit the /tdd directive", so red-green stopped as soon as they scaled up from one ticket to a whole spec. Each implementer now builds its ticket with `tdd`. There is still no step where you agree seams interactively, as there is in an `implement` session, so name the seams in the spec or the tickets if you want them pinned.
+Теперь да, хотя поначалу нет. Пользователи версии из in-progress заметили, что «субагенты-исполнители не наследуют директиву /tdd», так что red-green прекращался, как только масштаб вырастал с одного тикета до целой спецификации. Теперь каждый исполнитель строит свой тикет через `tdd`. Шага, где ты интерактивно согласуешь швы, как в сессии `implement`, по-прежнему нет, поэтому назови швы в спецификации или тикетах, если хочешь их зафиксировать.
 
-**Two implementers running in parallel collided on the same file, or picked different names for the same thing.**
+**Два исполнителя, работавшие параллельно, столкнулись на одном файле или выбрали разные имена для одного и того же.**
 
-Worktrees don't remove collisions; they postpone them to merge time. A blocking edge written from ticket text is a guess about which files each ticket will touch, and two tickets on "different parts of the codebase" still share a message catalogue, a config registry, or a type. Each implementer sees only its own ticket and the shared notes, never the other's work in progress, so one user's web and mobile tickets added the same string as `blockedSince` and `blockedOn`. When two frontier tickets touch one shared file, either add a blocking edge between them so they run one after the other, or have the exploration notes fix the exact names each ticket adds.
+Worktree не устраняют столкновения; они откладывают их до слияния. Блокирующая связь, выведенная из текста тикета, остаётся лишь догадкой о том, каких файлов коснётся каждый тикет, а два тикета в «разных частях кодовой базы» всё равно делят каталог сообщений, реестр конфигурации или тип. Каждый исполнитель видит только свой тикет и общие заметки и никогда не видит незавершённую работу другого, так что у одного пользователя тикеты для веба и мобильного приложения добавили одну и ту же строку как `blockedSince` и `blockedOn`. Когда два тикета фронта трогают один общий файл, либо добавь между ними блокирующую связь, чтобы они шли один за другим, либо пусть заметки исследования зафиксируют точные имена, которые добавляет каждый тикет.
 
-**Blocked tickets never start, even after their blocker has merged.**
+**Заблокированные тикеты так и не стартуют, даже после слияния их блокера.**
 
-This is a known problem on GitHub. The tracker's blocked-by count only drops when a blocker *closes*, and tickets typically close when the PR merges, which is the end of the run. The tracker is the right source for the starting graph but a stale one mid-run. Tell the orchestrator to track which tickets have merged into the integration branch itself and compute the frontier from that.
+Это известная проблема на GitHub. Счётчик blocked-by в трекере уменьшается, только когда блокер *закрывается*, а тикеты обычно закрываются при мерже PR, то есть в конце прогона. Трекер служит правильным источником для начального графа, но посреди прогона он устаревает. Скажи оркестратору самому отслеживать, какие тикеты слиты в интеграционную ветку, и вычислять фронт по этому.
 
-**Does this replace Sandcastle or an AFK script?**
+**Заменяет ли это Sandcastle или AFK-скрипт?**
 
-No. People ask because the skills now reach into implementation: "is Sandcastle still relevant? Your skills now seem to be able to handle implementation as well." `implement-spec` puts an agent in charge of orchestration inside one harness session, which needs no infrastructure and lets you watch and steer. For work that is truly [AFK](https://www.aihero.dev/ai-coding-dictionary/afk), a deterministic loop ([Sandcastle](https://github.com/mattpocock/sandcastle), a shell script, a CI job) is faster, cheaper, and more reliable, because no agent makes the orchestration decisions.
+Нет. Об этом спрашивают, потому что скиллы теперь дотягиваются до реализации: «Sandcastle ещё актуален? Похоже, твои скиллы теперь умеют и реализацию». `implement-spec` поручает оркестрацию агенту внутри одной сессии обвязки, что не требует инфраструктуры и позволяет наблюдать и рулить. Для работы, действительно выполняемой в режиме [AFK](https://www.aihero.dev/ai-coding-dictionary/afk) (агент работает сам), детерминированный цикл ([Sandcastle](https://github.com/mattpocock/sandcastle), shell-скрипт, задание CI) быстрее, дешевле и надёжнее, потому что решения об оркестрации не принимает ни один агент.
 
-**A ticket's key test was skipped inside its worktree, and it reported green.**
+**Ключевой тест тикета был пропущен внутри его worktree, и тот отчитался зелёным.**
 
-A worktree holds only what git tracks. Tests that read gitignored fixtures, local databases, or credentials can silently skip there. For a ticket whose verification depends on untracked material, tell the orchestrator to run it in the main checkout instead.
+В worktree лежит только то, что отслеживает git. Тесты, читающие фикстуры из gitignore, локальные базы данных или учётные данные, там могут молча пропускаться. Для тикета, проверка которого зависит от неотслеживаемых материалов, скажи оркестратору запустить его в основном checkout.
 
-## It's working if
+## Работает, если
 
-- Several implementers are running at once whenever the graph allows, not one after another.
-- A ticket starts as soon as its last blocker lands on the integration branch, not when the whole run ends.
-- Every ticket's trace shows `tdd` running, with a failing test before the code.
-- Merges into the integration branch are fast-forwards, not conflict resolutions.
-- The run ends on one branch with every ticket resolved, and a PR only if your tracker wanted one.
+- Когда граф позволяет, одновременно работают несколько исполнителей, а не один за другим.
+- Тикет стартует, как только его последний блокер влит в интеграционную ветку, а не когда закончится весь прогон.
+- Трасса каждого тикета показывает работу `tdd` с падающим тестом до кода.
+- Слияния в интеграционную ветку идут fast-forward, а не через разрешение конфликтов.
+- Прогон заканчивается на одной ветке со всеми закрытыми тикетами и с PR, только если его хотел твой трекер.
 
-## Where it fits
+## Место в общей картине
 
-`implement-spec` is the build step of the main chain, as the parallel alternative to running [implement](https://aihero.dev/skills-implement) once per ticket:
+`implement-spec` служит шагом разработки в основной цепочке, как параллельная альтернатива запуску [implement](https://aihero.dev/skills-implement) по разу на тикет:
 
 ```txt
 grill-with-docs → to-spec → to-tickets → implement-spec → retro
 ```
 
-Its neighbours are [to-tickets](https://aihero.dev/skills-to-tickets), which declares the blocking edges it reads as a task graph, and [code-review](https://aihero.dev/skills-code-review), which it runs over the integration branch before closing out. [ask-matt](https://aihero.dev/skills-ask-matt) is the router over the whole set when you are not sure which flow you are in.
+Его соседи: [to-tickets](https://aihero.dev/skills-to-tickets), который объявляет блокирующие связи, читаемые им как граф задач, и [code-review](https://aihero.dev/skills-code-review), который он запускает по интеграционной ветке перед завершением. Если не уверен, в каком сценарии находишься, [ask-matt](https://aihero.dev/skills-ask-matt) служит маршрутизатором по всему набору.

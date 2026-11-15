@@ -1,94 +1,94 @@
-## What it does
+## Что делает
 
-`setup-matt-pocock-skills` answers three questions about one repo: where issues live, what the triage labels are called, and where the domain docs sit. It records the answers as markdown files under `docs/agents/`.
+`setup-matt-pocock-skills` отвечает на три вопроса об одном репозитории: где живут задачи, как называются метки триажа и где лежат документы предметной области. Ответы он записывает markdown-файлами в `docs/agents/`.
 
-Those files are the only thing that varies between repos. The skills themselves are identical everywhere. They read `docs/agents/issue-tracker.md` at run time and do what it says. That is why the set is not tied to GitHub, and why you never edit a skill file to point it at another tracker. Invoking it with "link the skills to a custom issue tracker" works with anything you can connect to programmatically, with no changes to the skills.
+Эти файлы составляют единственное, что отличается от репозитория к репозиторию. Сами скиллы везде одинаковы. Они читают `docs/agents/issue-tracker.md` во время выполнения и делают то, что там сказано. Поэтому набор не привязан к GitHub, и поэтому тебе никогда не нужно править файл скилла, чтобы направить его на другой трекер. Вызов с «привяжи скиллы к нестандартному трекеру задач» работает с чем угодно, к чему можно подключиться программно, без изменений в скиллах.
 
-It is a prompt-driven skill, not a deterministic script. It reads your `git remote`, `CLAUDE.md` and `GLOSSARY.md`, proposes what it found, and waits for you to confirm before it writes anything.
+Это скилл, управляемый промптом, а не детерминированный скрипт. Он читает твои `git remote`, `CLAUDE.md` и `GLOSSARY.md`, предлагает то, что нашёл, и ждёт твоего подтверждения, прежде чем что-либо записать.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke this by typing `/setup-matt-pocock-skills`; the [agent](https://www.aihero.dev/ai-coding-dictionary/agent) won't reach for it on its own. Its metadata marks it non-invokable on purpose, so no other skill can fire it for you.
+Ты вызываешь его, набрав `/setup-matt-pocock-skills`; [агент](https://www.aihero.dev/ai-coding-dictionary/agent) сам к нему не потянется. Его метаданные намеренно помечают его как невызываемый моделью, так что и другой скилл не сможет запустить его за тебя.
 
-Reach for it once per repo, before the first use of any other engineering skill. If [triage](https://aihero.dev/skills-triage), [to-spec](https://aihero.dev/skills-to-spec), [to-tickets](https://aihero.dev/skills-to-tickets) or [wayfinder](https://aihero.dev/skills-wayfinder) start guessing where your issues go, or apply labels your tracker doesn't have, this repo has not been set up yet. You can run it in a repo halfway through a project. The skill reads what is already there, so no earlier work is lost.
+Обращайся к нему один раз на репозиторий, до первого использования любого другого инженерного скилла. Если [triage](https://aihero.dev/skills-triage), [to-spec](https://aihero.dev/skills-to-spec), [to-tickets](https://aihero.dev/skills-to-tickets) или [wayfinder](https://aihero.dev/skills-wayfinder) начинают гадать, куда идут твои задачи, или ставят метки, которых нет в твоём трекере, значит, этот репозиторий ещё не настроен. Его можно запустить и в репозитории посреди проекта. Скилл читает то, что уже есть, так что прежняя работа не теряется.
 
-## Prerequisites
+## Предварительные условия
 
-It writes into the repo you run it in:
+Он пишет в репозиторий, в котором ты его запускаешь:
 
-| It writes | Where |
+| Что пишет | Куда |
 | --- | --- |
 | `issue-tracker.md` | `docs/agents/` |
 | `domain.md` | `docs/agents/` |
-| `triage-labels.md` | `docs/agents/`, only when the `triage` skill is installed |
-| An `## Agent skills` block | whichever of `CLAUDE.md` or `AGENTS.md` already exists |
+| `triage-labels.md` | `docs/agents/`, только когда установлен скилл `triage` |
+| Блок `## Agent skills` | в тот из `CLAUDE.md` или `AGENTS.md`, который уже существует |
 
-You commit all of it as markdown. There is no user-level or global mode. The config lives in the repo, so every repo gets its own copy.
+Всё это ты коммитишь как markdown. Режима уровня пользователя или глобального режима нет. Конфигурация живёт в репозитории, так что у каждого репозитория своя копия.
 
-## The three decisions
+## Три решения
 
-It starts each section with the recommended answer, and skips any question its exploration already answered. Most runs need only two confirmations.
+Каждый раздел он начинает с рекомендуемого ответа и пропускает вопросы, на которые уже ответило его исследование. Большинству запусков нужно всего два подтверждения.
 
-| Decision | What it proposes | When it asks |
+| Решение | Что он предлагает | Когда спрашивает |
 | --- | --- | --- |
-| **Issue tracker** | the one matching your `git remote` | always, because this is the one real choice |
-| **Triage labels** | keep the five canonical names (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`) | only if the `triage` skill is installed |
-| **Domain docs** | single-context: one `GLOSSARY.md` plus `docs/adr/` at the root | only if it spots monorepo signals, and then it offers a multi-context `GLOSSARY-MAP.md` |
+| **Трекер задач** | тот, что соответствует твоему `git remote` | всегда, потому что это единственный настоящий выбор |
+| **Метки триажа** | оставить пять канонических имён (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`) | только если установлен скилл `triage` |
+| **Документы предметной области** | один контекст: один `GLOSSARY.md` плюс `docs/adr/` в корне | только если замечает признаки монорепозитория, и тогда предлагает многоконтекстный `GLOSSARY-MAP.md` |
 
-The tracker options:
+Варианты трекера:
 
-| Option | Where issues live | Needs |
+| Вариант | Где живут задачи | Что нужно |
 | --- | --- | --- |
-| **GitHub** | the repo's GitHub Issues | the `gh` CLI |
-| **GitLab** | the repo's GitLab Issues | the `glab` CLI |
-| **Local markdown** | files under `.scratch/<feature>/` in this repo | nothing, not even a remote |
-| **Other** | wherever you say | one paragraph from you describing the workflow |
+| **GitHub** | GitHub Issues репозитория | CLI `gh` |
+| **GitLab** | GitLab Issues репозитория | CLI `glab` |
+| **Локальный markdown** | файлы в `.scratch/<feature>/` в этом репозитории | ничего, даже remote |
+| **Другое** | где скажешь | один абзац от тебя с описанием процесса |
 
-The first three ship as templates in the skill and work out of the box. Local markdown is a full option, not a fallback. The skill supports a solo project with no remote. One caveat: don't use local markdown if you use GitHub. They are alternatives, so pick one.
+Первые три поставляются как шаблоны в скилле и работают из коробки. Локальный markdown представляет собой полноценный вариант, а не запасным. Скилл поддерживает одиночный проект без remote. Одна оговорка: не используй локальный markdown, если пользуешься GitHub. Это альтернативы, выбери одну.
 
-"Other" is a full option too. It is how Jira, Linear, Azure DevOps and Beads all work. You describe the workflow, the skill records your prose in `docs/agents/issue-tracker.md`, and the downstream skills follow the prose. Users have already built this: a Jira-over-[MCP](https://www.aihero.dev/ai-coding-dictionary/mcp) variant, a Gitea CLI shaped like `gh`, a hand-built local dashboard.
+«Другое» тоже полноценный вариант. Именно так работают Jira, Linear, Azure DevOps и Beads. Ты описываешь процесс, скилл записывает твою прозу в `docs/agents/issue-tracker.md`, и последующие скиллы следуют этой прозе. Пользователи уже так делали: вариант с Jira через [MCP](https://www.aihero.dev/ai-coding-dictionary/mcp), CLI для Gitea по образцу `gh`, самодельная локальная панель.
 
-## Common questions
+## Частые вопросы
 
-**Do I have to use GitHub?**
+**Обязательно ли использовать GitHub?**
 
-No. GitHub, GitLab and local markdown under `.scratch/` all ship as ready-made templates, and anything else works through the "other" path. This is the most-repeated question, in roughly these words: *"hard locked to github"*, *"can I use GitLab / Jira"*, *"what about Azure DevOps"*. The answer is always the same: setup chooses the tracker, not the skill.
+Нет. GitHub, GitLab и локальный markdown в `.scratch/` поставляются как готовые шаблоны, а всё остальное работает через путь «другое». Это самый повторяющийся вопрос, примерно в таких словах: *«жёстко привязано к github»*, *«можно ли использовать GitLab / Jira»*, *«а как насчёт Azure DevOps»*. Ответ всегда один: трекер выбирает настройка, а не скилл.
 
-**Do I need to re-run it after updating the skills?**
+**Нужно ли перезапускать его после обновления скиллов?**
 
-The direct answer after v1.1 was yes. The skill's own closing message is softer. It tells you to re-run only to switch trackers or start over. Both are defensible. The seed templates change between versions, so a `docs/agents/issue-tracker.md` from an older release can go out of date against the skills that now read it. If a downstream skill does something different from what the docs describe, re-run setup. It is cheap.
+Прямой ответ после v1.1 был «да». Заключительное сообщение самого скилла мягче. Оно велит перезапускать только чтобы сменить трекер или начать заново. Обе позиции обоснованы. Исходные шаблоны меняются от версии к версии, так что `docs/agents/issue-tracker.md` из старого релиза может устареть относительно скиллов, которые его теперь читают. Если последующий скилл делает не то, что описано в документах, перезапусти настройку. Это дёшево.
 
-**It wrote to `CLAUDE.md`, but I'm on Codex.**
+**Он записал в `CLAUDE.md`, а я работаю в Codex.**
 
-This is a known gap, and still open. The file-selection rule is "edit `CLAUDE.md` if it exists, else `AGENTS.md`". It checks which file exists, not which [harness](https://www.aihero.dev/ai-coding-dictionary/harness) is running. In a repo with a `CLAUDE.md` left over from Claude Code, the skill writes its `## Agent skills` block to a file Codex never reads. Users have two workarounds: move the block to `AGENTS.md` by hand, or keep `AGENTS.md` canonical and make `CLAUDE.md` a one-line pointer at it. If neither file exists, the skill asks you which to create instead of picking one. This has confused people who expected it to decide.
+Это известный пробел, всё ещё открытый. Правило выбора файла: «правь `CLAUDE.md`, если он существует, иначе `AGENTS.md`». Оно проверяет, какой файл существует, а не какая [обвязка](https://www.aihero.dev/ai-coding-dictionary/harness) (harness) запущена. В репозитории с `CLAUDE.md`, оставшимся от Claude Code, скилл пишет свой блок `## Agent skills` в файл, который Codex никогда не читает. У пользователей два обходных пути: вручную перенести блок в `AGENTS.md` или держать каноническим `AGENTS.md`, а `CLAUDE.md` сделать однострочным указателем на него. Если нет ни одного файла, скилл спрашивает, какой создать, а не выбирает сам. Это сбивало с толку тех, кто ждал, что он решит.
 
-**It didn't create my triage labels.**
+**Он не создал мои метки триажа.**
 
-It doesn't. `docs/agents/triage-labels.md` is a *mapping*: it tells `/triage` which strings in your tracker correspond to the five canonical roles. It does not run `gh label create`. On a fresh GitHub repo the labels do not exist yet, and users have filed this as a bug more than once. Two consequences:
+Не создаёт. `docs/agents/triage-labels.md` содержит *сопоставление*: он говорит `/triage`, какие строки в твоём трекере соответствуют пяти каноническим ролям. Он не запускает `gh label create`. В свежем репозитории GitHub меток ещё нет, и пользователи не раз заводили это как баг. Два следствия:
 
-- If your tracker already uses the canonical names, the mapping is an identity table and there is nothing to configure. That is the intended common case, not a missing step.
-- This skill does not create [wayfinder](https://aihero.dev/skills-wayfinder)'s `wayfinder:map` and `wayfinder:<type>` labels either, and `gh issue create --label <missing>` fails instead of creating the label. Create them by hand before the first wayfinder run on a GitHub repo.
+- Если твой трекер уже использует канонические имена, сопоставление сводится к тождественной таблице, и настраивать нечего. Это задуманный типичный случай, а не пропущенный шаг.
+- Метки `wayfinder:map` и `wayfinder:<type>` для [wayfinder](https://aihero.dev/skills-wayfinder) этот скилл тоже не создаёт, а `gh issue create --label <missing>` падает вместо создания метки. Создай их вручную до первого запуска wayfinder в репозитории GitHub.
 
-**Can I configure the other skills' behaviour here ([grilling](https://www.aihero.dev/ai-coding-dictionary/grilling) cadence, question format, tone)?**
+**Можно ли здесь настроить поведение других скиллов (темп [допроса](https://www.aihero.dev/ai-coding-dictionary/grilling), формат вопросов, тон)?**
 
-No. It configures three things: tracker, labels, doc layout. Users have asked to make it the place for per-user preferences. The answer is that skills stay opinionated and take no per-user config. Preferences belong in your `CLAUDE.md` as plain instructions, which every skill already reads.
+Нет. Он настраивает три вещи: трекер, метки, раскладку документов. Пользователи просили сделать его местом для персональных предпочтений. Ответ: скиллы остаются с собственным мнением и не принимают персональную конфигурацию. Предпочтениям место в твоём `CLAUDE.md` в виде простых инструкций, которые уже читает каждый скилл.
 
-**Can I keep the config in `~/.claude` instead of committing it to every repo?**
+**Можно ли хранить конфигурацию в `~/.claude`, а не коммитить её в каждый репозиторий?**
 
-Not today. A user who runs the skills across many repos has an open request for this, but no user-level mode exists. Every repo carries its own `docs/agents/`.
+Сегодня нет. У пользователя, который запускает скиллы во многих репозиториях, есть открытый запрос на это, но режима уровня пользователя не существует. Каждый репозиторий несёт свой `docs/agents/`.
 
-**Isn't it strange to have a skill that configures the other skills?**
+**Не странно ли иметь скилл, который настраивает другие скиллы?**
 
-One long-standing complaint says yes, in these words: *"having a skill to set up the other skill does not feel right to me: that means the LLM is configuring its own skills."* The trade-off is real. Without a setup step, every skill that touches issues would need its own copy of the tracker instructions. The output is markdown you can read and edit, and that limits the risk. You can read every file it wrote and change it by hand. Make day-to-day changes that way, not with another run.
+Одна давняя жалоба отвечает «да» такими словами: *«скилл для настройки другого скилла кажется мне неправильным: это значит, что LLM настраивает собственные скиллы»*. Компромисс реален. Без шага настройки каждому скиллу, касающемуся задач, понадобилась бы своя копия инструкций по трекеру. Результат представляет собой markdown, который можно читать и править, и это ограничивает риск. Ты можешь прочитать каждый записанный им файл и изменить его вручную. Повседневные изменения вноси именно так, а не новым запуском.
 
-## It's working if
+## Работает, если
 
-- `docs/agents/issue-tracker.md` and `docs/agents/domain.md` exist, plus `triage-labels.md` if `triage` is installed.
-- An `## Agent skills` section appears in the instruction file your harness reads, with a one-line summary pointing at each of those files.
-- The tracker it proposed matches the remote you use, and the label strings match labels that exist in your tracker.
-- Afterwards, `/to-tickets` publishes without asking you where issues live, and `/triage` applies labels rather than inventing them.
-- Nothing in the skill files themselves changed. If setup edited a `SKILL.md`, something went wrong.
+- Существуют `docs/agents/issue-tracker.md` и `docs/agents/domain.md`, плюс `triage-labels.md`, если установлен `triage`.
+- В файле инструкций, который читает твоя обвязка, появляется раздел `## Agent skills` с однострочной сводкой, указывающей на каждый из этих файлов.
+- Предложенный им трекер соответствует remote, которым ты пользуешься, а строки меток совпадают с метками, существующими в твоём трекере.
+- После этого `/to-tickets` публикует, не спрашивая, где живут задачи, а `/triage` ставит метки, а не выдумывает их.
+- В самих файлах скиллов ничего не изменилось. Если настройка правила `SKILL.md`, что-то пошло не так.
 
-## Where it fits
+## Место в общей картине
 
-`setup-matt-pocock-skills` is the **run-once setup** for the engineering flow, the precondition everything else assumes rather than a step in the chain. Its neighbours are its readers: [triage](https://aihero.dev/skills-triage), which applies the label vocabulary written here; [to-spec](https://aihero.dev/skills-to-spec) and [to-tickets](https://aihero.dev/skills-to-tickets), which publish into the tracker named here; and [wayfinder](https://aihero.dev/skills-wayfinder), which reads the "Wayfinding operations" section of the same tracker file to learn how to store maps and child [tickets](https://www.aihero.dev/ai-coding-dictionary/ticket). [domain-modeling](https://aihero.dev/skills-domain-modeling) later fills in the domain-doc layout that setup records. It creates `GLOSSARY.md` and ADRs only when you resolve a term or decision, so a repo with no domain docs after setup is normal. For which skill to reach for next, [ask-matt](https://aihero.dev/skills-ask-matt) routes the whole set.
+`setup-matt-pocock-skills` служит **одноразовой настройкой** для инженерного процесса: предусловием, которое предполагает всё остальное, а не шагом цепочки. Его соседи: те, кто его читает: [triage](https://aihero.dev/skills-triage), который применяет записанный здесь словарь меток; [to-spec](https://aihero.dev/skills-to-spec) и [to-tickets](https://aihero.dev/skills-to-tickets), которые публикуют в названный здесь трекер; и [wayfinder](https://aihero.dev/skills-wayfinder), который читает раздел "Wayfinding operations" того же файла трекера, чтобы узнать, как хранить карты и дочерние [тикеты](https://www.aihero.dev/ai-coding-dictionary/ticket). Позже [domain-modeling](https://aihero.dev/skills-domain-modeling) наполняет записанную настройкой раскладку документов предметной области. Он создаёт `GLOSSARY.md` и ADR, только когда ты утверждаешь термин или решение, так что репозиторий без документов предметной области после настройки вполне нормален. Какой скилл брать дальше, подскажет [ask-matt](https://aihero.dev/skills-ask-matt), маршрутизатор по всему набору.

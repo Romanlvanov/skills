@@ -1,94 +1,94 @@
-## What it does
+## Что делает
 
-`diagnosing-bugs` runs a six-phase diagnosis on a hard bug or a performance regression: build a repro, minimise it, rank hypotheses, instrument, fix with a regression test, clean up.
+`diagnosing-bugs` проводит шестифазную диагностику трудного бага или регрессии производительности: построить воспроизведение, минимизировать его, ранжировать гипотезы, добавить инструментирование, исправить с регрессионным тестом, прибраться.
 
-It will not let the agent form a theory until a **tight** feedback loop exists: one named command, already run once, that goes red on *this* bug and green when it is fixed. Given a bug report, a coding agent by default reads code and guesses. This skill blocks that. If no red-capable command exists, there is no Phase 2. That single gate is what the skill is for. Once the loop exists, everything after it (bisection, hypothesis-testing, instrumentation) is mechanical.
+Он не позволяет агенту строить теорию, пока не появится **плотный** цикл обратной связи: одна названная команда, уже однажды запущенная, которая становится красной на *этом* баге и зелёной, когда он исправлен. Получив баг-репорт, агент для программирования по умолчанию читает код и гадает. Этот скилл это блокирует. Если нет команды, способной стать красной, нет и Фазы 2. Ради этой единственной контрольной точки скилл и существует. Когда цикл есть, всё дальнейшее (бисекция, проверка гипотез, инструментирование) становится механическим.
 
-## When to reach for it
+## Когда к нему обращаться
 
-Type `/diagnosing-bugs`, or the agent reaches for it on its own when a task fits. It is model-invoked, and fires on "diagnose" or "debug this", or on a report that something is broken, throwing, failing, or slow.
+Набери `/diagnosing-bugs`, или агент сам потянется к нему, когда задача подходит. Он вызывается моделью и срабатывает на «продиагностируй» или «отладь это» ("diagnose"/"debug this") или на сообщение, что что-то сломалось, бросает исключение, падает или тормозит.
 
-Reach for it on the hard ones: a bug you can't solve at first look, an intermittent flake, a regression introduced between two known-good states. It is slow and thorough on purpose, so it is the wrong tool for a question you want answered in one message.
+Обращайся к нему в трудных случаях: баг, который не решается с первого взгляда, плавающий сбой, регрессия, появившаяся между двумя заведомо рабочими состояниями. Он намеренно медленный и тщательный, поэтому для вопроса, на который ты ждёшь ответа в одном сообщении, это не тот инструмент.
 
-| Your situation | Where to go |
+| Твоя ситуация | Куда идти |
 | --- | --- |
-| A specific defect you can describe as a symptom | This skill |
-| A slow endpoint or a timing regression with a known before-and-after | This skill. It has a performance branch (measure a baseline, then bisect) |
-| "Where are the bottlenecks in this codebase?", no specific symptom | Not this skill. It diagnoses one known failure, it does not audit |
-| A raw bug report from someone else, not yet confirmed or written up | [triage](https://aihero.dev/skills-triage) first |
-| Throwaway code to answer a design question, not chase a defect | [prototype](https://aihero.dev/skills-prototype) |
-| Building a planned behaviour test-first | [tdd](https://aihero.dev/skills-tdd) |
-| Asking what would have prevented the bug, once it is fixed | [retro](https://aihero.dev/skills-retro), run in the same session |
-| No good seam exists to lock the bug down | [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture), which you start yourself |
+| Конкретный дефект, который можно описать как симптом | Этот скилл |
+| Медленный эндпоинт или регрессия по времени с известными «до» и «после» | Этот скилл. У него есть ветка производительности (измерь базовую линию, затем бисекция) |
+| «Где узкие места в этой кодовой базе?», без конкретного симптома | Не этот скилл. Он диагностирует один известный сбой, а не проводит аудит |
+| Сырой баг-репорт от кого-то другого, ещё не подтверждённый и не оформленный | Сначала [triage](https://aihero.dev/skills-triage) |
+| Одноразовый код, чтобы ответить на вопрос дизайна, а не гоняться за дефектом | [prototype](https://aihero.dev/skills-prototype) |
+| Построение запланированного поведения через тесты | [tdd](https://aihero.dev/skills-tdd) |
+| Вопрос, что предотвратило бы баг, после его исправления | [retro](https://aihero.dev/skills-retro), запущенный в той же сессии |
+| Нет хорошего шва, чтобы зафиксировать баг тестом | [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture), который ты запускаешь сам |
 
-## The tight loop is the skill
+## Плотный цикл и есть скилл
 
-Phase 1 gets the most effort because it is the only hard phase. The skill lists ways to build the loop, roughly in order of preference:
+Фаза 1 получает больше всего усилий, потому что это единственная трудная фаза. Скилл перечисляет способы построить цикл, примерно в порядке предпочтения:
 
-1. A failing test at whatever seam reaches the bug.
-2. A curl or HTTP script against a running dev server.
-3. A CLI invocation with a fixture input, diffed against a known-good snapshot.
-4. A headless browser script asserting on DOM, console, or network.
-5. A replayed capture: a saved request, payload, or event log, run through the code path in isolation.
-6. A throwaway harness: a minimal subset of the system, one function call.
-7. A property or fuzz loop, for "sometimes wrong output".
-8. A bisection harness you can hand to `git bisect run`.
-9. A differential loop: same input, old version against new.
-10. A [human-in-the-loop](https://www.aihero.dev/ai-coding-dictionary/human-in-the-loop) bash script, last resort. The skill ships `scripts/hitl-loop.template.sh` for this: the agent runs the script, you follow prompts in your terminal, and your answers come back as parseable output.
+1. Падающий тест на любом шве, который дотягивается до бага.
+2. curl или HTTP-скрипт против запущенного dev-сервера.
+3. Вызов CLI с входом-фикстурой, сравниваемый с заведомо верным снимком.
+4. Скрипт headless-браузера с проверками DOM, консоли или сети.
+5. Воспроизведённая запись: сохранённый запрос, полезная нагрузка или журнал событий, прогнанные через путь кода изолированно.
+6. Одноразовая обвязка: минимальное подмножество системы, один вызов функции.
+7. Цикл на свойствах или фаззинге для «иногда неверный вывод».
+8. Обвязка для бисекции, которую можно отдать `git bisect run`.
+9. Дифференциальный цикл: тот же вход, старая версия против новой.
+10. Bash-скрипт с [человеком в контуре](https://www.aihero.dev/ai-coding-dictionary/human-in-the-loop) (HITL), крайняя мера. Для этого скилл поставляет `scripts/hitl-loop.template.sh`: агент запускает скрипт, ты следуешь подсказкам в терминале, и твои ответы возвращаются как разбираемый вывод.
 
-*A* loop is not the goal. **Tight** is: fast (seconds), deterministic (same verdict every run), sharp (asserts your exact symptom, not "didn't crash"), and runnable by the agent without you. A 30-second flaky loop is barely better than none. For a bug that only shows up sometimes, the target is not a clean repro but a **higher reproduction rate**: loop the trigger, parallelise, add stress, inject sleeps, until the flake rate is high enough to debug against.
+Цель не *какой-нибудь* цикл. Цель: **плотный** цикл: быстрый (секунды), детерминированный (одинаковый вердикт при каждом запуске), точный (проверяет именно твой симптом, а не «не упало») и запускаемый агентом без тебя. Нестабильный цикл на 30 секунд едва ли лучше, чем никакого. Для бага, который проявляется лишь иногда, цель не чистое воспроизведение, а **более высокая частота воспроизведения**: гоняй триггер в цикле, распараллеливай, добавляй нагрузку, вставляй задержки, пока частота сбоев не станет достаточной, чтобы по ней отлаживать.
 
-When the agent cannot build one, the skill tells it to stop and say so, list what it tried, and ask you for [environment](https://www.aihero.dev/ai-coding-dictionary/environment) access, a captured artifact, or permission to add temporary instrumentation. It must not go on to form hypotheses anyway.
+Если агент не может построить цикл, скилл велит ему остановиться и сказать об этом, перечислить, что он пробовал, и попросить у тебя доступ к [окружению](https://www.aihero.dev/ai-coding-dictionary/environment), записанный артефакт или разрешение добавить временное инструментирование. Строить гипотезы всё равно ему нельзя.
 
-## The gates between phases
+## Контрольные точки между фазами
 
-The phases are gates, not a checklist. The agent cannot enter a phase until a specific condition is true.
+Фазы являются контрольными точками, а не чек-листом. Агент не может войти в фазу, пока не выполнено конкретное условие.
 
-| Gate | What has to be true |
+| Контрольная точка | Что должно быть верно |
 | --- | --- |
-| Into Phase 2 | A named command, already run and pasted with its output, that can go red on this bug |
-| Into Phase 3 | The repro is reproduced *and* minimised: every remaining element is needed to reproduce the bug |
-| Into Phase 4 | 3–5 ranked, falsifiable hypotheses exist, each stating its prediction, shown to you before any is tested |
-| Into Phase 5 | Probes map to a specific prediction, one variable at a time, every debug log has a tag like `[DEBUG-a4f2]`, so one grep finds them all for cleanup |
-| Done | The original repro no longer reproduces, the instrumentation is gone, and the commit message names the hypothesis that turned out correct |
+| Вход в Фазу 2 | Названная команда, уже запущенная и вставленная вместе с выводом, которая может стать красной на этом баге |
+| Вход в Фазу 3 | Воспроизведение воспроизводится *и* минимизировано: каждый оставшийся элемент нужен для воспроизведения бага |
+| Вход в Фазу 4 | Есть 3–5 ранжированных фальсифицируемых гипотез, у каждой указано предсказание, и они показаны тебе до проверки любой из них |
+| Вход в Фазу 5 | Зонды привязаны к конкретному предсказанию, по одной переменной за раз, у каждого отладочного лога есть метка вроде `[DEBUG-a4f2]`, чтобы при уборке один grep нашёл их все |
+| Готово | Исходное воспроизведение больше не воспроизводится, инструментирование убрано, а сообщение коммита называет гипотезу, которая оказалась верной |
 
-Phase 5 has one exception. The agent writes the regression test before the fix, but only if a **correct seam** exists for it: one where the test exercises the real bug pattern as it occurs at the call site. Where the only available seam is too shallow, the skill tells the agent to say so instead of writing a test that gives false confidence. The missing seam is itself a finding, and the agent records it instead of hiding it.
+У Фазы 5 одно исключение. Агент пишет регрессионный тест до исправления, но только если для него есть **правильный шов**: такой, где тест задействует реальный паттерн бага в том виде, в каком он возникает в месте вызова. Если единственный доступный шов слишком мелкий, скилл велит агенту сказать об этом, а не писать тест, дающий ложную уверенность. Отсутствие шва само по себе становится находкой, и агент фиксирует её, а не прячет.
 
-## Common questions
+## Частые вопросы
 
-**It fires on quick questions where I just wanted a direct answer.**
-This is the most-reported problem with the skill. On GPT-5.6-Sol especially, users report it triggering on a plain description of a problem: "the model triggers the rather formal diagnosing-bugs skill instead. It then goes on to construct a reproduction scenario (often building a mock scenario with limited value) before giving me a response or suggestion. This results in considerable reply delays." Four separate people reported the same problem on [issue #578](https://github.com/mattpocock/skills/issues/578). The accepted fix is to start with a lighter approach and move to the full diagnosis only when the problem needs it, but that change has not shipped. The skill is tuned for Claude Code's invocation behaviour, and a [model](https://www.aihero.dev/ai-coding-dictionary/model) with a lower activation threshold fires it too often. Until the fix ships, the workaround is to say what you want ("just answer this, don't diagnose") or to disable model invocation for it in your [harness](https://www.aihero.dev/ai-coding-dictionary/harness).
+**Он срабатывает на быстрые вопросы, где мне нужен был прямой ответ.**
+Это самая частая жалоба на скилл. Особенно на GPT-5.6-Sol пользователи сообщают, что он срабатывает на простое описание проблемы: «вместо этого модель запускает довольно формальный скилл diagnosing-bugs. Затем она строит сценарий воспроизведения (часто мок-сценарий с ограниченной ценностью), прежде чем дать мне ответ или предложение. Это приводит к заметным задержкам ответа». Четыре разных человека сообщили об одном и том же в [issue #578](https://github.com/mattpocock/skills/issues/578). Принятое решение: начинать с более лёгкого подхода и переходить к полной диагностике, только когда проблема этого требует, но это изменение ещё не выпущено. Скилл настроен под поведение вызова в Claude Code, и [модель](https://www.aihero.dev/ai-coding-dictionary/model) с более низким порогом срабатывания запускает его слишком часто. Пока исправление не выпущено, обходной путь: сказать, чего ты хочешь («просто ответь, не диагностируй»), или отключить для него вызов моделью в своей [обвязке](https://www.aihero.dev/ai-coding-dictionary/harness) (harness).
 
-**Can I point it at a codebase and ask where the performance problems are?**
-No. It diagnoses one failure you can already name. Its performance branch is for a regression with a symptom (establish a baseline measurement, then bisect, measure first and fix second), not for a proactive sweep. A skill for the proactive version was [proposed and closed](https://github.com/mattpocock/skills/issues/431); no skill does it now.
+**Можно направить его на кодовую базу и спросить, где проблемы производительности?**
+Нет. Он диагностирует один сбой, который ты уже можешь назвать. Его ветка производительности предназначена для регрессии с симптомом (установи базовое измерение, затем бисекция; сначала измеряй, потом исправляй), а не для проактивного прочёсывания. Скилл для проактивного варианта [предлагали и закрыли](https://github.com/mattpocock/skills/issues/431); сейчас такого скилла нет.
 
-**Does it stop and ask me before it writes the fix?**
-No. Only Phase 3 has a human checkpoint: the ranked hypothesis list is shown to you before any is tested, and the agent continues with its own ranking if you are away. There is no gate between instrumentation and the fix, so the agent can start writing code before you have agreed with its root cause. [Issue #124](https://github.com/mattpocock/skills/issues/124) asks for that gate and is still open. If you want it, say so when you invoke the skill.
+**Останавливается ли он, чтобы спросить меня, прежде чем писать исправление?**
+Нет. Контрольная точка с человеком есть только в Фазе 3: ранжированный список гипотез показывается тебе до проверки любой из них, и если тебя нет, агент продолжает по своему ранжированию. Между инструментированием и исправлением контрольной точки нет, так что агент может начать писать код раньше, чем ты согласился с первопричиной. [Issue #124](https://github.com/mattpocock/skills/issues/124) просит такую точку и всё ещё открыта. Если она тебе нужна, скажи об этом при вызове скилла.
 
-**I already ran `/triage` on this bug report. Is this the same work again?**
-Partly, and neither skill says so. As one reader put it: "Triage's step 3 is essentially a shallow, bounded instance of diagnosing-bugs Phase 1–2, but neither file mentions the other." Triage does a bounded "is this actually a bug, and what is the surface" pass; this skill does the thorough version. Running triage first is not wasted, because its verification often gives you most of Phase 1's raw material. But expect this skill to redo that work in full, and expect no cross-reference to tell you so.
+**Я уже прогнал `/triage` по этому баг-репорту. Это та же работа заново?**
+Отчасти, и ни один из скиллов об этом не говорит. Как выразился один читатель: «Шаг 3 триажа по сути представляет собой мелкий ограниченный экземпляр Фаз 1–2 diagnosing-bugs, но ни один файл не упоминает другой». Триаж делает ограниченный проход «действительно ли это баг и какова его поверхность»; этот скилл делает тщательную версию. Прогнать триаж сначала не напрасно, потому что его проверка часто даёт большую часть сырья для Фазы 1. Но жди, что этот скилл переделает эту работу полностью, и не жди перекрёстной ссылки, которая бы тебе это сообщила.
 
-**Will the repro output it pastes leak secrets?**
-It might. The skill asks the agent to paste the invocation and its output, and to request artifacts like HAR files, log dumps, and core dumps. No instruction tells the agent to sanitise them. [Issue #674](https://github.com/mattpocock/skills/issues/674) raises exactly this (credentials, tokens, cookies, and personal data copied into a chat, an issue, or a PR) and proposes a redaction guardrail. It is open and unimplemented. Treat redaction as your job for now, particularly before the output goes anywhere public.
+**Не утекут ли секреты в выводе воспроизведения, который он вставляет?**
+Могут. Скилл просит агента вставлять вызов и его вывод и запрашивать артефакты вроде HAR-файлов, дампов логов и core-дампов. Никакая инструкция не велит агенту их очищать. [Issue #674](https://github.com/mattpocock/skills/issues/674) поднимает ровно это (учётные данные, токены, cookies и персональные данные, скопированные в чат, задачу или PR) и предлагает ограждение для вычищения. Она открыта и не реализована. Пока считай вычищение своей задачей, особенно прежде чем вывод попадёт куда-то публично.
 
-**My security scanner flagged this skill as high risk.**
-Snyk flags it, and the flag is a false positive. It is the only skill in the set that ships an executable shell script (`hitl-loop.template.sh`) alongside instructions to run it and to curl a dev server. A shipped `.sh` file, instructions to run it, and outbound HTTP together are enough to trigger a static scanner. The script itself is about 30 lines of `read -r -p` prompts that pause for human input. The scanner rates what the skill could do, not a proven exploit.
+**Мой сканер безопасности пометил этот скилл как высокорисковый.**
+Snyk его помечает, и это ложное срабатывание. Это единственный скилл в наборе, который поставляет исполняемый shell-скрипт (`hitl-loop.template.sh`) вместе с инструкциями его запустить и обращаться через curl к dev-серверу. Поставляемый `.sh`-файл, инструкции его запустить и исходящий HTTP вместе достаточны, чтобы сработал статический сканер. Сам скрипт состоит примерно из 30 строк подсказок `read -r -p`, которые ждут ввода человека. Сканер оценивает, что скилл мог бы сделать, а не доказанный эксплойт.
 
-**What happened to `/diagnose`?**
-v1.0.0 renamed it to `/diagnosing-bugs`. The old name no longer exists. Anything of yours that chains `/diagnose` (a wrapper skill, a saved prompt) needs updating.
+**Что случилось с `/diagnose`?**
+v1.0.0 переименовала его в `/diagnosing-bugs`. Старого имени больше нет. Всё твоё, что вызывает `/diagnose` по цепочке (скилл-обёртка, сохранённый промпт), нужно обновить.
 
-## It's working if
+## Работает, если
 
-- It shows you a command and its red output before it offers a single theory. If theory arrives first, the skill is not running.
-- The failure it reproduces is the one you reported, not a nearby one it found on the way.
-- It shrinks the repro before it starts guessing, and can tell you why it needs each remaining piece.
-- It shows you a ranked list of 3–5 hypotheses, each with a prediction you could falsify, before it tests any of them.
-- Every debug log it adds carries a tag like `[DEBUG-a4f2]`, and a grep for that tag comes back empty when it declares done.
-- The commit or PR message names which hypothesis was right.
-- When it cannot lock the bug down with a test, it says so instead of writing a shallow one.
+- Он показывает тебе команду и её красный вывод, прежде чем предложить хоть одну теорию. Если теория пришла первой, скилл не работает.
+- Воспроизводимый им сбой тот, о котором ты сообщил, а не соседний, найденный по пути.
+- Он сжимает воспроизведение, прежде чем начать гадать, и может объяснить, зачем ему каждая оставшаяся часть.
+- Он показывает тебе ранжированный список из 3–5 гипотез, у каждой предсказание, которое можно опровергнуть, прежде чем проверять любую из них.
+- Каждый добавленный им отладочный лог несёт метку вроде `[DEBUG-a4f2]`, и grep по этой метке ничего не находит, когда он объявляет работу законченной.
+- Сообщение коммита или PR называет, какая гипотеза была верной.
+- Когда он не может зафиксировать баг тестом, он так и говорит, а не пишет мелкий тест.
 
-## Where it fits
+## Место в общей картине
 
-`diagnosing-bugs` is a reach-for-it-anytime standalone. You start it when something is broken, and it ends when the fix and its regression test are in. It keeps no state and needs no prior setup. [ask-matt](https://aihero.dev/skills-ask-matt) routes "Something's broken" here.
+`diagnosing-bugs`: самостоятельный инструмент, к которому можно обратиться в любой момент. Ты запускаешь его, когда что-то сломано, и он заканчивается, когда исправление и его регрессионный тест на месте. Он не хранит состояния и не требует предварительной настройки. [ask-matt](https://aihero.dev/skills-ask-matt) направляет сюда ситуацию «Что-то сломалось».
 
-Two neighbours matter. [retro](https://aihero.dev/skills-retro) comes after it: once the fix is in, run it in the same session to ask what would have prevented the bug, while the session has more information than it had at the start. `diagnosing-bugs` never invokes `retro` itself, because `retro` is user-invoked. [triage](https://aihero.dev/skills-triage) comes before it for bugs that arrive as raw reports from other people, and does a shallower version of the same first two phases.
+Важны два соседа. [retro](https://aihero.dev/skills-retro) идёт после него: когда исправление на месте, запусти его в той же сессии, чтобы спросить, что предотвратило бы баг, пока у сессии больше информации, чем было в начале. `diagnosing-bugs` никогда сам не вызывает `retro`, потому что `retro` вызывается пользователем. [triage](https://aihero.dev/skills-triage) идёт перед ним для багов, приходящих сырыми отчётами от других людей, и выполняет более мелкую версию тех же первых двух фаз.

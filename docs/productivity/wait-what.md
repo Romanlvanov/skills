@@ -1,36 +1,36 @@
-## What it does
+## Что делает
 
-You type `wait-what` when you did not understand a message. The [agent](https://www.aihero.dev/ai-coding-dictionary/agent) then re-pitches what it just said. It adds the context you were missing, writes in plain English, and uses the vocabulary from your project's `GLOSSARY.md`.
+Ты набираешь `wait-what`, когда не понял сообщение. [Агент](https://www.aihero.dev/ai-coding-dictionary/agent) заново излагает то, что только что сказал. Он добавляет недостающий тебе контекст, пишет простым языком и использует словарь из `GLOSSARY.md` твоего проекта.
 
-The skill is three lines long. That is the design, not an unfinished draft. Skills against verbosity usually fail because they grow too long. A four-hundred-line concision skill still leaves the [model](https://www.aihero.dev/ai-coding-dictionary/model) verbose, because the model copies the length of the skill, not its request. This one has a single precise leading word and nothing else.
+Скилл занимает три строки. Это замысел, а не недописанный черновик. Скиллы против многословия обычно проваливаются, потому что разрастаются. Скилл о краткости на четыреста строк всё равно оставляет [модель](https://www.aihero.dev/ai-coding-dictionary/model) многословной: модель копирует длину скилла, а не его просьбу. В этом скилле одно точное опорное слово и больше ничего.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke it by typing `/wait-what`. The agent will not reach for it on its own, and it shouldn't. Only you know when you stopped following.
+Ты вызываешь его, набрав `/wait-what`. Агент сам к нему не потянется, и не должен. Только ты знаешь, где перестал следить за мыслью.
 
-Use it as soon as you notice you're skimming. For example, the agent has started to use jargon it invented, put five acronyms in one sentence, or explained a decision whose premise you never saw. It fixes the conversation you're already in. To stop the jargon arriving at all, use [grill-with-docs](https://aihero.dev/skills-grill-with-docs), which builds the shared language upfront.
+Используй его, как только заметишь, что читаешь по диагонали. Например, агент начал пользоваться придуманным им жаргоном, втиснул пять аббревиатур в одно предложение или объяснил решение, посылку которого ты так и не увидел. Скилл чинит разговор, в котором ты уже находишься. Чтобы жаргон вообще не появлялся, используй [grill-with-docs](https://aihero.dev/skills-grill-with-docs): он заранее выстраивает общий язык.
 
-## The name is the mechanism
+## Название и есть механизм
 
-The leading word is **wait**. "Be concise" is an instruction about the agent's output, and the model obeys it by clipping words and losing you further. **Wait** is about *your* state. It says you stopped understanding here. An agent that hears "be brief" writes clipped fragments. An agent that hears "wait, you lost me" backs up and explains.
+Опорное слово здесь **wait** («погоди»). «Будь краток» говорит о выводе агента, и модель выполняет это, обрезая слова и запутывая тебя ещё сильнее. **Wait** говорит о *твоём* состоянии. Оно означает, что здесь ты перестал понимать. Агент, который слышит «покороче», пишет обрубки фраз. Агент, который слышит «погоди, я потерялся», возвращается назад и объясняет.
 
-That difference is the whole skill. Every popular fix for verbosity names the *output*: `/tldr`, `/no-fluff`, `/talk-normal`. The model over-corrects into clipped fragments that are shorter and no clearer. Naming the *listener* asks for both halves at once: fewer words **and** the context you were missing.
+В этой разнице весь скилл. Каждое популярное средство от многословия называет *вывод*: `/tldr`, `/no-fluff`, `/talk-normal`. Модель перегибает палку и выдаёт обрубки, которые короче, но не яснее. Если назвать *слушателя*, просишь обе половины сразу: меньше слов **и** контекст, которого тебе не хватало.
 
-The skill says re-pitch **that**, not "that last message". What lost you is usually bigger than one paragraph, so the agent decides how far back to go.
+Скилл говорит переформулировать **это** (that), а не «последнее сообщение». То, на чём ты потерялся, обычно больше одного абзаца, поэтому агент сам решает, насколько далеко вернуться.
 
-## It plugs into the language you already have
+## Он подключается к языку, который у тебя уже есть
 
-The body reuses the leading words already in your global `CLAUDE.md` and your project's `GLOSSARY.md`. ASD-STE100 Simplified Technical English sets the register. The ubiquitous language supplies the nouns. The skill, `CLAUDE.md` and `GLOSSARY.md` use the same [tokens](https://www.aihero.dev/ai-coding-dictionary/token), so invoking it is not a new instruction. It is a reminder of one the agent already agreed to.
+Тело скилла переиспользует опорные слова, которые уже есть в твоём глобальном `CLAUDE.md` и в `GLOSSARY.md` проекта. Регистр задаёт простой технический язык в духе ASD-STE100 (Simplified Technical English). Существительные даёт единый язык. Скилл, `CLAUDE.md` и `GLOSSARY.md` используют одни и те же [токены](https://www.aihero.dev/ai-coding-dictionary/token), поэтому вызов скилла не новая инструкция. Это напоминание об инструкции, с которой агент уже согласился.
 
-If you have no `GLOSSARY.md` (and no `GLOSSARY-MAP.md` pointing to one for the context at hand), the skill still works. You lose only the domain-vocabulary half.
+Если у тебя нет `GLOSSARY.md` (и нет `GLOSSARY-MAP.md`, указывающего на него для текущего контекста), скилл всё равно работает. Ты теряешь только половину, связанную со словарём предметной области.
 
-## It's working if
+## Работает, если
 
-- The re-pitch is **shorter and clearer**, not shorter and blunter.
-- It adds the premise you were missing, instead of only deleting words.
-- Project nouns replace invented ones. The terms in your `GLOSSARY.md` come back.
-- You can use it twice in a row, and it does not degrade into terseness.
+- Переформулировка **короче и яснее**, а не короче и грубее.
+- Она добавляет посылку, которой тебе не хватало, а не только удаляет слова.
+- Придуманные существительные заменяются терминами проекта. Термины из твоего `GLOSSARY.md` возвращаются.
+- Его можно вызвать дважды подряд, и он не скатывается в сухость.
 
-## Where it fits
+## Место в общей картине
 
-You can use `wait-what` at any point, in any conversation, inside any other skill. It repairs one message after the fact. The real fix is a shared language agreed upfront, and that is [grill-with-docs](https://aihero.dev/skills-grill-with-docs): a [grilling](https://www.aihero.dev/ai-coding-dictionary/grilling) session that runs [domain-modeling](https://aihero.dev/skills-domain-modeling) as it goes, so it records the words you both use in your `GLOSSARY.md`. If you're unsure which skill fits the moment, [ask-matt](https://aihero.dev/skills-ask-matt) routes you.
+`wait-what` можно использовать в любой момент, в любом разговоре, внутри любого другого скилла. Он чинит одно сообщение постфактум. Настоящее решение: общий язык, согласованный заранее, и это [grill-with-docs](https://aihero.dev/skills-grill-with-docs): сессия [допроса](https://www.aihero.dev/ai-coding-dictionary/grilling) (grilling), которая по ходу запускает [domain-modeling](https://aihero.dev/skills-domain-modeling) и записывает слова, которыми вы оба пользуетесь, в твой `GLOSSARY.md`. Если не уверен, какой скилл подходит к моменту, [ask-matt](https://aihero.dev/skills-ask-matt) подскажет маршрут.

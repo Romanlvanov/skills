@@ -1,101 +1,101 @@
-## What it does
+## Что делает
 
-`code-review` reviews the diff between `HEAD` and a fixed point you name (a commit, a branch, a tag, `main`, `HEAD~5`) along two axes. **Standards** asks whether the code follows how this repo writes code. **Spec** asks whether the code does what the originating issue or [spec](https://www.aihero.dev/ai-coding-dictionary/spec) asked for. Each axis runs in its own [sub-agent](https://www.aihero.dev/ai-coding-dictionary/subagent) so neither sees the other's reasoning.
+`code-review` проверяет дифф между `HEAD` и названной тобой фиксированной точкой (коммит, ветка, тег, `main`, `HEAD~5`) по двум осям. **Standards** спрашивает, следует ли код тому, как пишут код в этом репозитории. **Spec** спрашивает, делает ли код то, что просила исходная задача или [спецификация](https://www.aihero.dev/ai-coding-dictionary/spec). Каждая ось работает в собственном [субагенте](https://www.aihero.dev/ai-coding-dictionary/subagent), поэтому ни одна не видит рассуждений другой.
 
-The skill never merges or re-ranks the two axes. The report ends with a worst issue *per axis* and declines to name a single winner across them. A change can pass one axis and fail the other. Code that follows every convention but implements the wrong thing passes Standards and fails Spec. Code that does exactly what the [ticket](https://www.aihero.dev/ai-coding-dictionary/ticket) asked but breaks the repo's conventions does the reverse. A blended verdict lets the passing axis hide the failing one.
+Скилл никогда не сливает и не переранжирует оси. Отчёт заканчивается худшей проблемой *по каждой оси* и отказывается называть единого победителя. Изменение может пройти одну ось и провалить другую. Код, следующий всем соглашениям, но реализующий не то, проходит Standards и проваливает Spec. Код, делающий ровно то, что просил [тикет](https://www.aihero.dev/ai-coding-dictionary/ticket), но нарушающий соглашения репозитория, наоборот. Смешанный вердикт позволяет прошедшей оси скрыть проваленную.
 
-## When to reach for it
+## Когда к нему обращаться
 
-Type `/code-review`, or the agent reaches for it automatically when you ask to review a branch, a PR, work in progress, or anything "since X".
+Набери `/code-review`, или агент сам потянется к нему, когда ты просишь проверить ветку, PR, незавершённую работу или что-то «начиная с X».
 
-| Your situation | Reach for |
+| Твоя ситуация | К чему обратиться |
 | --- | --- |
-| A diff exists and you want to know if it is built right *and* is the right thing | `code-review` |
-| You want bugs hunted in the diff: null paths, races, off-by-one | Claude Code's own built-in review, not this one (see the name clash below) |
-| Nothing is written yet and you want it written test-first | [tdd](https://aihero.dev/skills-tdd) |
-| A whole spec needs building, review included | [implement](https://aihero.dev/skills-implement), which calls this skill itself |
-| The whole codebase has drifted, not one diff | [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) |
-| Something is broken and you do not know why | [diagnosing-bugs](https://aihero.dev/skills-diagnosing-bugs) |
+| Дифф есть, и ты хочешь знать, построено ли это правильно *и* то ли это, что нужно | `code-review` |
+| Хочешь поиска багов в диффе: null-пути, гонки, ошибки на единицу | Встроенное ревью Claude Code, а не это (см. конфликт имён ниже) |
+| Ничего ещё не написано, и ты хочешь писать через тесты | [tdd](https://aihero.dev/skills-tdd) |
+| Нужно построить целую спецификацию, включая ревью | [implement](https://aihero.dev/skills-implement), который сам вызывает этот скилл |
+| Поплыла вся кодовая база, а не один дифф | [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) |
+| Что-то сломано, и ты не знаешь почему | [diagnosing-bugs](https://aihero.dev/skills-diagnosing-bugs) |
 
-You must supply the fixed point. If you do not, the skill asks for one rather than guessing. Before it spawns anything, it checks that the ref resolves and that the diff is not empty, so a mistyped branch name fails in front of you instead of inside two sub-agents.
+Фиксированную точку ты обязан указать. Если не указал, скилл спросит, а не будет гадать. Прежде чем что-либо запускать, он проверяет, что ссылка разрешается и дифф не пуст, так что опечатка в имени ветки проявится у тебя на глазах, а не внутри двух субагентов.
 
-## Prerequisites
+## Предварительные условия
 
-The Standards axis needs nothing. It reads whatever the repo documents (`CODING_STANDARDS.md`, `CONTRIBUTING.md`, and the like) and falls back on a built-in baseline when the repo documents nothing.
+Оси Standards ничего не нужно. Она читает то, что документирует репозиторий (`CODING_STANDARDS.md`, `CONTRIBUTING.md` и подобное), а если репозиторий ничего не документирует, опирается на встроенный базовый набор.
 
-The Spec axis needs a spec to exist and be findable. It looks in this order:
+Оси Spec нужно, чтобы спецификация существовала и находилась. Она ищет в таком порядке:
 
-1. Issue references in the commit messages (`#123`, `Closes #45`, a GitLab `!67`), fetched through the tracker doc.
-2. A path you pass in as an argument.
-3. A spec file under `docs/`, `specs/`, or `.scratch/` matching the branch or feature name.
-4. Asking you.
+1. Ссылки на задачи в сообщениях коммитов (`#123`, `Closes #45`, GitLab `!67`), полученные через документ трекера.
+2. Путь, который ты передал аргументом.
+3. Файл спецификации в `docs/`, `specs/` или `.scratch/`, совпадающий с именем ветки или фичи.
+4. Спросить тебя.
 
-Step 1 depends on the tracker doc, which [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) writes. Without it the axis still works if you hand it a path. With no spec at all, the skill skips the Spec sub-agent and the report says "no spec available" rather than inventing requirements.
+Шаг 1 зависит от документа трекера, который пишет [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills). Без него ось всё равно работает, если ты дашь ей путь. Если спецификации нет вообще, скилл пропускает субагента Spec, и отчёт говорит «спецификация недоступна», а не выдумывает требования.
 
-## The two axes
+## Две оси
 
 | | Standards | Spec |
 | --- | --- | --- |
-| Question | Is it built right? | Is it the right thing? |
-| Reads | The repo's documented standards, plus the smell baseline | The originating issue or spec |
-| Reports | Documented breaches (can be hard), and smells (always judgement calls) | Missing or partial requirements, scope creep, requirements implemented wrongly |
-| Every finding cites | The standards file and the rule, or the named smell plus the hunk | The line of the spec |
+| Вопрос | Построено ли правильно? | То ли это, что нужно? |
+| Читает | Документированные стандарты репозитория плюс базовый набор запахов | Исходную задачу или спецификацию |
+| Сообщает | Нарушения документированного (могут быть жёсткими) и запахи (всегда на усмотрение) | Отсутствующие или частичные требования, расползание объёма, неверно реализованные требования |
+| Каждая находка ссылается на | Файл стандартов и правило либо названный запах плюс фрагмент диффа | Строку спецификации |
 
-This design exists to avoid a generic review skill that does not know your standards. Such a skill flags what is deliberate in your codebase and misses the invariants your codebase depends on. So the repo's own documentation is the [primary source](https://www.aihero.dev/ai-coding-dictionary/primary-source) on the Standards axis, and **the repo always overrides**.
+Такой дизайн нужен, чтобы не было обобщённого скилла ревью, не знающего твоих стандартов. Такой скилл помечает то, что в твоей кодовой базе сделано намеренно, и пропускает инварианты, на которых она держится. Поэтому собственная документация репозитория служит [первоисточником](https://www.aihero.dev/ai-coding-dictionary/primary-source) для оси Standards, и **репозиторий всегда главнее**.
 
-The **smell baseline** sits under the repo's standards. It is twelve code smells from chapter 3 of Fowler's _Refactoring_: Mysterious Name, Duplicated Code, Feature Envy, Data Clumps, Primitive Obsession, Repeated Switches, Shotgun Surgery, Divergent Change, Speculative Generality, Message Chains, Middle Man, Refused Bequest. Each is a labelled heuristic ("possible Feature Envy"), never a hard violation. Each states what the smell is and how to fix it, so a finding comes with a fix attached rather than only a complaint. Both axes skip anything your linter already enforces.
+**Базовый набор запахов** лежит под стандартами репозитория. Это двенадцать запахов кода из главы 3 книги Фаулера _Refactoring_: Mysterious Name, Duplicated Code, Feature Envy, Data Clumps, Primitive Obsession, Repeated Switches, Shotgun Surgery, Divergent Change, Speculative Generality, Message Chains, Middle Man, Refused Bequest. Каждый из них подаётся как помеченная эвристика («possible Feature Envy»), а не жёстким нарушением. Для каждого сказано, что это за запах и как его исправить, так что находка приходит с готовым исправлением, а не только с жалобой. Обе оси пропускают всё, что уже обеспечивает твой линтер.
 
-## Common questions
+## Частые вопросы
 
-**It collides with Claude Code's own `/code-review`. What do I do?**
+**Он конфликтует со встроенным `/code-review` в Claude Code. Что делать?**
 
-This is the most reported problem with the skill, and it is not fixed. Claude Code ships its own `/code-review`, which does something different: it hunts bugs in the diff, where this one checks spec compliance and repo standards. When you install this library, one of them wins, and which one depends on how you installed:
+Это самая частая проблема со скиллом, и она не исправлена. Claude Code поставляет собственный `/code-review`, который делает другое: ищет баги в диффе, а этот проверяет соответствие спецификации и стандартам репозитория. Когда ты устанавливаешь эту библиотеку, побеждает один из них, и какой именно, зависит от способа установки:
 
-- **Plugin marketplace.** Every skill gets a `mattpocock-skills:` prefix, and the built-in becomes hard to reach at the unqualified name.
-- **Plain skills install.** The local file wins, and this skill shadows the built-in.
+- **Маркетплейс плагинов.** Каждый скилл получает префикс `mattpocock-skills:`, и до встроенного становится трудно добраться по неквалифицированному имени.
+- **Обычная установка скиллов.** Побеждает локальный файл, и этот скилл затеняет встроенный.
 
-One answer is to remove Claude Code's built-in skills entirely. That saves a lot of [context](https://www.aihero.dev/ai-coding-dictionary/context), and the collision stops mattering. The shadowing itself is arguably a Claude Code [harness](https://www.aihero.dev/ai-coding-dictionary/harness) bug (a skill author should be free to name a skill anything), so the other answer is to rename the local copy. `npx skills update` undoes an edit to the frontmatter or a renamed directory. The durable workaround users report is to fork the skill to a new name and drop `code-review` from the managed set. Keep a note of the commit you forked from so you can re-sync by hand.
+Один выход: полностью убрать встроенные скиллы Claude Code. Это экономит много [контекста](https://www.aihero.dev/ai-coding-dictionary/context), и конфликт перестаёт иметь значение. Само затенение, пожалуй, следует считать багом [обвязки](https://www.aihero.dev/ai-coding-dictionary/harness) (harness) Claude Code (автор скилла должен быть волен называть скилл как угодно), поэтому другой выход: переименовать локальную копию. `npx skills update` отменяет правку frontmatter или переименованный каталог. Надёжный обходной путь, о котором сообщают пользователи: форкнуть скилл под новым именем и исключить `code-review` из управляемого набора. Запиши коммит, от которого форкнул, чтобы синхронизироваться вручную.
 
-**Its sub-agents keep invoking `/code-review` again and spawn more agents.**
+**Его субагенты снова вызывают `/code-review` и порождают новых агентов.**
 
-This is a known open bug. Several people have reproduced it, in more than one harness. The Standards and Spec prompts do not forbid delegation, so a sub-agent can find the skill again and fan out again. One report reached more than 50 agents. The fix people have applied on forks is one line appended to both sub-agent briefs: "Do not invoke `/code-review` or spawn additional agents: perform this review directly." Some prefer to handle it at the harness level so every skill inherits the guard. Neither is in the shipped skill yet. If you run this unattended, watch the agent count.
+Это известный открытый баг. Несколько человек воспроизвели его, и не в одной обвязке. Промпты Standards и Spec не запрещают делегирование, поэтому субагент может снова найти скилл и снова разветвиться. В одном отчёте агентов стало больше 50. Исправление, которое применяют в форках: одна строка, добавленная в оба брифа субагентов: "Do not invoke `/code-review` or spawn additional agents: perform this review directly." Некоторые предпочитают решать это на уровне обвязки, чтобы защиту наследовал каждый скилл. Ни то, ни другое пока не вошло в поставляемый скилл. Если запускаешь его без присмотра, следи за числом агентов.
 
-**Should I run it in the same [session](https://www.aihero.dev/ai-coding-dictionary/session) that wrote the code?**
+**Запускать ли его в той же [сессии](https://www.aihero.dev/ai-coding-dictionary/session), где писался код?**
 
-Prefer a fresh one. As one reader put it: "Same context reviewing itself isn't review, it's confirmation bias with a slash command." An agent that reviews in the authoring session has every assumption that shaped the code in its context. An independent reviewer would not have that context. This is also why people ask for [implement](https://aihero.dev/skills-implement) without its built-in review step, because that step runs the review inside the session that just wrote the diff. The independent version is to invoke `/code-review` yourself from a clean session.
+Лучше в свежей. Как сказал один читатель: «Когда тот же контекст проверяет сам себя, это не ревью, а предвзятость подтверждения со slash-командой». У агента, который проверяет в авторской сессии, в контексте все допущения, сформировавшие код. У независимого ревьюера такого контекста не было бы. По этой же причине просят [implement](https://aihero.dev/skills-implement) без встроенного шага ревью: этот шаг запускает ревью внутри сессии, которая только что написала дифф. Независимый вариант: самому вызвать `/code-review` из чистой сессии.
 
-**After every ticket, or once at the end?**
+**После каждого тикета или один раз в конце?**
 
-Both work, and the skill does not decide for you. Per-ticket keeps each diff small enough that the Spec axis has one clear spec to check against, which is the mode `implement` uses. Batching to the end of a branch catches interactions between tickets that the per-ticket passes each miss. If you are unsure, review per ticket and run one final pass against the branch point.
+Работает и то и другое, и скилл не решает за тебя. Ревью по тикету держит каждый дифф достаточно маленьким, чтобы у оси Spec была одна ясная спецификация для сверки; так работает `implement`. Ревью пачкой в конце ветки ловит взаимодействия между тикетами, которые пропускает каждый проход по отдельности. Если не уверен, проверяй по тикетам и сделай один финальный проход от точки ветвления.
 
-**Can I trust the findings?**
+**Можно ли доверять находкам?**
 
-Not without checking. Sub-agent output is a hypothesis, not evidence. One team reported a dozen breaking changes that prose-based reviews had missed. The skill combines the two reports as they are, or lightly cleaned. It does not re-verify each claim against the files, so a finding can cite the wrong location or overstate an impact. Read the citation on each finding before you act on it. The skill requires every finding to carry a citation (a standards rule, a smell plus its hunk, or a spec line), and that is what makes the findings checkable.
+Не без проверки. Вывод субагента нужно считать гипотезой, а не доказательством. Одна команда сообщила о дюжине ломающих изменений, которые пропустили ревью на основе прозы. Скилл объединяет два отчёта как есть или слегка подчищенными. Он не перепроверяет каждое утверждение по файлам, так что находка может указывать не на то место или преувеличивать последствия. Прежде чем действовать, прочитай ссылку в каждой находке. Скилл требует, чтобы каждая находка несла ссылку (правило стандартов, запах с фрагментом диффа или строку спецификации), и именно это делает находки проверяемыми.
 
-**Why does it find new problems every single time I run it?**
+**Почему он каждый раз находит новые проблемы?**
 
-Each fix adds new code to review, and the judgement-call half of the Standards axis gives different results from run to run. One reader described the loop: "/code-review and /improve-code-architecture always find new stuff every time. I implement fixes, rerun these skills, and again and again." There is no convergence guarantee. Treat a pass as a list of leads. Act on the ones with a cited rule behind them, then stop. Do not run it in a loop until it comes back clean, because it never will.
+Каждое исправление добавляет новый код для ревью, а та половина оси Standards, что на усмотрение, даёт разные результаты от запуска к запуску. Один читатель описал этот цикл: «/code-review и /improve-code-architecture каждый раз находят что-то новое. Я исправляю, перезапускаю эти скиллы, и снова, и снова». Гарантии сходимости нет. Относись к проходу как к списку зацепок. Действуй по тем, за которыми стоит процитированное правило, и остановись. Не гоняй его в цикле, пока не станет чисто: чисто не станет никогда.
 
-**Does it review my uncommitted work?**
+**Проверяет ли он незакоммиченную работу?**
 
-No. It diffs `<fixed-point>...HEAD`. The three-dot form measures from the merge-base and excludes staged and working-tree changes. If `implement` has not made an interim commit, the review cannot see the work that is about to go into the next commit. Commit first, then review, then amend or add a fixup.
+Нет. Он берёт дифф `<fixed-point>...HEAD`. Форма с тремя точками считает от merge-base и исключает изменения в индексе и рабочем дереве. Если `implement` не сделал промежуточный коммит, ревью не видит работу, которая вот-вот попадёт в следующий коммит. Сначала закоммить, потом проверяй, потом amend или fixup.
 
-## It's working if
+## Работает, если
 
-- It refuses to start on a bad ref or an empty diff, before any sub-agent is spawned.
-- The report arrives as two separate blocks under `## Standards` and `## Spec`, not one merged list.
-- Every Standards finding names either a rule in one of your repo's files or one of the twelve smells, with the hunk quoted; every Spec finding quotes a line of the spec.
-- The closing summary gives a worst issue per axis and declines to pick an overall winner.
-- With no spec available, the Spec block says so instead of listing requirements it inferred from the code.
+- Он отказывается стартовать на неверной ссылке или пустом диффе, ещё до запуска субагентов.
+- Отчёт приходит двумя отдельными блоками под `## Standards` и `## Spec`, а не одним слитым списком.
+- Каждая находка Standards называет либо правило в одном из файлов твоего репозитория, либо один из двенадцати запахов, с цитатой фрагмента; каждая находка Spec цитирует строку спецификации.
+- Итоговая сводка даёт худшую проблему по каждой оси и отказывается выбирать общего победителя.
+- Если спецификации нет, блок Spec так и говорит, а не перечисляет требования, выведенные из кода.
 
-## Where it fits
+## Место в общей картине
 
-`code-review` is the review step near the tail of the build chain: `grill-with-docs → to-spec → to-tickets → implement → code-review → retro`. It also stands alone on any branch or PR you point it at.
+`code-review` служит шагом ревью ближе к концу цепочки разработки: `grill-with-docs → to-spec → to-tickets → implement → code-review → retro`. Кроме того, он работает сам по себе на любой ветке или PR, на которые ты его направишь.
 
-- [implement](https://aihero.dev/skills-implement) is the closest neighbour. It drives the build and calls this skill as its own closing review before committing. [implement-spec](https://aihero.dev/skills-implement-spec) does the same once, over the whole integration branch.
-- [retro](https://aihero.dev/skills-retro) comes after it and tunes it. When a session shows the review missing a class of mistake, `retro` proposes the check or the `CODING_STANDARDS.md` rule the Standards axis then reads.
-- [pr](https://aihero.dev/skills-pr) writes the pull request body once the reviewed work goes up.
-- [to-spec](https://aihero.dev/skills-to-spec) and [to-tickets](https://aihero.dev/skills-to-tickets) produce the document the Spec axis checks against, so a vague spec makes that axis vague.
-- [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) is the whole-codebase counterpart, because this skill only looks at one diff.
+- Ближайший сосед: [implement](https://aihero.dev/skills-implement). Он ведёт разработку и вызывает этот скилл как собственное заключительное ревью перед коммитом. [implement-spec](https://aihero.dev/skills-implement-spec) делает то же один раз, по всей интеграционной ветке.
+- [retro](https://aihero.dev/skills-retro) идёт после него и настраивает его. Когда сессия показывает, что ревью пропускает какой-то класс ошибок, `retro` предлагает проверку или правило в `CODING_STANDARDS.md`, которое затем читает ось Standards.
+- [pr](https://aihero.dev/skills-pr) пишет описание pull request, когда проверенная работа отправляется.
+- [to-spec](https://aihero.dev/skills-to-spec) и [to-tickets](https://aihero.dev/skills-to-tickets) производят документ, с которым сверяется ось Spec, так что расплывчатая спецификация делает расплывчатой и эту ось.
+- [improve-codebase-architecture](https://aihero.dev/skills-improve-codebase-architecture) служит аналогом для всей кодовой базы, потому что этот скилл смотрит только на один дифф.
 
-[ask-matt](https://aihero.dev/skills-ask-matt) routes across the whole set when you are unsure which skill the situation wants.
+Если не уверен, какой скилл нужен в ситуации, [ask-matt](https://aihero.dev/skills-ask-matt) проложит маршрут по всему набору.

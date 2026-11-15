@@ -1,81 +1,81 @@
-## What it does
+## Что делает
 
-`to-spec` turns the conversation you have just had into a **[spec](https://www.aihero.dev/ai-coding-dictionary/spec)**, and publishes it to your issue tracker as a single issue.
+`to-spec` превращает только что прошедший разговор в **[спецификацию](https://www.aihero.dev/ai-coding-dictionary/spec)** и публикует её в твой трекер задач одной задачей.
 
-It does not interview you. When you reach for it, the deciding is already done. So it synthesises what is known (from the thread, the codebase, your `GLOSSARY.md` and ADRs) and does not start a new round of questions. The spec records decisions you already made. It is not a place to make new ones.
+Он тебя не расспрашивает. Когда ты к нему обращаешься, решения уже приняты. Поэтому он сводит воедино известное (из ветки разговора, кодовой базы, твоего `GLOSSARY.md` и ADR) и не начинает новый раунд вопросов. Спецификация фиксирует решения, которые ты уже принял. Принимать новые в ней не место.
 
-## When to reach for it
+## Когда к нему обращаться
 
-You invoke this by typing `/to-spec`; the [agent](https://www.aihero.dev/ai-coding-dictionary/agent) won't reach for it on its own.
+Ты вызываешь его, набрав `/to-spec`; [агент](https://www.aihero.dev/ai-coding-dictionary/agent) сам к нему не потянется.
 
-Reach for it when the build is too big for one agent [session](https://www.aihero.dev/ai-coding-dictionary/session) and must be split across several. That is the whole trigger:
+Обращайся к нему, когда разработка слишком велика для одной [сессии](https://www.aihero.dev/ai-coding-dictionary/session) агента и её нужно разбить на несколько. Это и есть весь триггер:
 
-| Where you are | What to run |
+| Где ты находишься | Что запускать |
 | --- | --- |
-| You haven't decided anything yet | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) first |
-| Decided, and the work fits one [context window](https://www.aihero.dev/ai-coding-dictionary/context-window) | [implement](https://aihero.dev/skills-implement): skip the spec |
-| Decided, and the work spans several sessions | `/to-spec`, then [to-tickets](https://aihero.dev/skills-to-tickets) |
-| A [wayfinder](https://aihero.dev/skills-wayfinder) map has cleared | `/to-spec #<map_issue>` |
+| Ты ещё ничего не решил | Сначала [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
+| Решено, и работа помещается в одно [контекстное окно](https://www.aihero.dev/ai-coding-dictionary/context-window) | [implement](https://aihero.dev/skills-implement): спецификацию пропусти |
+| Решено, и работа занимает несколько сессий | `/to-spec`, затем [to-tickets](https://aihero.dev/skills-to-tickets) |
+| Карта [wayfinder](https://aihero.dev/skills-wayfinder) прояснилась | `/to-spec #<map_issue>` |
 
-## Prerequisites
+## Предварительные условия
 
-`to-spec` publishes the spec as an issue, so [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) must first configure a tracker and the triage-label vocabulary for this repo. Either kind of tracker works: a real tracker like GitHub, or local markdown files under `.scratch/`, which work with no extra setup.
+`to-spec` публикует спецификацию как задачу, поэтому [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) должен сначала настроить для этого репозитория трекер и словарь меток триажа. Подходит любой вид трекера: настоящий, вроде GitHub, или локальные markdown-файлы в `.scratch/`, которые работают без дополнительной настройки.
 
-## The spec is a decision record
+## Спецификация как запись решений
 
-The spec exists because context windows end. You settled many things while [grilling](https://www.aihero.dev/ai-coding-dictionary/grilling): the shape of the solution, the choices you argued through, and what you deliberately refused. All of that is in one conversation that you are about to clear. The spec keeps it.
+Спецификация существует потому, что контекстные окна заканчиваются. Во время [допроса](https://www.aihero.dev/ai-coding-dictionary/grilling) (grilling) ты решил многое: форму решения, выборы, которые вы обсудили, и то, от чего ты намеренно отказался. Всё это лежит в одном разговоре, который ты вот-вот очистишь. Спецификация это сохраняет.
 
-So the spec does not validate or decide anything. It records what you decided, in your project's own vocabulary, so a fresh session can pick up the work without you explaining it again. If the spec states something you never said, that is a defect.
+Поэтому спецификация ничего не проверяет и не решает. Она записывает то, что решил ты, собственным словарём проекта, чтобы свежая сессия могла подхватить работу без твоих повторных объяснений. Если спецификация утверждает что-то, чего ты никогда не говорил, это дефект.
 
-## Seams before prose
+## Швы раньше прозы
 
-Before it writes anything, `to-spec` sketches the **seams** where the feature will be tested, and checks them with you. It prefers existing seams to new ones, and picks the highest seam it can. The ideal number of seams for a change is one.
+Прежде чем что-либо писать, `to-spec` намечает **швы**, на которых будет тестироваться фича, и сверяет их с тобой. Существующие швы он предпочитает новым и выбирает самый высокий шов, какой может. Идеальное число швов для изменения: один.
 
-Other skills use those agreed seams later. [tdd](https://aihero.dev/skills-tdd) works only at seams you agreed in advance. [code-review](https://aihero.dev/skills-code-review) reviews the diff against the spec, so a seam nobody agreed to shows up as a review finding. Both connections go through this document. That is why you should take the seam conversation seriously here, and not leave it for implementation.
+Другие скиллы позже используют эти согласованные швы. [tdd](https://aihero.dev/skills-tdd) работает только на швах, согласованных заранее. [code-review](https://aihero.dev/skills-code-review) проверяет дифф по спецификации, так что шов, который никто не согласовывал, всплывает как находка ревью. Обе связи проходят через этот документ. Поэтому к разговору о швах здесь стоит отнестись серьёзно и не откладывать его до реализации.
 
-## Common questions
+## Частые вопросы
 
-**Where did `/to-prd` go?**
-It is this skill, renamed in v1.1. "Spec" is now the one term used throughout, and the old `to-prd` slug no longer works, so reinstall under the new name. The old vocabulary is replaced by the pair *spec* and *tickets*. The spec is the destination and the decisions that fix it. The [tickets](https://www.aihero.dev/ai-coding-dictionary/ticket) are the steps that get there. If you change direction, delete the unfinished tickets and keep the spec.
+**Куда делся `/to-prd`?**
+Это он и есть, переименованный в v1.1. Теперь везде используется один термин «спецификация» (spec), а старый slug `to-prd` больше не работает, так что переустанови под новым именем. Старый словарь заменён парой *спецификация* и *тикеты*. Спецификация описывает пункт назначения и решения, которые его фиксируют. [Тикеты](https://www.aihero.dev/ai-coding-dictionary/ticket) являются шагами, ведущими туда. Если меняешь направление, удали незаконченные тикеты и сохрани спецификацию.
 
-**Why does the spec get the `ready-for-agent` label? I don't want an agent implementing off it.**
-The label means "no further triage needed": the document is complete enough for an agent to work from. It marks an input, not a work order. But [AFK](https://www.aihero.dev/ai-coding-dictionary/afk) agents that poll for `ready-for-agent` cannot see that difference. They will try to build the whole spec in one run instead of picking up the ticket slices. This is the most-reported problem with the skill. Until it changes, exclude the parent spec explicitly in your AFK agent's prompt, or remove the label after `/to-tickets` has run.
+**Почему спецификация получает метку `ready-for-agent`? Я не хочу, чтобы агент реализовывал по ней.**
+Метка означает «дальнейший триаж не нужен»: документ достаточно полон, чтобы агент мог по нему работать. Она помечает вход, а не задание на работу. Но [AFK](https://www.aihero.dev/ai-coding-dictionary/afk)-агенты, которые опрашивают `ready-for-agent`, этой разницы не видят. Они попытаются построить всю спецификацию за один прогон, вместо того чтобы брать срезы-тикеты. Это самая частая жалоба на скилл. Пока это не изменится, явно исключи родительскую спецификацию в промпте своего AFK-агента или сними метку после запуска `/to-tickets`.
 
-**Why not go straight from grilling to `/to-tickets` and skip the spec?**
-Often you should. The spec is worth its step only on multi-session work. Its value is that the tickets are disposable and the spec is not. Each ticket is sized for one fresh context window and then gets deleted or closed, while the spec stays as the one place that records the reasoning behind them. On a single-session change, that gives you nothing, and you pay for an extra synthesis step where the [model](https://www.aihero.dev/ai-coding-dictionary/model) can drift. Go from grilling to `/implement`.
+**Почему бы не пойти от допроса сразу к `/to-tickets` и пропустить спецификацию?**
+Часто так и стоит делать. Спецификация оправдывает свой шаг только в работе на несколько сессий. Её ценность в том, что тикеты одноразовые, а спецификация нет. Каждый тикет рассчитан на одно свежее контекстное окно и затем удаляется или закрывается, а спецификация остаётся единственным местом, где записаны стоящие за ними рассуждения. При изменении на одну сессию это ничего не даёт, и ты платишь за лишний шаг сведения, на котором [модель](https://www.aihero.dev/ai-coding-dictionary/model) может уплыть. Иди от допроса к `/implement`.
 
-**I just finished a wayfinder map. What do I feed it?**
-Give it the main map issue, `/to-spec #<map_issue>`, not the individual decision tickets. [wayfinder](https://aihero.dev/skills-wayfinder) produces decisions spread across a map, not deliverables. `to-spec` collapses them into one document you can build from. If you loop the map straight into `/implement`, you lose that step.
+**Я только что закончил карту wayfinder. Что ему подавать?**
+Главную задачу карты, `/to-spec #<map_issue>`, а не отдельные тикеты-решения. [wayfinder](https://aihero.dev/skills-wayfinder) производит решения, разбросанные по карте, а не готовые результаты. `to-spec` сворачивает их в один документ, по которому можно строить. Если замкнуть карту прямо на `/implement`, этот шаг теряется.
 
-**Is the spec for me to review, or is it just for the agent?**
-Mostly for the agent, and it reads that way: complete, dense, and full of references. Read the seams and the out-of-scope section. In those two places, a wrong decision is cheapest to catch now and most expensive to find later. People do complain about reading the whole thing, and there is no summary mode. But if the spec surprises you, the grilling was too shallow; the spec is not too long.
+**Спецификация для моего ревью или только для агента?**
+В основном для агента, и читается она соответственно: полная, плотная и полная ссылок. Прочитай швы и раздел «Вне рамок». В этих двух местах неверное решение дешевле всего поймать сейчас и дороже всего найти потом. Люди жалуются, что приходится читать целиком, и режима сводки нет. Но если спецификация тебя удивляет, допрос был слишком поверхностным, а не спецификация слишком длинной.
 
-**Do I keep the spec frozen once tickets start, or let the agent rewrite it?**
-Nothing keeps it in sync. In practice it is a snapshot of what you knew at that moment, and it goes out of date the first time implementation teaches you something. Treat it as disposable after the work ships. Your `GLOSSARY.md` and ADRs are the files meant to last. If you learn something during implementation that should last, put it there, not in an edited spec.
+**Замораживать ли спецификацию, когда начались тикеты, или позволить агенту её переписывать?**
+Ничто не держит её в синхроне. На практике она служит снимком того, что ты знал в тот момент, и устаревает в первый же раз, когда реализация тебя чему-то научит. После выпуска работы считай её одноразовой. Долговечными задуманы `GLOSSARY.md` и ADR. Если во время реализации ты узнал что-то, что должно сохраниться, клади это туда, а не в отредактированную спецификацию.
 
-**My work is a refactor or a module boundary, not a feature. Does the template fit?**
-Less well, and this is a known limitation. The template relies heavily on user stories, which do not fit architectural work. You end up writing stories nobody asked for around decisions that are really about interfaces and invariants. Use the implementation-decisions and testing-decisions sections instead. Record the lasting architectural decisions as ADRs through [grill-with-docs](https://aihero.dev/skills-grill-with-docs), not in the spec.
+**У меня рефакторинг или граница модуля, а не фича. Подходит ли шаблон?**
+Хуже, и это известное ограничение. Шаблон сильно опирается на пользовательские истории, которые не подходят для архитектурной работы. В итоге пишешь истории, о которых никто не просил, вокруг решений, которые на самом деле касаются интерфейсов и инвариантов. Используй вместо этого разделы «Решения по реализации» и «Решения по тестированию». Долговечные архитектурные решения записывай как ADR через [grill-with-docs](https://aihero.dev/skills-grill-with-docs), а не в спецификацию.
 
-**Will it check the tracker for related work, or cite the ADRs it's respecting?**
-No to both. It reads and follows the ADRs for the area it touches, but it does not link them. It also does not search the tracker for overlapping issues before it writes, so a spec can duplicate work that someone already filed, and nothing warns you. If the area is busy, search the tracker yourself first.
+**Проверит ли он трекер на связанную работу или сошлётся на ADR, которые соблюдает?**
+Нет и нет. Он читает ADR для затрагиваемой области и следует им, но ссылок на них не ставит. И он не ищет в трекере пересекающиеся задачи перед записью, так что спецификация может дублировать работу, которую кто-то уже завёл, и ничто тебя не предупредит. Если область оживлённая, сначала поищи в трекере сам.
 
-**`/to-tickets` couldn't read my spec: it kept truncating.**
-A tracker issue may not return a very large spec in full, and there is no local copy to use instead. To fix this, do not [clear](https://www.aihero.dev/ai-coding-dictionary/clearing) or [compact](https://www.aihero.dev/ai-coding-dictionary/compaction) between `/to-spec` and `/to-tickets`. Run them in the same window, and `/to-tickets` never has to fetch the spec again.
+**`/to-tickets` не смог прочитать мою спецификацию: она всё время обрезалась.**
+Задача в трекере может не вернуть очень большую спецификацию целиком, а локальной копии взамен нет. Чтобы этого избежать, не [очищай](https://www.aihero.dev/ai-coding-dictionary/clearing) и не [сжимай](https://www.aihero.dev/ai-coding-dictionary/compaction) контекст между `/to-spec` и `/to-tickets`. Запускай их в одном окне, и `/to-tickets` не придётся получать спецификацию заново.
 
-## It's working if
+## Работает, если
 
-- It starts writing instead of asking you a new round of questions.
-- It shows you the seams before it writes, and proposes as few as it can.
-- It uses your project's nouns, not generic product-management boilerplate.
-- You remember making every decision in it. It invented nothing to fill a section.
-- The out-of-scope section lists real things. The things you refused are usually the most useful lines on the page.
+- Он начинает писать, а не задаёт тебе новый раунд вопросов.
+- Он показывает тебе швы до написания и предлагает их как можно меньше.
+- Он использует существительные твоего проекта, а не общие шаблонные фразы управления продуктом.
+- Ты помнишь, как принимал каждое решение в ней. Ничего не выдумано, чтобы заполнить раздел.
+- Раздел «Вне рамок» перечисляет реальные вещи. То, от чего ты отказался, обычно самые полезные строки на странице.
 
-## Where it fits
+## Место в общей картине
 
-`to-spec` is a step in the main build chain, but only on the multi-session branch of it:
+`to-spec` служит шагом основной цепочки разработки, но только в её ветке на несколько сессий:
 
 ```txt
 grill-with-docs → to-spec → to-tickets → implement → code-review → retro
 ```
 
-Upstream, [grill-with-docs](https://aihero.dev/skills-grill-with-docs) makes the decisions that this skill only records, and a finished [wayfinder](https://aihero.dev/skills-wayfinder) map joins the chain here. Downstream, [to-tickets](https://aihero.dev/skills-to-tickets) cuts the spec into tracer-bullet tickets for [implement](https://aihero.dev/skills-implement) to build. When you're unsure which skill or flow fits, [ask-matt](https://aihero.dev/skills-ask-matt) routes you.
+Выше по течению [grill-with-docs](https://aihero.dev/skills-grill-with-docs) принимает решения, которые этот скилл только записывает, а законченная карта [wayfinder](https://aihero.dev/skills-wayfinder) вливается в цепочку здесь. Ниже по течению [to-tickets](https://aihero.dev/skills-to-tickets) нарезает спецификацию на тикеты-трассирующие пули, которые строит [implement](https://aihero.dev/skills-implement). Если не уверен, какой скилл или сценарий подходит, [ask-matt](https://aihero.dev/skills-ask-matt) подскажет маршрут.

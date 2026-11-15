@@ -1,70 +1,70 @@
-## What it does
+## Что делает
 
-`writing-for-agents` is the reference for writing agent-facing documents: a skill, an `AGENTS.md` or `CLAUDE.md`, a [spec](https://www.aihero.dev/ai-coding-dictionary/spec), a runtime prompt, a README, any doc an [agent](https://www.aihero.dev/ai-coding-dictionary/agent) reads. The format differs, but the writing does not. The same levers make each one predictable, so the agent follows the same *process* on every run (not necessarily to the same output).
+`writing-for-agents` служит справочником по написанию документов для агентов: скилла, `AGENTS.md` или `CLAUDE.md`, [спецификации](https://www.aihero.dev/ai-coding-dictionary/spec), рантайм-промпта, README, любого документа, который читает [агент](https://www.aihero.dev/ai-coding-dictionary/agent). Формат разный, а письмо нет. Одни и те же рычаги делают каждый из них предсказуемым, так что агент при каждом запуске следует одному и тому же *процессу* (не обязательно приходя к одному и тому же результату).
 
-Its default fix is to delete, not to explain. Ask an agent to write instructions for another agent and it spends most of its words explaining what the [model](https://www.aihero.dev/ai-coding-dictionary/model) already knows. Each of those lines is a **no-op**: it costs [context](https://www.aihero.dev/ai-coding-dictionary/context) and changes no behaviour. This reference helps you find them, so it is as useful on a document you already have as on a blank file.
+Его исправление по умолчанию: удалить, а не объяснить. Попроси агента написать инструкции для другого агента, и большую часть слов он потратит на объяснение того, что [модель](https://www.aihero.dev/ai-coding-dictionary/model) уже знает. Каждая такая строка представляет собой **пустую операцию** (no-op): она расходует [контекст](https://www.aihero.dev/ai-coding-dictionary/context) и не меняет поведения. Этот справочник помогает их находить, поэтому он так же полезен для уже существующего документа, как и для пустого файла.
 
-It was called `writing-great-skills` until v1.1. The new name fits what it always was. Almost none of it is specific to skills. The skill-only mechanics (frontmatter, the model- versus user-invoked choice, router skills) live in a linked `SKILL-MECHANICS.md` that you read only when the document in front of you is a skill.
+До v1.1 он назывался `writing-great-skills`. Новое имя соответствует тому, чем он был всегда. Почти ничего в нём не относится только к скиллам. Механика, специфичная для скиллов (frontmatter, выбор между вызовом моделью и пользователем, скиллы-маршрутизаторы), вынесена в связанный `SKILL-MECHANICS.md`, который читаешь, только когда перед тобой именно скилл.
 
-## When to reach for it
+## Когда к нему обращаться
 
-Type `/writing-for-agents`, or the agent reaches for it on its own when you're creating or editing a skill, or modifying `AGENTS.md` or `CLAUDE.md`.
+Набери `/writing-for-agents`, или агент сам потянется к нему, когда ты создаёшь или редактируешь скилл либо меняешь `AGENTS.md` или `CLAUDE.md`.
 
-Reach for it by hand for everything else an agent reads: your docs, specs and [tickets](https://www.aihero.dev/ai-coding-dictionary/ticket), system and [AFK](https://www.aihero.dev/ai-coding-dictionary/afk) prompts. The test is one question: does an agent read this? It does not matter how the agent gets the document: a pointer names it, a human pastes it, or it is in the repo. To find out what a codebase contains, use [grill-with-docs](https://aihero.dev/skills-grill-with-docs). This reference controls how a document reads, not what it knows.
+Вручную обращайся к нему для всего остального, что читает агент: твоих документов, спецификаций и [тикетов](https://www.aihero.dev/ai-coding-dictionary/ticket), системных промптов и промптов для [AFK](https://www.aihero.dev/ai-coding-dictionary/afk) (агент работает сам). Проверка сводится к одному вопросу: читает ли это агент? Неважно, как агент получает документ: по указателю, человек вставляет его вручную или он лежит в репозитории. Чтобы узнать, что содержит кодовая база, используй [grill-with-docs](https://aihero.dev/skills-grill-with-docs). Этот справочник управляет тем, как документ читается, а не тем, что в нём известно.
 
-## The two loads
+## Две нагрузки
 
-The central idea is two budgets that every document and pointer spends:
+Центральная идея: два бюджета, которые расходует каждый документ и каждый указатель:
 
-- **Context load**: the cost of always-loaded material on the agent's window: an `AGENTS.md` line, a skill description, anything sitting in context every [turn](https://www.aihero.dev/ai-coding-dictionary/turn) whether or not it fires.
-- **Cognitive load**: the cost to you of remembering which documents exist and when to reach for each. You are the index. Do not try to minimise this cost, because it is the price of human agency.
+- **Контекстная нагрузка**: цена постоянно загруженного материала для окна агента: строки `AGENTS.md`, описания скилла, всего, что сидит в контексте каждый [ход](https://www.aihero.dev/ai-coding-dictionary/turn), срабатывает оно или нет.
+- **Когнитивная нагрузка**: цена для тебя: помнить, какие документы существуют и когда к какому обращаться. Индекс здесь ты. Не пытайся минимизировать эту цену: это плата за человеческую свободу действий.
 
-Once you think in these two loads, most authoring decisions (split or don't, inline or disclose, point or push) become the same trade made in different places.
+Когда начинаешь думать этими двумя нагрузками, большинство авторских решений (разделять или нет, встроить или вынести, указывать или проталкивать) оказываются одним и тем же компромиссом в разных местах.
 
-## The levers
+## Рычаги
 
-- **[Context pointers](https://www.aihero.dev/ai-coding-dictionary/context-pointer)**: the reference held in context that names out-of-context material and encodes when to reach it. A skill description and an `AGENTS.md` line naming a doc are the same thing. The pointer's *wording*, not its target, decides how reliably the agent follows it.
-- **Information hierarchy**: the ladder from in-file step, to in-file reference, to disclosed reference behind a pointer. **[Progressive disclosure](https://www.aihero.dev/ai-coding-dictionary/progressive-disclosure)** is moving material down that ladder so the top stays easy to read.
-- **Completion criteria**: how clear and demanding each step's done-condition is, and the **legwork** that demand causes. They are the defence against **premature completion**.
-- **Leading words**: a compact concept already in the model's pretraining (*tight*, *red*, *tracer bullet*) that the agent thinks with while running the document. It works in two places. In the body it guides execution, and in the pointer it triggers invocation.
-- **Pruning**: single source of truth, relevance, and the no-op test applied sentence by sentence, against **duplication**, **sediment** and **sprawl**.
+- **[Контекстные указатели](https://www.aihero.dev/ai-coding-dictionary/context-pointer)**: ссылка в контексте, которая называет материал вне контекста и кодирует, когда к нему обращаться. Описание скилла и строка в `AGENTS.md`, называющая документ, являются одним и тем же. Насколько надёжно агент по нему пойдёт, решает *формулировка* указателя, а не его цель.
+- **Информационная иерархия**: лестница от шага в файле к справке в файле и к вынесенной справке за указателем. **[Постепенное раскрытие](https://www.aihero.dev/ai-coding-dictionary/progressive-disclosure)** означает спуск материала по этой лестнице, чтобы верх оставался лёгким для чтения.
+- **Критерии завершения**: насколько ясно и требовательно условие готовности каждого шага, и **черновая работа** (legwork), которую эта требовательность порождает. Они защищают от **преждевременного завершения**.
+- **Опорные слова**: компактное понятие, уже имеющееся в предобучении модели (*плотный*, *красный*, *трассирующая пуля*), которым агент думает при выполнении документа. Оно работает в двух местах. В теле оно направляет выполнение, а в указателе запускает вызов.
+- **Обрезка**: единый источник истины, релевантность и проверка на пустую операцию, применяемые предложение за предложением против **дублирования**, **наносов** (sediment) и **разрастания** (sprawl).
 
-## Common questions
+## Частые вопросы
 
-**Where did `/writing-great-skills` go?**
-It is this skill, renamed in v1.1. Users pointed it at `AGENTS.md`, docs, specs, tickets and runtime prompts long before the rename. Structure, leading words and pruning apply to any text an agent reads. There is no alias. Reinstall under the new name.
+**Куда делся `/writing-great-skills`?**
+Это он и есть, переименованный в v1.1. Пользователи применяли его к `AGENTS.md`, документам, спецификациям, тикетам и рантайм-промптам задолго до переименования. Структура, опорные слова и обрезка применимы к любому тексту, который читает агент. Псевдонима нет. Переустанови под новым именем.
 
-**"Writing for agents": so the agent does the writing?**
-The other way round. You are the author; the agent is the reader. That is what makes it hard. You write for a reader that has already read everything, so explanation is waste and precision is the whole job.
+**«Написание для агентов»: то есть пишет агент?**
+Наоборот. Автор ты; агент выступает читателем. Это и делает задачу трудной. Ты пишешь для читателя, который уже всё прочитал, поэтому объяснения являются отходами, а точность составляет всю работу.
 
-**Can't I just ask the agent to write it for me?**
-You can, and it will produce something verbose. Left alone the model explains what it already knows, and it will not apply the no-op test or reach for a leading word on its own. Use the reference to review the draft. Most of its value comes from that review pass.
+**Нельзя ли просто попросить агента написать это за меня?**
+Можно, и он выдаст что-то многословное. Предоставленная самой себе модель объясняет то, что уже знает, и сама не применит проверку на пустую операцию и не потянется к опорному слову. Используй справочник для ревью черновика. Большая часть его ценности приходится на этот проход ревью.
 
-**I asked an agent to trim a document and it cut the functionality.**
-Agents told to "streamline" optimise for length, because length is the thing they can see. The no-op test checks behaviour, not style: delete the line and ask whether the agent's behaviour changed. When a sentence fails, delete the whole sentence rather than trim words from it, and settle a disagreement about it by running the document, not by arguing.
+**Я попросил агента сократить документ, и он вырезал функциональность.**
+Агенты, которым сказали «упростить», оптимизируют длину, потому что длину они видят. Проверка на пустую операцию проверяет поведение, а не стиль: удали строку и спроси, изменилось ли поведение агента. Если предложение не проходит проверку, удаляй его целиком, а не выкидывай из него слова, а споры о нём решай запуском документа, а не аргументами.
 
-**How do I know when it's done?**
-When it works, and you can no longer find duplication, sediment or no-ops. There is no automated eval. You check by running the document by hand and using the failure-mode vocabulary to diagnose problems. When a document misbehaves, the same vocabulary helps you fix it: name the failure mode first, then fix that.
+**Как понять, что он готов?**
+Когда он работает и ты больше не находишь дублирования, наносов и пустых операций. Автоматической оценки нет. Проверяешь вручную: запускаешь документ и диагностируешь проблемы с помощью словаря видов сбоев. Когда документ ведёт себя неправильно, тот же словарь помогает исправить: сначала назови вид сбоя, потом исправляй его.
 
-**Should this live in `CLAUDE.md` or somewhere else?**
-Ask which load you want to pay. `CLAUDE.md` loads into every [session](https://www.aihero.dev/ai-coding-dictionary/session) unconditionally. Material behind a pointer costs only the pointer's own line until it fires. Anything that applies in one session out of ten costs context load in the other nine.
+**Это должно лежать в `CLAUDE.md` или где-то ещё?**
+Спроси, какую нагрузку ты хочешь оплачивать. `CLAUDE.md` безусловно загружается в каждую [сессию](https://www.aihero.dev/ai-coding-dictionary/session). Материал за указателем стоит только строки самого указателя, пока тот не сработает. Всё, что нужно в одной сессии из десяти, оплачивается контекстной нагрузкой в остальных девяти.
 
-**Do I need to rewrite my documents for each new model?**
-Mostly no, and over-fitting to one model causes its own problems. Updating for a new model is usually another no-op pass rather than a rewrite.
+**Нужно ли переписывать документы под каждую новую модель?**
+В основном нет, а подгонка под одну модель создаёт собственные проблемы. Обновление под новую модель обычно сводится к ещё одному проходу по пустым операциям, а не к переписыванию.
 
-**My skill only works on the exact task I built it from.**
-The common method (do the work once, then have the agent write it up as a skill) fits that one run too closely, and the examples come out too specific. Keep the run as evidence, then generalise on purpose: strip what belonged to that repo and those files, and write for the class of task.
+**Мой скилл работает только на той задаче, по которой я его строил.**
+Распространённый метод (сделать работу один раз, а потом попросить агента оформить её как скилл) слишком плотно подгоняет скилл под тот прогон, и примеры выходят слишком конкретными. Сохрани прогон как свидетельство, затем обобщи намеренно: убери то, что относилось к тому репозиторию и тем файлам, и пиши для класса задач.
 
-**English isn't my first language. Do I lose the leading-word advantage?**
-No. Finding the word that packs the most behaviour into the fewest [tokens](https://www.aihero.dev/ai-coding-dictionary/token) is work the reference does for you.
+**Английский мне не родной. Я теряю преимущество опорных слов?**
+Нет. Найти слово, которое упаковывает больше всего поведения в наименьшее число [токенов](https://www.aihero.dev/ai-coding-dictionary/token), справочник помогает за тебя.
 
-## It's working if
+## Работает, если
 
-- The document gets shorter as it gets better, and you are surprised how little is left.
-- You can point at a leading word and see it change the agent's behaviour in more than one place.
-- Nothing is stated twice, in any form. Duplication is the most reliable sign a document was never tested.
-- Reference that only one branch needs sits behind a pointer rather than in the main file.
+- Документ становится короче по мере того, как становится лучше, и тебя удивляет, как мало осталось.
+- Можно указать на опорное слово и увидеть, как оно меняет поведение агента больше чем в одном месте.
+- Ничего не сказано дважды ни в какой форме. Дублирование служит самым надёжным признаком того, что документ ни разу не проверяли.
+- Справка, нужная только одной ветви, лежит за указателем, а не в основном файле.
 
-## Where it fits
+## Место в общей картине
 
-This is a reach-for-it-anytime standalone reference. It applies to the whole set, not to one skill. Every skill here was written with it, and it also covers the documents the other skills produce (a `GLOSSARY.md` and its ADRs, a spec, a ticket) once an agent has to read them. Its one direct caller is [retro](https://aihero.dev/skills-retro), which loads it before proposing any steering file or skill. When you're unsure which skill or flow fits a task, [ask-matt](https://aihero.dev/skills-ask-matt) routes you over the whole set.
+Это самостоятельный справочник, к которому можно обратиться в любой момент. Он относится ко всему набору, а не к одному скиллу. Каждый скилл здесь написан с его помощью, и он же покрывает документы, которые производят другие скиллы (`GLOSSARY.md` и его ADR, спецификацию, тикет), как только их должен читать агент. Его единственный прямой вызывающий: [retro](https://aihero.dev/skills-retro), который загружает его, прежде чем предлагать управляющий файл или скилл. Если не уверен, какой скилл или сценарий подходит к задаче, [ask-matt](https://aihero.dev/skills-ask-matt) проложит маршрут по всему набору.
