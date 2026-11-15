@@ -1,8 +1,8 @@
-# Good and Bad Tests
+# Хорошие и плохие тесты
 
-## Good Tests
+## Хорошие тесты
 
-**Integration-style**: Test through real interfaces, not mocks of internal parts.
+**В интеграционном стиле**: тестируй через реальные интерфейсы, а не через моки внутренних частей.
 
 ```typescript
 // GOOD: Tests observable behavior
@@ -14,17 +14,17 @@ test("user can checkout with valid cart", async () => {
 });
 ```
 
-Characteristics:
+Характеристики:
 
-- Tests behavior users/callers care about
-- Uses public API only
-- Survives internal refactors
-- Describes WHAT, not HOW
-- One logical assertion per test
+- Тестирует поведение, важное пользователям/вызывающим
+- Использует только публичный API
+- Переживает внутренний рефакторинг
+- Описывает ЧТО, а не КАК
+- Одна логическая проверка на тест
 
-## Bad Tests
+## Плохие тесты
 
-**Implementation-detail tests**: Coupled to internal structure.
+**Тесты деталей реализации**: привязаны к внутренней структуре.
 
 ```typescript
 // BAD: Tests implementation details
@@ -35,14 +35,14 @@ test("checkout calls paymentService.process", async () => {
 });
 ```
 
-Red flags:
+Тревожные признаки:
 
-- Mocking internal collaborators
-- Testing private methods
-- Asserting on call counts/order
-- Test breaks when refactoring without behavior change
-- Test name describes HOW not WHAT
-- Verifying through external means instead of interface
+- Мокирование внутренних соавторов
+- Тестирование приватных методов
+- Проверки числа/порядка вызовов
+- Тест ломается при рефакторинге без изменения поведения
+- Имя теста описывает КАК, а не ЧТО
+- Проверка внешними средствами вместо интерфейса
 
 ```typescript
 // BAD: Bypasses interface to verify
@@ -60,7 +60,7 @@ test("createUser makes user retrievable", async () => {
 });
 ```
 
-**Tautological tests**: Expected value restates the implementation, so the test passes by construction.
+**Тавтологические тесты**: ожидаемое значение повторяет реализацию, поэтому тест проходит по построению.
 
 ```typescript
 // BAD: Expected value is recomputed the way the code computes it

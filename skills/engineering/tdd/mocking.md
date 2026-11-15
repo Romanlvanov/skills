@@ -1,25 +1,25 @@
-# When to Mock
+# Когда мокать
 
-Mock at **system boundaries** only:
+Мокай **только на границах системы**:
 
-- External APIs (payment, email, etc.)
-- Databases (sometimes - prefer test DB)
-- Time/randomness
-- File system (sometimes)
+- Внешние API (платежи, почта и т.п.)
+- Базы данных (иногда; лучше тестовая БД)
+- Время/случайность
+- Файловая система (иногда)
 
-Don't mock:
+Не мокай:
 
-- Your own classes/modules
-- Internal collaborators
-- Anything you control
+- Свои собственные классы/модули
+- Внутренних соавторов
+- Всё, что ты контролируешь
 
-## Designing for Mockability
+## Проектирование под мокирование
 
-At system boundaries, design interfaces that are easy to mock:
+На границах системы проектируй интерфейсы, которые легко мокать:
 
-**1. Use dependency injection**
+**1. Используй внедрение зависимостей**
 
-Pass external dependencies in rather than creating them internally:
+Передавай внешние зависимости снаружи, а не создавай их внутри:
 
 ```typescript
 // Easy to mock
@@ -34,9 +34,9 @@ function processPayment(order) {
 }
 ```
 
-**2. Prefer SDK-style interfaces over generic fetchers**
+**2. Предпочитай интерфейсы в стиле SDK универсальным fetcher-функциям**
 
-Create specific functions for each external operation instead of one generic function with conditional logic:
+Создавай отдельную функцию для каждой внешней операции вместо одной универсальной функции с условной логикой:
 
 ```typescript
 // GOOD: Each function is independently mockable
@@ -52,8 +52,8 @@ const api = {
 };
 ```
 
-The SDK approach means:
-- Each mock returns one specific shape
-- No conditional logic in test setup
-- Easier to see which endpoints a test exercises
-- Type safety per endpoint
+Подход SDK означает:
+- Каждый мок возвращает одну конкретную форму
+- Нет условной логики в подготовке теста
+- Проще увидеть, какие эндпоинты использует тест
+- Типобезопасность для каждого эндпоинта
