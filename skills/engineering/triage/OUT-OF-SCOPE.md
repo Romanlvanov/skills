@@ -1,11 +1,11 @@
-# Out-of-Scope Knowledge Base
+# База знаний вне охвата (out-of-scope)
 
-The `.out-of-scope/` directory in a repo stores persistent records of rejected feature requests. It serves two purposes:
+Каталог `.out-of-scope/` в репозитории хранит постоянные записи об отклонённых запросах на фичи. У него две цели:
 
-1. **Institutional memory**: why a feature was rejected, so the reasoning isn't lost when the issue is closed
-2. **Deduplication**: when a new issue comes in that matches a prior rejection, the skill can surface the previous decision instead of re-litigating it
+1. **Институциональная память**: почему фичу отклонили, чтобы обоснование не потерялось при закрытии задачи
+2. **Дедупликация**: когда приходит новая задача, совпадающая с прежним отказом, скилл может показать прежнее решение, а не начинать спор заново
 
-## Directory structure
+## Структура каталога
 
 ```
 .out-of-scope/
@@ -14,11 +14,11 @@ The `.out-of-scope/` directory in a repo stores persistent records of rejected f
 └── graphql-api.md
 ```
 
-One file per **concept**, not per issue. Multiple issues requesting the same thing are grouped under one file.
+Один файл на **понятие**, а не на задачу. Несколько задач с одним и тем же запросом группируются в одном файле.
 
-## File format
+## Формат файла
 
-The file should be written in a relaxed, readable style, more like a short design document than a database entry. Use paragraphs, code samples, and examples to make the reasoning clear and useful to someone encountering it for the first time.
+Файл пиши в свободном, читаемом стиле, скорее как короткий проектный документ, чем как запись в базе данных. Используй абзацы, примеры кода и примеры, чтобы обоснование было ясным и полезным для того, кто видит его впервые.
 
 ```markdown
 # Dark Mode
@@ -53,53 +53,53 @@ interface ThemeConfig {
 - #134: "Dark theme option"
 ```
 
-### Naming the file
+### Имя файла
 
-Use a short, descriptive kebab-case name for the concept: `dark-mode.md`, `plugin-system.md`, `graphql-api.md`. The name should be recognizable enough that someone browsing the directory understands what was rejected without opening the file.
+Используй короткое описательное имя понятия в kebab-case: `dark-mode.md`, `plugin-system.md`, `graphql-api.md`. Имя должно быть достаточно узнаваемым, чтобы тот, кто просматривает каталог, понял, что было отклонено, не открывая файл.
 
-### Writing the reason
+### Как писать причину
 
-The reason should be substantive: not "we don't want this" but why. Good reasons reference:
+Причина должна быть содержательной: не «мы этого не хотим», а почему. Хорошие причины ссылаются на:
 
-- Project scope or philosophy ("This project focuses on X; theming is a downstream concern")
-- Technical constraints ("Supporting this would require Y, which conflicts with our Z architecture")
-- Strategic decisions ("We chose to use A instead of B because...")
+- Охват или философию проекта («Этот проект сосредоточен на X; темы оформления это забота потребителей ниже по цепочке»)
+- Технические ограничения («Поддержка этого потребовала бы Y, что противоречит нашей архитектуре Z»)
+- Стратегические решения («Мы выбрали A вместо B, потому что...»)
 
-The reason should be durable. Avoid referencing temporary circumstances ("we're too busy right now"); those aren't real rejections, they're deferrals.
+Причина должна быть долговечной. Не ссылайся на временные обстоятельства («мы сейчас слишком заняты»): это не настоящие отказы, а отсрочки.
 
-## When to check `.out-of-scope/`
+## Когда проверять `.out-of-scope/`
 
-During triage (Step 1: Gather context), read all files in `.out-of-scope/`. When evaluating a new issue:
+Во время триажа (шаг 1: «Собери контекст») прочитай все файлы в `.out-of-scope/`. При оценке новой задачи:
 
-- Check if the request matches an existing out-of-scope concept
-- Matching is by concept similarity, not keyword: "night theme" matches `dark-mode.md`
-- If there's a match, surface it to the maintainer: "This is similar to `.out-of-scope/dark-mode.md`. We rejected this before because [reason]. Do you still feel the same way?"
+- Проверь, совпадает ли запрос с существующим понятием вне охвата
+- Совпадение определяется по сходству понятий, а не по ключевым словам: «night theme» совпадает с `dark-mode.md`
+- Если совпадение есть, покажи его мейнтейнеру: «Это похоже на `.out-of-scope/dark-mode.md`. Раньше мы отклонили это, потому что [причина]. Ты по-прежнему так считаешь?»
 
-The maintainer may:
+Мейнтейнер может:
 
-- **Confirm**: the new issue gets added to the existing file's "Prior requests" list, then closed
-- **Reconsider**: the out-of-scope file gets deleted or updated, and the issue proceeds through normal triage
-- **Disagree**: the issues are related but distinct, proceed with normal triage
+- **Подтвердить**: новая задача добавляется в список «Prior requests» существующего файла, затем закрывается
+- **Пересмотреть**: файл вне охвата удаляется или обновляется, а задача проходит обычный триаж
+- **Не согласиться**: задачи связаны, но различаются; продолжай обычный триаж
 
-## When to write to `.out-of-scope/`
+## Когда писать в `.out-of-scope/`
 
-Only when an **enhancement** (not a bug) is *rejected* as `wontfix`. This applies to enhancement PRs exactly as it does to issues: a rejected PR is recorded here so the same request doesn't return as fresh code.
+Только когда **улучшение** (не баг) *отклонено* как `wontfix`. Это относится к PR-улучшениям точно так же, как к задачам: отклонённый PR записывается сюда, чтобы тот же запрос не вернулся в виде свежего кода.
 
-Do **not** write here when something is closed as `wontfix` because it's **already implemented**. That's a built feature, not a rejected one; recording it would poison the dedup checks with false rejections. Instead, the closing comment points to where the feature already lives.
+**Не** пиши сюда, когда что-то закрыто как `wontfix`, потому что это **уже реализовано**. Это сделанная фича, а не отклонённая; её запись отравила бы проверки на дубликаты ложными отказами. Вместо этого закрывающий комментарий указывает, где фича уже находится.
 
-The flow:
+Порядок:
 
-1. Maintainer decides a feature request is out of scope
-2. Check if a matching `.out-of-scope/` file already exists
-3. If yes: append the new issue to the "Prior requests" list
-4. If no: create a new file with the concept name, decision, reason, and first prior request
-5. Post a comment on the issue explaining the decision and mentioning the `.out-of-scope/` file
-6. Close the issue with the `wontfix` label
+1. Мейнтейнер решает, что запрос на фичу вне охвата
+2. Проверь, есть ли уже подходящий файл в `.out-of-scope/`
+3. Если да: допиши новую задачу в список «Prior requests»
+4. Если нет: создай новый файл с названием понятия, решением, причиной и первым прежним запросом
+5. Опубликуй на задаче комментарий, объясняющий решение и упоминающий файл в `.out-of-scope/`
+6. Закрой задачу с меткой `wontfix`
 
-## Updating or removing out-of-scope files
+## Обновление и удаление файлов вне охвата
 
-If the maintainer changes their mind about a previously rejected concept:
+Если мейнтейнер передумал насчёт ранее отклонённого понятия:
 
-- Delete the `.out-of-scope/` file
-- The skill does not need to reopen old issues; they're historical records
-- The new issue that triggered the reconsideration proceeds through normal triage
+- Удали файл в `.out-of-scope/`
+- Скиллу не нужно переоткрывать старые задачи; они остаются исторической записью
+- Новая задача, вызвавшая пересмотр, проходит обычный триаж

@@ -1,42 +1,42 @@
-# Writing Agent Briefs
+# Как писать брифы для агента
 
-An agent brief is a structured comment posted on a GitHub issue or PR when it moves to `ready-for-agent`. It is the authoritative specification that an AFK agent will work from. The original body and discussion are context: the agent brief is the contract.
+Бриф для агента это структурированный комментарий, который публикуется на задаче (issue) GitHub или PR, когда она переходит в `ready-for-agent`. Это авторитетная спецификация, по которой будет работать AFK-агент (агент, работающий сам). Исходное тело и обсуждение служат контекстом, а бриф для агента является контрактом.
 
-The brief states **what the agent should do**, which stretches to both surfaces: for an issue, that's building the change from nothing; for a PR, it's what's left to do *to the existing diff*: finish it, close gaps, address review points. Same principles either way; the PR example below shows the difference.
+Бриф описывает, **что должен сделать агент**, и это распространяется на оба случая: для задачи это построить изменение с нуля; для PR это то, что осталось сделать *с существующим диффом*: доделать его, закрыть пробелы, учесть замечания ревью. Принципы одни и те же; пример с PR ниже показывает разницу.
 
-## Principles
+## Принципы
 
-### Durability over precision
+### Долговечность важнее точности
 
-The issue may sit in `ready-for-agent` for days or weeks. The codebase will change in the meantime. Write the brief so it stays useful even as files are renamed, moved, or refactored.
+Задача может пролежать в `ready-for-agent` дни или недели. За это время кодовая база изменится. Пиши бриф так, чтобы он оставался полезным, даже когда файлы переименуют, переместят или отрефакторят.
 
-- **Do** describe interfaces, types, and behavioral contracts
-- **Do** name specific types, function signatures, or config shapes that the agent should look for or modify
-- **Don't** reference file paths: they go stale
-- **Don't** reference line numbers
-- **Don't** assume the current implementation structure will remain the same
+- **Описывай** интерфейсы, типы и поведенческие контракты
+- **Называй** конкретные типы, сигнатуры функций или формы конфигурации, которые агент должен найти или изменить
+- **Не** ссылайся на пути к файлам: они устаревают
+- **Не** ссылайся на номера строк
+- **Не** предполагай, что текущая структура реализации останется прежней
 
-### Behavioral, not procedural
+### Поведение, а не процедура
 
-Describe **what** the system should do, not **how** to implement it. The agent will explore the codebase fresh and make its own implementation decisions.
+Описывай, **что** должна делать система, а не **как** это реализовать. Агент заново исследует кодовую базу и сам примет решения о реализации.
 
-- **Good:** "The `SkillConfig` type should accept an optional `schedule` field of type `CronExpression`"
-- **Bad:** "Open src/types/skill.ts and add a schedule field on line 42"
-- **Good:** "When a user runs `/triage` with no arguments, they should see a summary of issues needing attention"
-- **Bad:** "Add a switch statement in the main handler function"
+- **Хорошо:** «Тип `SkillConfig` должен принимать необязательное поле `schedule` типа `CronExpression`»
+- **Плохо:** «Открой src/types/skill.ts и добавь поле schedule в строке 42»
+- **Хорошо:** «Когда пользователь запускает `/triage` без аргументов, он должен видеть сводку задач, требующих внимания»
+- **Плохо:** «Добавь оператор switch в главную функцию-обработчик»
 
-### Complete acceptance criteria
+### Полные критерии приёмки
 
-The agent needs to know when it's done. Every agent brief must have concrete, testable acceptance criteria. Each criterion should be independently verifiable.
+Агенту нужно знать, когда он закончил. У каждого брифа для агента должны быть конкретные проверяемые критерии приёмки. Каждый критерий должен проверяться независимо.
 
-- **Good:** "Running `gh issue list --label needs-triage` returns issues that have been through initial classification"
-- **Bad:** "Triage should work correctly"
+- **Хорошо:** «Запуск `gh issue list --label needs-triage` возвращает задачи, прошедшие начальную классификацию»
+- **Плохо:** «Триаж должен работать правильно»
 
-### Explicit scope boundaries
+### Явные границы охвата
 
-State what is out of scope. This prevents the agent from gold-plating or making assumptions about adjacent features.
+Укажи, что вне охвата. Это не даёт агенту заниматься лишней полировкой или строить предположения о соседних фичах.
 
-## Template
+## Шаблон
 
 ```markdown
 ## Agent Brief
@@ -67,9 +67,9 @@ Be specific about edge cases and error conditions.
 - Adjacent feature that might seem related but is separate
 ```
 
-## Examples
+## Примеры
 
-### Good agent brief (bug)
+### Хороший бриф для агента (баг)
 
 ```markdown
 ## Agent Brief
@@ -104,7 +104,7 @@ and append "..." to indicate truncation.
 - Multi-line description support
 ```
 
-### Good agent brief (enhancement)
+### Хороший бриф для агента (улучшение)
 
 ```markdown
 ## Agent Brief
@@ -145,9 +145,9 @@ checked for matches.
 - Bug reports (only enhancement rejections go to `.out-of-scope/`)
 ```
 
-### Good agent brief (PR)
+### Хороший бриф для агента (PR)
 
-For a PR, "Current behavior" describes the state of the diff, and the brief asks the agent to finish or fix it rather than build from scratch.
+Для PR раздел «Current behavior» описывает состояние диффа, а бриф просит агента доделать или исправить его, а не строить с нуля.
 
 ```markdown
 ## Agent Brief
@@ -182,7 +182,7 @@ is untouched when the flag is absent.
 - Changing the JSON shape of the success payload the PR already defined
 ```
 
-### Bad agent brief
+### Плохой бриф для агента
 
 ```markdown
 ## Agent Brief
@@ -198,10 +198,10 @@ The function around line 150 has the issue.
 - src/types.ts (line 42)
 ```
 
-This is bad because:
-- No category
-- Vague description ("the triage thing is broken")
-- References file paths and line numbers that will go stale
-- No acceptance criteria
-- No scope boundaries
-- No description of current vs desired behavior
+Он плох, потому что:
+- Нет категории
+- Расплывчатое описание («the triage thing is broken»)
+- Ссылается на пути к файлам и номера строк, которые устареют
+- Нет критериев приёмки
+- Нет границ охвата
+- Нет описания текущего и желаемого поведения
