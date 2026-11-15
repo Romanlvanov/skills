@@ -1,20 +1,20 @@
 # Productivity
 
-General workflow tools, not code-specific.
+Общие инструменты рабочего процесса, не привязанные к коду.
 
-## User-invoked
+## Вызываются пользователем (User-invoked)
 
-Reachable only when you type them (Claude Code: `disable-model-invocation: true`; Codex: `policy.allow_implicit_invocation: false` in `agents/openai.yaml`).
+Доступны только когда ты набираешь их вручную (Claude Code: `disable-model-invocation: true`; Codex: `policy.allow_implicit_invocation: false` в `agents/openai.yaml`).
 
-- **[grill-me](./grill-me/SKILL.md)**: Get relentlessly interviewed about a plan or design until every branch of the design tree is resolved.
-- **[handoff](./handoff/SKILL.md)**: Compact the current conversation into a handoff document so another agent can continue the work.
-- **[teach](./teach/SKILL.md)**: Teach the user a new skill or concept over multiple sessions, using the current directory as a stateful teaching workspace.
-- **[to-questionnaire](./to-questionnaire/SKILL.md)**: Turn a decision you can't answer alone into a Markdown questionnaire for the one person who can (filled in async, or together over a meeting).
-- **[wait-what](./wait-what/SKILL.md)**: Fire this the moment a message doesn't land. The agent re-pitches it with the context you're missing, in plain English, using your `GLOSSARY.md` vocabulary.
+- **[grill-me](./grill-me/SKILL.md)**: тебя безжалостно расспрашивают о плане или дизайне, пока не будет разрешена каждая ветвь дерева решений.
+- **[handoff](./handoff/SKILL.md)**: сжимает текущий разговор в документ передачи (handoff), чтобы другой агент мог продолжить работу.
+- **[teach](./teach/SKILL.md)**: учит пользователя новому навыку или понятию за несколько сессий, используя текущий каталог как учебное рабочее пространство с состоянием.
+- **[to-questionnaire](./to-questionnaire/SKILL.md)**: превращает решение, которое ты не можешь принять в одиночку, в Markdown-опросник для того единственного человека, который может (заполняется асинхронно или вместе на встрече).
+- **[wait-what](./wait-what/SKILL.md)**: вызывай, как только сообщение до тебя не дошло. Агент переформулирует его с недостающим тебе контекстом, простым языком, используя словарь твоего `GLOSSARY.md`.
 
-## Model-invoked
+## Вызываются моделью (Model-invoked)
 
-Model- or user-reachable (rich trigger phrasing so the model can reach for them).
+Доступны модели и пользователю (подробные фразы-триггеры, чтобы модель могла к ним потянуться).
 
-- **[grilling](./grilling/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea until every branch of the design tree is resolved.
-- **[writing-for-agents](./writing-for-agents/SKILL.md)**: Writing documents for agents: skills, AGENTS.md/CLAUDE.md, and any doc an agent reaches by a pointer.
+- **[grilling](./grilling/SKILL.md)**: безжалостно расспрашивает пользователя о плане, решении или идее, пока не будет разрешена каждая ветвь дерева решений.
+- **[writing-for-agents](./writing-for-agents/SKILL.md)**: написание документов для агентов: скиллы, AGENTS.md/CLAUDE.md и любой документ, к которому агент приходит по указателю.
