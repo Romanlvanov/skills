@@ -1,8 +1,8 @@
-# HTML Report Format
+# Формат HTML-отчёта
 
-The architectural review is rendered as a single self-contained HTML file in the OS temp directory. Tailwind and Mermaid both come from CDNs. Mermaid handles graph-shaped diagrams reliably; hand-built divs and inline SVG handle the more editorial visuals (mass diagrams, cross-sections). Mix the two: don't lean on Mermaid for everything, it'll start to look generic.
+Архитектурное ревью отрисовывается как один самодостаточный HTML-файл во временном каталоге ОС. Tailwind и Mermaid подключаются из CDN. Mermaid надёжно справляется с диаграммами в форме графа; вручную собранные div и встроенный SVG отвечают за более редакционный визуал (диаграммы массы, поперечные срезы). Сочетай их: не полагайся на Mermaid во всём, иначе отчёт начнёт выглядеть шаблонно.
 
-## Scaffold
+## Каркас
 
 ```html
 <!doctype html>
@@ -33,34 +33,36 @@ The architectural review is rendered as a single self-contained HTML file in the
 </html>
 ```
 
-## Header
+Каркас приведён на английском. Выставь `lang` и `<title>` под язык отчёта: для русского `lang="ru"` и «Архитектурное ревью: {{имя репозитория}}». Подписи бейджей оставь как есть.
 
-Repo name, date, and a compact legend: solid box = module, dashed line = seam, red arrow = leakage, thick dark box = deep module. No introduction paragraph. Straight into the candidates.
+## Шапка
 
-## Candidate card
+Имя репозитория, дата и компактная легенда: сплошной прямоугольник = модуль, пунктирная линия = шов, красная стрелка = протечка, толстый тёмный прямоугольник = глубокий модуль. Без вступительного абзаца. Сразу к кандидатам.
 
-The diagrams carry the weight. Prose is sparse, plain, and uses the glossary terms (from the `/codebase-design` skill) without ceremony.
+## Карточка кандидата
 
-Each candidate is one `<article>`:
+Основную нагрузку несут диаграммы. Текста мало, он простой и использует термины глоссария (из скилла `/codebase-design`) без церемоний.
 
-- **Title**: short, names the deepening (e.g. "Collapse the Order intake pipeline").
-- **Badge row**: recommendation strength (`Strong` = emerald, `Worth exploring` = amber, `Speculative` = slate), plus a tag for the dependency category (`in-process`, `local-substitutable`, `ports & adapters`, `mock`).
-- **Files**: monospaced list, `font-mono text-sm`.
-- **Before / After diagram**: the centrepiece. Two columns, side by side. See patterns below.
-- **Problem**: one sentence. What hurts.
-- **Solution**: one sentence. What changes.
-- **Wins**: bullets, ≤6 words each. e.g. "Tests hit one interface", "Pricing logic stops leaking", "Delete 4 shallow wrappers".
-- **ADR callout** (if applicable): one line in an amber-tinted box.
+Каждый кандидат оформляется одним `<article>`:
 
-No paragraphs of explanation. If the diagram needs a paragraph to be understood, redraw the diagram.
+- **Заголовок**: короткий, называет углубление (например, «Схлопнуть конвейер приёма Order»).
+- **Ряд бейджей**: сила рекомендации (`Strong` = изумрудный, `Worth exploring` = янтарный, `Speculative` = сланцево-серый), плюс тег категории зависимостей (`in-process`, `local-substitutable`, `ports & adapters`, `mock`).
+- **Файлы**: моноширинный список, `font-mono text-sm`.
+- **Диаграмма «до / после»**: центральный элемент. Две колонки бок о бок. Паттерны смотри ниже.
+- **Проблема**: одно предложение. Что болит.
+- **Решение**: одно предложение. Что меняется.
+- **Выигрыши**: пункты, не больше 6 слов каждый. Например: «Тесты бьют в один интерфейс», «Логика цен перестаёт протекать», «Удалить 4 мелкие обёртки».
+- **Врезка про ADR** (если применимо): одна строка в блоке с янтарным оттенком.
 
-## Diagram patterns
+Никаких поясняющих абзацев. Если диаграмме нужен абзац, чтобы её поняли, перерисуй диаграмму.
 
-Pick the pattern that fits the candidate. Mix them. Don't make every diagram look the same. Variety is part of the point.
+## Паттерны диаграмм
 
-### Mermaid graph (the workhorse for dependencies / call flow)
+Выбирай паттерн, который подходит кандидату. Сочетай их. Не делай все диаграммы одинаковыми. Разнообразие тоже часть смысла.
 
-Use a Mermaid `flowchart` or `graph` when the point is "X calls Y calls Z, and look at the mess." Wrap it in a Tailwind-styled card so it doesn't feel parachuted in. Style with classDef to colour leakage edges red and the deep module dark. Sequence diagrams work well for "before: 6 round-trips; after: 1."
+### Граф Mermaid (рабочая лошадка для зависимостей / потока вызовов)
+
+Используй Mermaid `flowchart` или `graph`, когда суть в том, что «X вызывает Y, тот вызывает Z, и посмотри на этот бардак». Оберни его в карточку со стилями Tailwind, чтобы он не выглядел чужеродно. Через classDef покрась рёбра протечек в красный, а глубокий модуль в тёмный. Диаграммы последовательности хорошо работают для «до: 6 обращений туда-обратно; после: 1».
 
 ```html
 <div class="rounded-lg border border-slate-200 bg-white p-4">
@@ -75,49 +77,49 @@ Use a Mermaid `flowchart` or `graph` when the point is "X calls Y calls Z, and l
 </div>
 ```
 
-### Hand-built boxes-and-arrows (when Mermaid's layout fights you)
+### Ручные прямоугольники и стрелки (когда раскладка Mermaid мешает)
 
-Modules as `<div>`s with borders and labels. Arrows as inline SVG `<line>` or `<path>` elements positioned absolutely over a relative container. Reach for this when you want the "after" diagram to feel like one thick-bordered deep module with greyed-out internals, since Mermaid won't render that with the right weight.
+Модули как `<div>` с рамками и подписями. Стрелки как встроенные SVG-элементы `<line>` или `<path>`, абсолютно позиционированные поверх относительного контейнера. Используй это, когда хочешь, чтобы диаграмма «после» выглядела как один глубокий модуль с толстой рамкой и приглушёнными внутренностями: Mermaid не отрисует это с нужным весом.
 
-### Cross-section (good for layered shallowness)
+### Поперечный срез (хорош для многослойной мелкости)
 
-Stack horizontal bands (`h-12 border-l-4`) to show layers a call passes through. Before: 6 thin layers each doing nothing. After: 1 thick band labelled with the consolidated responsibility.
+Сложи горизонтальные полосы (`h-12 border-l-4`) стопкой, чтобы показать слои, через которые проходит вызов. До: 6 тонких слоёв, каждый ничего не делает. После: 1 толстая полоса с подписью объединённой ответственности.
 
-### Mass diagram (good for "interface as wide as implementation")
+### Диаграмма массы (хороша для «интерфейс шириной с реализацию»)
 
-Two rectangles per module: one for interface surface area, one for implementation. Before: interface rectangle is nearly as tall as the implementation rectangle (shallow). After: interface rectangle is short, implementation rectangle is tall (deep).
+Два прямоугольника на модуль: один для площади поверхности интерфейса, другой для реализации. До: прямоугольник интерфейса почти такой же высоты, как прямоугольник реализации (мелкий). После: прямоугольник интерфейса низкий, прямоугольник реализации высокий (глубокий).
 
-### Call-graph collapse
+### Схлопывание графа вызовов
 
-Before: a tree of function calls rendered as nested boxes. After: the same tree collapsed into one box, with the now-internal calls shown faded inside it.
+До: дерево вызовов функций в виде вложенных прямоугольников. После: то же дерево, схлопнутое в один прямоугольник, внутри которого бледно показаны ставшие внутренними вызовы.
 
-## Style guidance
+## Рекомендации по стилю
 
-- Lean editorial, not corporate-dashboard. Generous whitespace. Serif optional for headings (`font-serif` works well with stone/slate).
-- Colour sparingly: one accent (emerald or indigo) plus red for leakage and amber for warnings.
-- Keep diagrams ~320px tall so before/after sits comfortably side by side without scrolling.
-- Use `text-xs uppercase tracking-wider` for module labels inside diagrams, so they read as schematic, not as UI.
-- The only scripts are the Tailwind CDN and the Mermaid ESM import. The report is otherwise static: no app code, no interactivity beyond Mermaid's own rendering.
+- Тяготей к журнальному стилю, а не к корпоративному дашборду. Щедрые отступы. Шрифт с засечками для заголовков по желанию (`font-serif` хорошо сочетается со stone/slate).
+- Цвет экономно: один акцент (изумрудный или индиго) плюс красный для протечек и янтарный для предупреждений.
+- Держи высоту диаграмм около 320px, чтобы «до/после» удобно помещались бок о бок без прокрутки.
+- Используй `text-xs uppercase tracking-wider` для подписей модулей внутри диаграмм, чтобы они читались как схема, а не как UI.
+- Единственные скрипты: Tailwind CDN и ESM-импорт Mermaid. В остальном отчёт статичен: никакого кода приложения, никакой интерактивности сверх отрисовки самого Mermaid.
 
-## Top recommendation section
+## Раздел главной рекомендации
 
-One larger card. Candidate name, one sentence on why, anchor link to its card. That's it.
+Одна карточка покрупнее. Имя кандидата, одно предложение о том, почему, якорная ссылка на его карточку. Всё.
 
-## Tone
+## Тон
 
-Plain English, concise, but the architectural nouns and verbs come straight from the `/codebase-design` skill. Concision is not an excuse to drift.
+Простой язык, лаконично, но архитектурные существительные и глаголы берутся прямо из скилла `/codebase-design`. Лаконичность не оправдывает сползания.
 
-**Use exactly:** module, interface, implementation, depth, deep, shallow, seam, adapter, leverage, locality.
+**Используй точно:** модуль, интерфейс, реализация, глубина, глубокий, мелкий, шов, адаптер, рычаг, локальность.
 
-**Never substitute:** component, service, unit (for module) · API, signature (for interface) · boundary (for seam) · layer, wrapper (for module, when you mean module).
+**Никогда не заменяй:** компонент, сервис, юнит (вместо модуля) · API, сигнатура (вместо интерфейса) · граница (вместо шва) · слой, обёртка (вместо модуля, когда имеешь в виду модуль).
 
-**Phrasings that fit the style:**
+**Формулировки в духе стиля:**
 
-- "Order intake module is shallow: interface nearly matches the implementation."
-- "Pricing leaks across the seam."
-- "Deepen: one interface, one place to test."
-- "Two adapters justify the seam: HTTP in prod, in-memory in tests."
+- «Модуль приёма Order мелкий: интерфейс почти совпадает с реализацией.»
+- «Ценообразование протекает через шов.»
+- «Углубить: один интерфейс, одно место для тестов.»
+- «Два адаптера оправдывают шов: HTTP в продакшене, в памяти в тестах.»
 
-**Wins bullets** name the gain in glossary terms: *"locality: bugs concentrate in one module"*, *"leverage: one interface, N call sites"*, *"interface shrinks; implementation absorbs the wrappers"*. Don't write *"easier to maintain"* or *"cleaner code"*, because those terms aren't in the glossary and don't earn their place.
+**Пункты выигрышей** называют выгоду в терминах глоссария: *«локальность: баги сосредоточены в одном модуле»*, *«рычаг: один интерфейс, N мест вызова»*, *«интерфейс сжимается; реализация поглощает обёртки»*. Не пиши *«проще сопровождать»* или *«чище код»*: этих терминов нет в глоссарии, и они себя не оправдывают.
 
-No hedging, no throat-clearing, no "it's worth noting that…". If a sentence could be a bullet, make it a bullet. If a bullet could be cut, cut it. If a term isn't in the `/codebase-design` glossary, reach for one that is before inventing a new one.
+Без оговорок, без вводных слов и раскачки, без «стоит отметить, что…». Если предложение может быть пунктом списка, сделай его пунктом. Если пункт можно вырезать, вырежи. Если термина нет в глоссарии `/codebase-design`, сначала поищи тот, что есть, и только потом придумывай новый.
