@@ -1,81 +1,81 @@
 ---
 name: writing-for-agents
-description: Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md or CLAUDE.md.
+description: Написание документов для агентов. Используй, когда создаёшь или редактируешь скиллы (creating or editing skills) или меняешь AGENTS.md или CLAUDE.md (modifying AGENTS.md or CLAUDE.md).
 ---
 
-Reference for writing any document an agent consumes: a skill, an `AGENTS.md` / `CLAUDE.md`, a doc reached by a pointer. The packaging differs; the writing does not: the same levers make each one predictable, since the agent takes the same _process_ every run rather than producing the same output.
+Справочник по написанию любого документа, который потребляет агент: скилла, `AGENTS.md` / `CLAUDE.md`, документа, до которого доходят по указателю. Упаковка разная, а письмо нет: одни и те же рычаги делают каждый из них предсказуемым, потому что агент каждый раз проходит один и тот же _процесс_, а не выдаёт один и тот же результат.
 
-When the document you're writing is a skill, read [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md) for frontmatter, invocation choice, and router skills.
+Когда документ, который ты пишешь, является скиллом, прочитай [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md) про frontmatter, выбор способа вызова и скиллы-маршрутизаторы.
 
-## Context pointers
+## Контекстные указатели
 
-A **context pointer** is a reference held in the agent's context that names some out-of-context material and encodes the condition for reaching it. A skill's description is one; a line in `AGENTS.md` naming a doc is the same object. The pointer's _wording_, not its target, decides when the agent reaches the material, and how reliably. A must-have target behind a weakly worded pointer is a variance bug: sharpen the wording first, and inline the material only if sharpening fails.
+**Контекстный указатель** (context pointer) это ссылка в контексте агента, которая называет некий материал вне контекста и кодирует условие, при котором к нему обращаться. Описание скилла один из них; строка в `AGENTS.md`, называющая документ, это тот же объект. Когда агент дойдёт до материала и насколько надёжно, решает _формулировка_ указателя, а не его цель. Обязательная цель за слабо сформулированным указателем это баг вариативности: сначала заостри формулировку, и встраивай материал, только если заострение не помогло.
 
-A pointer does two jobs: state what the material is, and list the **branches** that should trigger reaching it (a branch is a distinct case the document handles, so different runs take different paths through it). Every word of an always-loaded pointer costs on every turn, so it earns even harder pruning than the body:
+Указатель выполняет две работы: сообщает, что это за материал, и перечисляет **ветви**, которые должны приводить к обращению к нему (ветвь это отдельный случай, который обрабатывает документ, так что разные прогоны идут по нему разными путями). Каждое слово постоянно загруженного указателя стоит денег на каждом ходу, поэтому его надо вычищать ещё жёстче, чем тело:
 
-- **Front-load the leading word**: the pointer is where it does its triggering work.
-- **One trigger per branch.** Synonyms that rename a single branch are one branch written twice; collapse them and keep only genuinely distinct branches.
-- **Cut identity the body already carries.**
+- **Выноси опорное слово вперёд**: именно в указателе оно выполняет свою работу триггера.
+- **Один триггер на ветвь.** Синонимы, переименовывающие одну ветвь, это одна ветвь, написанная дважды; схлопни их и оставь только действительно разные ветви.
+- **Вырезай идентичность, которую уже несёт тело.**
 
-## The two loads
+## Две нагрузки
 
-Every document and pointer you add spends one of two budgets:
+Каждый документ и указатель, который ты добавляешь, тратит один из двух бюджетов:
 
-- **Context load** is the cost of always-loaded material on the agent's window: an `AGENTS.md` line, a skill description, anything sitting in context every turn, spending tokens and attention whether or not it fires.
-- **Cognitive load** is the cost on the human: which documents exist and when to reach for each. The human is the index. Not a cost to minimise: it is the price of human agency; spend it where human judgement matters, remove it where it does not.
+- **Контекстная нагрузка** это цена постоянно загруженного материала для окна агента: строка в `AGENTS.md`, описание скилла, всё, что лежит в контексте на каждом ходу и тратит токены и внимание, срабатывает оно или нет.
+- **Когнитивная нагрузка** это цена для человека: какие документы существуют и когда к какому обращаться. Индекс здесь человек. Это не та цена, которую надо минимизировать: это плата за свободу действий человека; трать её там, где важно человеческое суждение, и убирай там, где оно не важно.
 
-Material reached only through a pointer escapes context load at the price of the pointer's own line; material with no pointer at all rides entirely on cognitive load.
+Материал, до которого доходят только через указатель, избегает контекстной нагрузки ценой строки самого указателя; материал вообще без указателя целиком ложится на когнитивную нагрузку.
 
-## Information hierarchy
+## Информационная иерархия
 
-A document is built from two content types: **steps** (the ordered actions the agent performs) and **reference** (definitions, rules, facts consulted on demand). The two mix freely: all steps (a recipe), all reference (a review's rules, this skill), or both. The core decision is where each piece sits on the **information hierarchy**, a ladder ranked by how immediately the agent needs the material:
+Документ строится из двух типов содержимого: **шагов** (упорядоченных действий, которые выполняет агент) и **справки** (определений, правил, фактов, к которым обращаются по необходимости). Они свободно смешиваются: только шаги (рецепт), только справка (правила ревью, этот скилл) или и то и другое. Главное решение в том, где каждый кусок стоит в **информационной иерархии**, лестнице, ранжированной по тому, насколько срочно агенту нужен материал:
 
-1. **In-file step** is the primary tier: what the agent does, in order.
-2. **In-file reference** is consulted on demand. Often a legitimately flat peer-set (every rule of a review on one rung), which is a fine arrangement, not a smell.
-3. **Disclosed reference** is pushed out into a separate file, reached by a context pointer, loaded only when the pointer fires. Spans a sibling file in the same folder through fully external reference that lives anywhere and any document can point at.
+1. **Шаг в файле**: основной уровень, что агент делает, по порядку.
+2. **Справка в файле**: к ней обращаются по необходимости. Часто это законно плоский набор равных (все правила ревью на одной ступени), и это нормальное устройство, а не запах.
+3. **Раскрываемая справка**: вынесена в отдельный файл, до неё доходят по контекстному указателю, загружается только когда указатель срабатывает. Охватывает всё от соседнего файла в том же каталоге до полностью внешней справки, которая лежит где угодно и на которую может указывать любой документ.
 
-Push too little down and the top bloats; push too much and you hide material the agent actually needs. That tension is the whole decision.
+Опустишь вниз слишком мало, и верх раздуется; опустишь слишком много, и спрячешь материал, который агенту на самом деле нужен. В этом напряжении всё решение.
 
-**Progressive disclosure** is the move down the ladder (out of the main file and behind a pointer) so the top stays legible. Not primarily a token optimisation: it is how the hierarchy is protected. Branching is the cleanest disclosure test: inline what every branch needs, and push behind a pointer what only some branches reach. When a document has steps, in-file reference that should be disclosed buries them and turns attending to them into a coin-flip: a variance lever, not just a legibility one.
+**Постепенное раскрытие** (progressive disclosure) это движение вниз по лестнице (из основного файла за указатель), чтобы верх оставался читаемым. В первую очередь это не оптимизация токенов: так защищается иерархия. Ветвление самый чистый тест для раскрытия: встраивай то, что нужно каждой ветви, и прячь за указатель то, до чего доходят лишь некоторые ветви. Когда в документе есть шаги, справка в файле, которую следовало раскрыть, хоронит их и превращает внимание к ним в подбрасывание монетки: это рычаг вариативности, а не только читаемости.
 
-**Co-location** is the within-file companion: where the ladder decides _how far down_ a piece sits, co-location decides _what sits beside it_ once there. Keep a concept's definition, rules, and caveats under one heading rather than scattered, so reading one part brings its neighbours with it. The test: the document should read like documentation written for the agent. Grouped material reads that way; scattered material does not. (Distinct from duplication: that repeats one meaning in two places; scattering fragments one meaning across many.)
+**Совместное размещение** (co-location) его спутник внутри файла: лестница решает, _насколько низко_ стоит кусок, а совместное размещение решает, _что стоит рядом с ним_ там. Держи определение понятия, правила и оговорки под одним заголовком, а не разбросанными, чтобы чтение одной части приносило с собой соседние. Тест: документ должен читаться как документация, написанная для агента. Сгруппированный материал так и читается; разбросанный нет. (Это не то же, что дублирование: оно повторяет один смысл в двух местах, а разбрасывание дробит один смысл на много мест.)
 
-**Sprawl** is the failure mode here: a document simply too long, even when every line is live and unique. Attention thins across the excess, and every extra line is one more to keep relevant. The cure is the ladder: disclose reference behind pointers, and split by branch or sequence so each path carries only what it needs.
+**Разрастание** (sprawl) здесь типичный сбой: документ просто слишком длинный, даже если каждая строка живая и уникальная. Внимание размазывается по избытку, и каждая лишняя строка это ещё одна строка, которую надо держать актуальной. Лекарство лестница: раскрывай справку за указателями и дели по ветвям или последовательностям, чтобы каждый путь нёс только то, что ему нужно.
 
-## Steps and completion criteria
+## Шаги и критерии завершения
 
-Every step ends on a **completion criterion**, the condition that tells the agent the work is done. Two properties make it a lever:
+Каждый шаг заканчивается **критерием завершения**, условием, которое говорит агенту, что работа сделана. Два свойства делают его рычагом:
 
-- **Clarity**: can the agent tell done from not-done? A vague bound ("understanding reached") invites **premature completion**: ending the step before it is genuinely done, attention slipping to _being done_. The visible steps still ahead (the **post-completion steps**) supply the pull; the criterion's clarity is the resistance. Defend in order: **sharpen the bound first** (local and cheap); only if it is irreducibly fuzzy _and_ you observe the rush, hide the later steps by splitting the sequence. Hiding only works across a real context boundary (a hand-off or a subagent dispatch; an inline call leaves the later steps in context and clears nothing).
-- **Demand**: how much it requires. "Every modified model accounted for" forces thorough work where "produce a change list" does not. Demand drives **legwork** (the digging the agent does within the work, latent in the wording rather than written as its own step), and it is not step-bound: "every rule applied" binds a body of flat reference just as "every step done" binds a sequence, which is how an all-reference document still carries an exhaustiveness bar.
+- **Ясность**: может ли агент отличить сделанное от несделанного? Размытая граница («понимание достигнуто») провоцирует **преждевременное завершение**: шаг заканчивается раньше, чем он действительно сделан, внимание соскальзывает на _то, чтобы закончить_. Видимые впереди шаги (**шаги после завершения**) создают тягу; ясность критерия создаёт сопротивление. Защищайся по порядку: **сначала заостри границу** (локально и дёшево); только если она неустранимо размыта _и_ ты наблюдаешь спешку, спрячь последующие шаги, разделив последовательность. Прятать помогает только через настоящую границу контекста (передачу или запуск субагента; встроенный вызов оставляет последующие шаги в контексте и ничего не очищает).
+- **Требовательность**: сколько он требует. «Учтена каждая изменённая модель» вынуждает к тщательной работе, а «составь список изменений» нет. Требовательность движет **черновой работой** (раскопками, которые агент делает внутри работы, скрытыми в формулировке, а не записанными отдельным шагом), и она не привязана к шагам: «применено каждое правило» связывает массив плоской справки так же, как «сделан каждый шаг» связывает последовательность, и именно так документ из одной справки всё равно задаёт планку исчерпывающей полноты.
 
-The strongest criteria are both checkable and exhaustive.
+Самые сильные критерии одновременно проверяемы и исчерпывающи.
 
-## When to split
+## Когда делить
 
-Splitting one document into two spends one of the two loads, so split only when the cut earns it:
+Деление одного документа на два тратит одну из двух нагрузок, поэтому дели, только когда разрез это оправдывает:
 
-- **By sequence**: split a run of steps where the post-completion steps tempt the agent to rush the one in front of it. Keeping them out of view drives more legwork on the current task. Beware the reverse: merging sequences exposes each step's later steps to what follows, inviting premature completion.
-- **By invocation**, skill-specific: see [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md).
+- **По последовательности**: раздели цепочку шагов, когда шаги после завершения соблазняют агента торопить текущий. Если убрать их из поля зрения, на текущей задаче будет больше черновой работы. Остерегайся обратного: объединение последовательностей открывает каждому шагу то, что идёт после, и провоцирует преждевременное завершение.
+- **По способу вызова**, только для скиллов: см. [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md).
 
-## Leading words
+## Опорные слова
 
-A **leading word** is a compact concept already living in the model's pretraining that the agent thinks with while running the document (_lesson_, _fog of war_, _tracer bullets_). Repeated as a token, never as a sentence, it accumulates a distributed definition and anchors a whole region of behaviour in the fewest tokens, by recruiting priors the model already holds. Coining your own works if you define it clearly, but a made-up word recruits no priors: you pay in definition tokens what a pretrained word gives free; reach for an existing word first.
+**Опорное слово** (leading word) это компактное понятие, уже живущее в предобучении модели, которым агент думает, выполняя документ (_урок_, _туман войны_, _трассирующие пули_). Повторяемое как токен, а не как предложение, оно накапливает распределённое определение и закрепляет целую область поведения минимумом токенов, задействуя априорные знания, которые у модели уже есть. Придумать своё работает, если чётко его определить, но выдуманное слово не задействует никаких априорных знаний: ты платишь токенами определения за то, что слово из предобучения даёт бесплатно; сначала тянись к существующему слову.
 
-It anchors twice. In the body, _execution_: the agent reaches for the same behaviour every time the word appears, and inside flat reference it focuses attention on a class of thing to look for. In a pointer, _invocation_: when the same word lives in your prompts, your docs, and your codebase, the agent links that shared language to the material and reaches it more reliably.
+Оно закрепляет дважды. В теле _исполнение_: агент тянется к одному и тому же поведению каждый раз, когда появляется слово, а внутри плоской справки оно фокусирует внимание на классе того, что надо искать. В указателе _вызов_: когда одно и то же слово живёт в твоих промптах, документах и кодовой базе, агент связывает этот общий язык с материалом и доходит до него надёжнее.
 
-Hunt for opportunities to refactor with leading words. A triad spelled out at three sites, a pointer spending a sentence to gesture at one idea. Each is a passage begging to collapse into a single token:
+Ищи возможности рефакторинга опорными словами. Триада, расписанная в трёх местах, указатель, тратящий предложение, чтобы намекнуть на одну идею. Каждый такой фрагмент просится схлопнуться в один токен:
 
-- "fast, deterministic, low-overhead" → _tight_ (a _tight_ loop).
-- "a loop you believe in" → _red_, turning a fuzzy gate into a binary observable state (the loop goes _red_ on the bug, or it doesn't).
+- «быстрый, детерминированный, с малыми накладными расходами» → _плотный_ (_плотный_ цикл).
+- «цикл, которому ты веришь» → _красный_, превращающий размытый барьер в бинарное наблюдаемое состояние (цикл становится _красным_ на баге или нет).
 
-You win twice: fewer tokens, and a sharper hook for the agent to hang its thinking on. Assume every document is carrying restatements that leading words retire. Go find them.
+Ты выигрываешь дважды: меньше токенов и более острый крючок, на который агент вешает своё мышление. Исходи из того, что каждый документ несёт пересказы, которые опорные слова отправят в отставку. Иди и найди их.
 
-**Negation** is the failure mode beside this lever: steering by prohibition drags the forbidden behaviour into context and makes it _more_ available, not less. _Don't think of an elephant_, and the elephant is all there is; the negation is a weak modifier the strongly-activated concept overruns, so the ban half-reads as an instruction to do the thing. Prompt the **positive**: state the target behaviour ("write one-line comments") so the banned one is never spoken. A prohibition earns its place only as a hard guardrail you cannot phrase positively; even then, pair it with the positive target so attention lands on what to do.
+**Отрицание** это сбой рядом с этим рычагом: управление через запрет втягивает запрещённое поведение в контекст и делает его _более_ доступным, а не менее. _Не думай о слоне_, и остаётся только слон; отрицание это слабый модификатор, который сильно активированное понятие подминает, так что запрет наполовину читается как указание сделать это. Формулируй **позитивно**: назови целевое поведение («пиши однострочные комментарии»), чтобы запрещённое вообще не прозвучало. Запрет оправдывает себя только как жёсткое ограждение, которое невозможно сформулировать позитивно; даже тогда ставь рядом позитивную цель, чтобы внимание попадало на то, что делать.
 
-## Pruning
+## Вычищение
 
-- Keep each meaning in a **single source of truth**: one authoritative place, so changing the behaviour is a one-place edit. **Duplication** (the same meaning in more than one place) costs maintenance and tokens, and inflates a meaning's prominence on the ladder past its real rank. (The accidental inverse of a leading word, which repeats a token on purpose, never the meaning.)
-- The **environment** is a source of truth too (`package.json` scripts, config files, the directory layout, `--help` output), and a document that restates it is a **cache**: a copy of a lookup, earning its load only when the lookup is expensive. Cache what the agent cannot find by looking: the unwritten convention, the reason behind a choice, the gotcha no config confesses. Leave the one-file, one-command lookups to the environment, where they cannot go stale.
-- Check every line for **relevance**: does it still bear on what the document does? A line loses relevance by never bearing on the task (mere exposition, or a branch that should be disclosed) or by going stale as the behaviour or world it describes changes. Shorter documents are easier to keep relevant. Without a pruning discipline the default fate is **sediment**: stale layers that settle because adding feels safe and removing feels risky, until you must core down through them to find what is still live.
-- Hunt **no-ops** sentence by sentence: an instruction the model already obeys by default pays load to say nothing. The test (does it change behaviour versus the default?) is model-relative, not reader-relative: two people disagreeing about a no-op disagree about the default, and settle it by running the document, not by debate. When a sentence fails, delete the whole sentence rather than trim words from it. The test also grades leading words: a word too weak to beat the default (_be thorough_ when the agent is already thorough-ish) is a no-op, and the fix is a stronger word (_relentless_), not a different technique.
+- Держи каждый смысл в **едином источнике истины**: одном авторитетном месте, чтобы изменение поведения было правкой в одном месте. **Дублирование** (один смысл более чем в одном месте) стоит сопровождения и токенов и раздувает значимость смысла на лестнице выше его реального ранга. (Это случайная противоположность опорного слова, которое намеренно повторяет токен, но никогда не смысл.)
+- **Окружение** тоже источник истины (скрипты `package.json`, конфигурационные файлы, структура каталогов, вывод `--help`), и документ, который его пересказывает, это **кэш**: копия поиска, которая оправдывает свою нагрузку, только когда поиск дорогой. Кэшируй то, что агент не может найти, просто посмотрев: неписаное соглашение, причину выбора, подвох, в котором не признаётся ни один конфиг. Поиски в один файл или одну команду оставь окружению, где они не могут устареть.
+- Проверяй каждую строку на **актуальность**: относится ли она ещё к тому, что делает документ? Строка теряет актуальность, если никогда не касается задачи (просто изложение или ветвь, которую следовало раскрыть) или устаревает, когда меняется поведение или мир, который она описывает. Короткие документы легче держать актуальными. Без дисциплины вычищения обычная судьба это **отложения**: устаревшие слои, которые оседают, потому что добавлять кажется безопасным, а удалять рискованным, пока не приходится бурить сквозь них, чтобы найти то, что ещё живо.
+- Охоться на **пустые инструкции** (no-ops) предложение за предложением: инструкция, которой модель и так подчиняется по умолчанию, тратит нагрузку, ничего не говоря. Тест (меняет ли она поведение по сравнению с поведением по умолчанию?) зависит от модели, а не от читателя: два человека, спорящие о пустой инструкции, спорят о поведении по умолчанию и решают спор, запуская документ, а не дебатами. Когда предложение не проходит тест, удаляй его целиком, а не урезай слова. Тот же тест оценивает опорные слова: слово, слишком слабое, чтобы перебить поведение по умолчанию (_будь тщательным_, когда агент и так более-менее тщателен), это пустая инструкция, и лечится она более сильным словом (_неотступный_), а не другой техникой.

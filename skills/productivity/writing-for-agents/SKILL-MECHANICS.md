@@ -1,22 +1,22 @@
-# Skill mechanics
+# Механика скиллов
 
-The skill-specific branch of [`writing-for-agents`](SKILL.md): what changes when the document is a skill (frontmatter, the invocation choice, and router skills). Everything else about writing it is the universal reference in `SKILL.md`.
+Ветвь [`writing-for-agents`](SKILL.md), специфичная для скиллов: что меняется, когда документ является скиллом (frontmatter, выбор способа вызова и скиллы-маршрутизаторы). Всё остальное о том, как его писать, это универсальная справка в `SKILL.md`.
 
-## Invocation
+## Вызов
 
-Two choices, trading the two loads:
+Два варианта, которые обменивают одну из двух нагрузок на другую:
 
-- A **model-invoked** skill keeps a `description`, so the agent can fire it autonomously, and other skills can reach it. You can still type its name: model-invocation always _includes_ user reach; a description only ever adds agent discovery, never removes the human's. The description is the skill's top-level context pointer, forced to stay loaded at all times: permanent context load in exchange for discoverability. A model-invoked skill whose content is all reference is also one home for shared reference: another skill can invoke it, so reference needed by several skills lives in one place. Mechanics: omit `disable-model-invocation`, and write a model-facing description carrying the trigger branches (the pointer-writing rules in `SKILL.md` apply in full).
-- A **user-invoked** skill strips the description from the agent's reach: only the human typing its name can invoke it, and no other skill can. Zero context load, but it spends cognitive load: you are the index that must remember it exists. Mechanics: set `disable-model-invocation: true`; the `description` becomes human-facing: a one-line summary, trigger lists stripped.
+- Скилл, **вызываемый моделью**, сохраняет `description`, так что агент может запускать его самостоятельно, и другие скиллы могут до него дойти. Ты по-прежнему можешь набрать его имя: вызов моделью всегда _включает_ доступ пользователя; описание только добавляет обнаружение агентом и никогда не отнимает доступ у человека. Описание это контекстный указатель скилла верхнего уровня, который обязан всегда оставаться загруженным: постоянная контекстная нагрузка в обмен на обнаруживаемость. Скилл, вызываемый моделью, содержимое которого целиком справка, также служит домом для общей справки: другой скилл может его вызвать, так что справка, нужная нескольким скиллам, живёт в одном месте. Механика: не указывай `disable-model-invocation` и напиши описание для модели с ветвями-триггерами (правила написания указателей из `SKILL.md` применяются полностью).
+- Скилл, **вызываемый пользователем**, убирает описание из досягаемости агента: вызвать его может только человек, набрав имя, и ни один другой скилл не может. Нулевая контекстная нагрузка, но тратится когнитивная: индекс это ты, и тебе надо помнить, что он существует. Механика: поставь `disable-model-invocation: true`; `description` становится описанием для человека: краткое описание в одну строку, без списков триггеров.
 
-Pick model-invocation only when the agent must reach the skill on its own, or another skill must. If it only ever fires by hand, make it user-invoked and pay no context load.
+Выбирай вызов моделью, только когда агент должен сам дойти до скилла или до него должен дойти другой скилл. Если он всегда запускается только вручную, сделай его вызываемым пользователем и не плати контекстную нагрузку.
 
-Shared reference that two user-invoked skills both need can live in neither: with no descriptions, neither can fire the other. Push it to a plain file outside the skill system: external reference any skill can point at.
+Общая справка, нужная двум скиллам, вызываемым пользователем, не может жить ни в одном из них: без описаний ни один не может запустить другой. Вынеси её в обычный файл вне системы скиллов: внешнюю справку, на которую может указывать любой скилл.
 
-## Splitting by invocation
+## Деление по способу вызова
 
-The invocation cut of splitting (the sequence cut lives in `SKILL.md`): split off a model-invoked skill when you have a distinct leading word that should trigger it on its own (a trigger word you actually use in your prompts), or another skill must reach it. You pay context load for the new always-loaded description, so that independent reach has to be worth it.
+Разрез деления по способу вызова (разрез по последовательности описан в `SKILL.md`): выделяй скилл, вызываемый моделью, когда у тебя есть отдельное опорное слово, которое должно запускать его само по себе (слово-триггер, которое ты действительно используешь в своих промптах), или когда до него должен дойти другой скилл. Ты платишь контекстную нагрузку за новое постоянно загруженное описание, так что независимый доступ должен того стоить.
 
-## Router skills
+## Скиллы-маршрутизаторы
 
-When user-invoked skills multiply past what you can remember, that piled-up cognitive load is cured by a **router skill**: one user-invoked skill that names the others and when to reach for each, so the human has one skill to remember instead of many. It can only hint, never fire them: user-invoked skills have no description, so nothing but the human can reach them.
+Когда скиллов, вызываемых пользователем, становится больше, чем ты можешь запомнить, эту накопившуюся когнитивную нагрузку лечит **скилл-маршрутизатор**: один скилл, вызываемый пользователем, который называет остальные и когда к какому обращаться, так что человеку нужно помнить один скилл вместо многих. Он может только подсказывать, но никогда не запускает их: у скиллов, вызываемых пользователем, нет описания, поэтому до них не может дойти никто, кроме человека.
